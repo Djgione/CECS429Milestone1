@@ -37,9 +37,10 @@ public class IntermediateTokenProcessor implements TokenProcessor {
 		
 		//Wont take as list and let u add on additional
 		List<String> splitWords = new ArrayList<>(Arrays.asList(token.split("-")));
-		token = token.replaceAll("-", "");
-		splitWords.add(token);
-		
+		if(splitWords.size()>1) {
+			token = token.replaceAll("-", "");
+			splitWords.add(token);
+		}
 		try 
 		{
 			Class<?> stemClass = Class.forName("org.tartarus.snowball.ext." + "english" + "Stemmer");
