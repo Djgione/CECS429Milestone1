@@ -5,7 +5,9 @@ import cecs429.index.Posting;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Represents a phrase literal consisting of one or more terms that must occur in sequence.
@@ -17,8 +19,8 @@ public class PhraseLiteral implements Query {
 	/**
 	 * Constructs a PhraseLiteral with the given individual phrase terms.
 	 */
-	public PhraseLiteral(Iterable<Query> children) {
-		mChildren.addAll(terms);
+	public PhraseLiteral(Collection<Query> children) {
+		mChildren.addAll(children);
 	}
 	
 	@Override
@@ -30,6 +32,6 @@ public class PhraseLiteral implements Query {
 	
 	@Override
 	public String toString() {
-		return "\"" + String.join(" ", mTerms) + "\"";
+            return "\"" + mChildren.stream().map(c -> c.toString()).collect(Collectors.joining(" "))+ "\"";
 	}
 }
