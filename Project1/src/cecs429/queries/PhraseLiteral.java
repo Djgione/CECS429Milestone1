@@ -18,7 +18,7 @@ public class PhraseLiteral implements Query {
 	 * Constructs a PhraseLiteral with the given individual phrase terms.
 	 */
 	public PhraseLiteral(Iterable<Query> children) {
-		mChildren.addAll(terms);
+		mChildren.addAll(children);
 	}
 	
 	@Override

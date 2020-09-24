@@ -3,7 +3,7 @@ package cecs429.queries;
 import cecs429.index.Index;
 import cecs429.index.Posting;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class AndQuery implements Query {
 	private List<Query> mChildren;
 	
-	public AndQuery(Iterable<Query> children) {
+	public AndQuery(Collection<Query> children) {
 		mChildren = new ArrayList<>(children);
 	}
 	
@@ -29,6 +29,6 @@ public class AndQuery implements Query {
 	@Override
 	public String toString() {
 		return
-		 String.join(" ", mComponents.stream().map(c -> c.toString()).collect(Collectors.toList()));
+		 String.join(" ", mChildren.stream().map(c -> c.toString()).collect(Collectors.toList()));
 	}
 }

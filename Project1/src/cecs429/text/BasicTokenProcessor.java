@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class BasicTokenProcessor implements TokenProcessor {
 	@Override
-	public String processToken(String token) {
-		return token.replaceAll("\\W", "").toLowerCase();
+	public List<String> processToken(String token) {
+		//return token.replaceAll("\\W", "").toLowerCase();
 	}
 }
