@@ -1,6 +1,7 @@
 package cecs429.queries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -108,7 +109,7 @@ public class BooleanQueryParser {
 		// Find the start of the next subquery by skipping spaces and + signs.
 		char test = query.charAt(startIndex);
 		while (test == ' ' || test == '+') {
-			test = query.charAt(++startIndex);
+                    test = query.charAt(++startIndex);
 		}
 		
 		// Find the end of the next subquery.
@@ -140,34 +141,72 @@ public class BooleanQueryParser {
 	 * Locates and returns the next literal from the given subquery string.
 	 */
 	private Literal findNextLiteral(String subquery, int startIndex) {
-		int subLength = subquery.length();
-		int lengthOut;
+            int subLength = subquery.length();
+            int lengthOut;
+            char literalSeparator;
+            Query returnQuery;
+            List<Query> terms = new ArrayList();
+            literalSeparator = subquery.charAt(startIndex);
+                
+            // Skip past white space.
+            while (subquery.charAt(startIndex) == ' ') {
+                    ++startIndex;
+            }
+             /*
+            TODO:
+            Instead of assuming that we only have single-term literals, modify this method so it will create a PhraseLiteral
+            object if the first non-space character you find is a double-quote ("). In this case, the literal is not ended
+            by the next space character, but by the next double-quote character.
+             */
+            // Locate the next space to find the end of this literal.
+            int nextSpace = subquery.indexOf(literalSeparator, startIndex);
+            lengthOut = nextSpace - startIndex;
+            
+            if (nextSpace < 0) {
+                // No more literals in this subquery.
+                lengthOut = subLength - startIndex;
+            }
+            else {
+                //the easy way to do this(slower?)
+                /*String [] strings = subquery.split(" ");
+                
+                for(String str : strings)
+                {
+                    terms.add(new TermLiteral(str));
+                }*/
+                
+                //the headache way to do this(faster?)
+                terms.add(new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)));
+                
+                int nextStartIndex = startIndex + lengthOut;
+                
+                while(nextStartIndex < subLength)
+                {
+                    nextSpace = subquery.indexOf(' ', nextStartIndex);
+                    
+                    if(nextSpace > 0)
+                        lengthOut = nextSpace - nextStartIndex;
+                    else
+                        lengthOut = subLength - nextStartIndex;
+                    
+                    terms.add(new TermLiteral(subquery.substring(nextStartIndex, nextStartIndex + lengthOut)));
+                    
+                    nextStartIndex += lengthOut;
+                }
+            }
+
+            if(literalSeparator == '\"')
+            {
+                returnQuery = new PhraseLiteral(terms);
+            }
+            else
+            {
+                returnQuery = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut));
+            }
+            // This is a term literal containing a single term or phrase literal.
+            return new Literal(new StringBounds(startIndex, lengthOut),returnQuery);
+
+           
 		
-		// Skip past white space.
-		while (subquery.charAt(startIndex) == ' ') {
-			++startIndex;
-		}
-		
-		// Locate the next space to find the end of this literal.
-		int nextSpace = subquery.indexOf(' ', startIndex);
-		if (nextSpace < 0) {
-			// No more literals in this subquery.
-			lengthOut = subLength - startIndex;
-		}
-		else {
-			lengthOut = nextSpace - startIndex;
-		}
-		
-		// This is a term literal containing a single term.
-		return new Literal(
-		 new StringBounds(startIndex, lengthOut),
-		 new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)));
-		
-		/*
-		TODO:
-		Instead of assuming that we only have single-term literals, modify this method so it will create a PhraseLiteral
-		object if the first non-space character you find is a double-quote ("). In this case, the literal is not ended
-		by the next space character, but by the next double-quote character.
-		 */
 	}
 }
