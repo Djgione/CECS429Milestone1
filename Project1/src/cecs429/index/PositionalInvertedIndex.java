@@ -11,6 +11,7 @@ public class PositionalInvertedIndex implements Index {
 	public PositionalInvertedIndex()
 	{
 		mMap = new HashMap<>();
+                System.out.print("in pii");
 	}
 	
 	public void addTerm(String term, int documentId, int position)

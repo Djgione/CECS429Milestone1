@@ -2,6 +2,8 @@ package cecs429.queries;
 
 import cecs429.index.Index;
 import cecs429.index.Posting;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import java.util.*;
 import java.util.stream.Collectors;

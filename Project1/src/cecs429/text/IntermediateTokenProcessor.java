@@ -31,7 +31,8 @@ public class IntermediateTokenProcessor implements TokenProcessor {
 		token = token.replaceAll("[\"\']","");
 		
 		
-		
+		// Set to lower case
+		token = token.toLowerCase();
 		// Replace all hyphens with no space and make extra string out of it
 		
 		//Wont take as list and let u add on additional
