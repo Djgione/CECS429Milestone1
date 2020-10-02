@@ -8,7 +8,9 @@ package cecs429.indexer;
 import cecs429.documents.DirectoryCorpus;
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
+import cecs429.index.BiWordIndex;
 import cecs429.index.Index;
+import cecs429.index.KGramIndex;
 import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
 import cecs429.queries.BooleanQueryParser;
@@ -28,11 +30,15 @@ public class Indexer {
     private DocumentCorpus corpus;
     private Index index;
     TokenProcessor processor=new IntermediateTokenProcessor();
+    private BiWordIndex biwordindex;
     BooleanQueryParser parser;
+    KGramIndex kgramindex;
 
     public Indexer(Path path)
     {
         parser= new BooleanQueryParser();
+        biwordindex=new BiWordIndex();
+        kgramindex=new KGramIndex();
         
 //        if(path.endsWith(".json"))
 //        {
@@ -52,15 +58,34 @@ public class Indexer {
         {
             int pos=0;
             TokenStream stream=new EnglishTokenStream(doc.getContent());
+            String s1="";
+            String s2="";
+            int i=0;
             for(String str : stream.getTokens())
             {
                 for(String s: processor.processToken(str))
                 {
+                    if(i==0)
+                    {
+                        s1=s;
+                        i++;
+                    }
+                    else
+                    {
+                        s2=s;
+                        biwordindex.addTerm(s1+" "+s2, doc.getId());
+                        s1=s2;
+                    }
                     pInvertedIndex.addTerm(s,doc.getId(),pos++);
                 }
             }
 
         }
+        for(String s:pInvertedIndex.getVocabulary())
+        {
+            kgramindex.addGram(s);
+        }
+        
 
         /*List<Posting> posting= pInvertedIndex.getPostings("whale");
         for(Posting p:posting)
@@ -69,13 +94,15 @@ public class Indexer {
         }
             //System.out.println(String.valueOf(pInvertedIndex.getPostings("whale")));
         //System.out.print(String.valueOf(pInvertedIndex.getVocabulary()));*/
+        kgramindex.print();
+      //  biwordindex.print();
         return pInvertedIndex; 
     }
     public List<Posting> query(String query)
     {                          
         Query q = parser.parseQuery(query);
         
-        List<Posting> p = q.getPostings(index);
+        List<Posting> p = q.getPostings(index,new IntermediateTokenProcessor());
 
         
         return p;

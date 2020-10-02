@@ -27,10 +27,10 @@ public class IntermediateTokenProcessor implements TokenProcessor {
 			token = token.substring(0,token.length()-1);
 		}
 
-		token = token.replaceAll("[\"\']","");
+		token = token.replaceAll("[^a-zA-Z0-9_]","");
 		
 		
-		
+		token=token.toLowerCase();
 		// Replace all hyphens with no space and make extra string out of it
 		
 		//Wont take as list and let u add on additional

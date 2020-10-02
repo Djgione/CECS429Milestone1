@@ -67,6 +67,14 @@ public class OrQuery implements Query {
                     j++;
                 }
             }
+            while(i<list1.size())
+            {
+                result.add(list1.get(i++));
+            }
+            while(j<list2.size())
+            {
+                result.add(list1.get(j++));
+            }
             return result;
         }
 

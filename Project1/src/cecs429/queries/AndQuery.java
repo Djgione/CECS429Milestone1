@@ -20,17 +20,17 @@ public class AndQuery implements Query {
 	}
 	
 	@Override
-	public List<Posting> getPostings(Index index) {
+	public List<Posting> getPostings(Index index, IntermediateTokenProcessor proc) {
 		List<Posting> result = new ArrayList();
                 
                 
-                for(Posting p : mChildren.get(0).getPostings(index))
+                for(Posting p : mChildren.get(0).getPostings(index,proc))
                 {
                     result.add(p);
                 }
                 for(int i=1;i<mChildren.size();i++)
                 {
-                    result=merge(result,mChildren.get(i).getPostings(index));
+                    result=merge(result,mChildren.get(i).getPostings(index,proc));
                 }
 		
 /*            mChildren.forEach((Query q) -> {
@@ -73,9 +73,10 @@ public class AndQuery implements Query {
 		 String.join(" ", mChildren.stream().map(c -> c.toString()).collect(Collectors.toList()));
 	}
 
-
     @Override
-    public List<Posting> getPostings(Index index, IntermediateTokenProcessor proc) {
+    public List<Posting> getPostings(Index index) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+
 }

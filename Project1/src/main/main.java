@@ -22,6 +22,7 @@ import java.util.HashSet;
  */
 public class main {
     public static void main(String[] args) {
+       // System.out.print(Paths.get("").toAbsolutePath());
         Scanner scanner = new Scanner(System.in);
         System.out.println("enter -> build index");
         System.out.println("         or stem");
@@ -38,7 +39,7 @@ public class main {
                 System.out.println("enter directory path");
                 //String path = scanner.nextLine();
                 
-                indexer=new Indexer(Paths.get("C:\\Users\\Kermite\\Documents\\MobyDick10Chapters").toAbsolutePath());
+                indexer=new Indexer(Paths.get("/Users/kabir/NetBeansProjects/CECS429Milestone1/Project1/src/corpus").toAbsolutePath());
                 
 
             } else if (str.equals("stem")) {
@@ -46,16 +47,20 @@ public class main {
             } else if (str.equals("vocab")) {
                 //TODO print first 1000 words of vocab in sorted manner one term per line
             } else if(str.equals("query")){
-                List<Posting> r = indexer.query("\"whale not\"");
+                List<Posting> r = indexer.query("\"Where else but\"");
+                for(Posting p:r)
+                {
+                    System.out.println(String.valueOf(p.getDocumentId()+" " +p.getPositions()));
+                }
                 
                System.out.print(String.valueOf(r)); 
             }
             
-         System.out.println("\nenter build index");
-        System.out.println("         or stem");
-        System.out.println("         or vocab");
-        System.out.println("         or query");
-        System.out.print("         or q to quit:");
+//         System.out.println("\nenter build index");
+//        System.out.println("         or stem");
+//        System.out.println("         or vocab");
+//        System.out.println("         or query");
+//        System.out.print("         or q to quit:");
          str = scanner.nextLine();
 
         }
