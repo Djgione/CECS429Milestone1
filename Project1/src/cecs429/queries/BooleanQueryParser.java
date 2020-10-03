@@ -1,6 +1,7 @@
 package cecs429.queries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,6 +37,8 @@ public class BooleanQueryParser {
 	
 	/**
 	 * Given a boolean query, parses and returns a tree of Query objects representing the query.
+     * @param query
+     * @return 
 	 */
 	public Query parseQuery(String query) {
 		int start = 0;
@@ -54,18 +57,19 @@ public class BooleanQueryParser {
 			String subquery = query.substring(nextSubquery.start, nextSubquery.start + nextSubquery.length);
 			int subStart = 0;
 			
+                        System.out.println("subquery: " + subquery);
 			// Store all the individual components of this subquery.
 			List<Query> subqueryLiterals = new ArrayList<>(0);
 
 			do {
 				// Extract the next literal from the subquery.
 				Literal lit = findNextLiteral(subquery, subStart);
-				
 				// Add the literal component to the conjunctive list.
 				subqueryLiterals.add(lit.literalComponent);
 				
 				// Set the next index to start searching for a literal.
 				subStart = lit.bounds.start + lit.bounds.length;
+                                System.out.println(lit.bounds.length);
 				
 			} while (subStart < subquery.length());
 			
@@ -108,7 +112,7 @@ public class BooleanQueryParser {
 		// Find the start of the next subquery by skipping spaces and + signs.
 		char test = query.charAt(startIndex);
 		while (test == ' ' || test == '+') {
-			test = query.charAt(++startIndex);
+                    test = query.charAt(++startIndex);
 		}
 		
 		// Find the end of the next subquery.
@@ -140,28 +144,57 @@ public class BooleanQueryParser {
 	 * Locates and returns the next literal from the given subquery string.
 	 */
 	private Literal findNextLiteral(String subquery, int startIndex) {
-		int subLength = subquery.length();
-		int lengthOut;
-		
+           int subLength = subquery.length();
+		int lengthOut = 0;
+                Query returnLiteral;
+                List<String> children = new ArrayList();
+            
+                
+                // "whlae not"  for  
 		// Skip past white space.
 		while (subquery.charAt(startIndex) == ' ') {
 			++startIndex;
 		}
-		
-		// Locate the next space to find the end of this literal.
-		int nextSpace = subquery.indexOf(' ', startIndex);
-		if (nextSpace < 0) {
-			// No more literals in this subquery.
-			lengthOut = subLength - startIndex;
-		}
-		else {
-			lengthOut = nextSpace - startIndex;
-		}
-		
-		// This is a term literal containing a single term.
+                // 1.if start index is " then scan till next " and put everything in a phrase 
+                // 2.set lengthout to the index of ending " +1
+		if(subquery.charAt(startIndex) == '\"')
+                {
+                    //"whale not" for
+                    // Locate the next space/double quote to find the end of this literal.
+                    startIndex++;
+                    int nextSkip = subquery.indexOf('\"', startIndex);
+                   
+                        lengthOut = nextSkip +1;
+                        String phrase=subquery.substring(startIndex, lengthOut-1);
+                        System.out.println("startIndex final: " + startIndex);
+                    
+                    //lengthOut = subLength;
+                    children.addAll(Arrays.asList(phrase.split(" ")));
+                    returnLiteral = new PhraseLiteral(children);
+                }
+                else
+                {
+                    // Locate the next space/double quote to find the end of this literal.
+                    int nextSkip = subquery.indexOf(' ', startIndex);
+                    if (nextSkip < 0) {
+                            // No more literals in this subquery.
+                            lengthOut = subLength - startIndex;
+                    }
+                    else 
+                    {
+                        lengthOut = nextSkip - startIndex;
+                        System.out.println("startIndex final: " + startIndex);
+                    }
+                    returnLiteral = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)); 
+                }
+                System.out.println("startIndex begin: " + startIndex);
+
+                
+		// This is a term literal containing a single term or a 2
+                // term phrase literal depending on if double quotes are in query or not.
 		return new Literal(
-		 new StringBounds(startIndex, lengthOut),
-		 new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)));
+		 new StringBounds(startIndex, lengthOut), returnLiteral);
+		 
 		
 		/*
 		TODO:
@@ -170,4 +203,6 @@ public class BooleanQueryParser {
 		by the next space character, but by the next double-quote character.
 		 */
 	}
+        
+	
 }

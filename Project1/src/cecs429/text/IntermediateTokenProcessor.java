@@ -17,7 +17,8 @@ public class IntermediateTokenProcessor implements TokenProcessor {
 		List<String> temp = new ArrayList<>();
 		
 		// Removes all non-alphanumeric from front of string
-		while(!Character.isLetterOrDigit(token.charAt(0)))
+		while(token.length()>0 && !Character.isLetterOrDigit(token.charAt(0)))
+
 		{
 			token = token.substring(1);
 		}
@@ -28,11 +29,12 @@ public class IntermediateTokenProcessor implements TokenProcessor {
 			token = token.substring(0,token.length()-1);
 		}
 
-		token = token.replaceAll("[\"\']","");
+		token = token.replaceAll("[^a-zA-Z0-9_]","");
 		
-		
+	
 		// Set to lower case
 		token = token.toLowerCase();
+		
 		// Replace all hyphens with no space and make extra string out of it
 		
 		//Wont take as list and let u add on additional

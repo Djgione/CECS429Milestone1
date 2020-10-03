@@ -47,7 +47,9 @@ public class JsonFileDocument implements FileDocument {
                 
                 switch (nextName) {
                     case "body":
+                        
                         content = jsonReader.nextString();
+//                        System.out.print(content);
                         break;
                     case "url":
                         jsonReader.nextString();

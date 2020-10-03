@@ -2,6 +2,7 @@ package cecs429.queries;
 
 import cecs429.index.Index;
 import cecs429.index.Posting;
+import cecs429.text.IntermediateTokenProcessor;
 
 import java.util.List;
 
@@ -20,12 +21,20 @@ public class TermLiteral implements Query {
 	}
 	
 	@Override
-	public List<Posting> getPostings(Index index) {
-		return index.getPostings(mTerm);
+	public List<Posting> getPostings(Index index,IntermediateTokenProcessor processor) {
+            mTerm=processor.processToken(mTerm).get(0);
+            return index.getPostings(mTerm);
 	}
 	
 	@Override
 	public String toString() {
 		return mTerm;
 	}
+
+    @Override
+    public List<Posting> getPostings(Index index) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 }

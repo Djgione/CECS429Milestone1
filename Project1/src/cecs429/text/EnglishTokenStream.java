@@ -12,13 +12,13 @@ public class EnglishTokenStream implements TokenStream {
 	
 	private class EnglishTokenIterator implements Iterator<String> {
 		private Scanner mScanner;
-		
+	
 		private EnglishTokenIterator() {
 			// A Scanner automatically tokenizes text by splitting on whitespace. By composing a Scanner we don't have to
 			// duplicate that behavior.
 			mScanner = new Scanner(mReader);
 		}
-	
+                
 		@Override
 		public boolean hasNext() {
 			return mScanner.hasNext();
@@ -28,6 +28,7 @@ public class EnglishTokenStream implements TokenStream {
 		public String next() {
 			return mScanner.next();
 		}
+                
 	}
 	
 	/**
