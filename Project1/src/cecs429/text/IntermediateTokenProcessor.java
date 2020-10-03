@@ -3,10 +3,7 @@ package cecs429.text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-<<<<<<< HEAD
-=======
 import java.util.regex.*;
->>>>>>> master
 
 import org.tartarus.snowball.SnowballStemmer;
 

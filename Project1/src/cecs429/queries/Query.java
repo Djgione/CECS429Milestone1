@@ -18,4 +18,4 @@ public interface Query {
     
     List<Posting> getPostings(Index index, IntermediateTokenProcessor proc);
 }
-}
+

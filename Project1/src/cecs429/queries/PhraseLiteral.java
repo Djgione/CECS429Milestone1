@@ -3,13 +3,8 @@ package cecs429.queries;
 import cecs429.index.Index;
 import cecs429.index.Posting;
 import cecs429.text.IntermediateTokenProcessor;
-import cecs429.text.TokenProcessor;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
-=======
-import java.util.Arrays;
->>>>>>> master
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,14 +22,8 @@ public class PhraseLiteral implements Query {
 	 */
 	public PhraseLiteral(Collection<String> children) {
 		mChildren.addAll(children);
-              
+        }      
 	
-	@Override
-	public List<Posting> getPostings(Index index) {
-		return null;
-		// TODO: program this method. Retrieve the postings for the individual terms in the phrase,
-		// and positional merge them together.
-	}
 	
 	@Override
 	public String toString() {
@@ -129,7 +118,6 @@ public class PhraseLiteral implements Query {
         return result;
     }
 
-    @Override
     public List<Posting> getPostings(Index index) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
