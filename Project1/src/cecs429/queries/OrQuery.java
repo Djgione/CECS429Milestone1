@@ -24,20 +24,7 @@ public class OrQuery implements Query {
 	
 	@Override
 	public List<Posting> getPostings(Index index) {
-		List<Posting> result = new ArrayList();
-		
-                for(Posting p : mChildren.get(0).getPostings(index))
-                {
-                    result.add(p);
-                }
-                for(int i=1;i<mChildren.size();i++)
-                {
-                    result=merge(result,mChildren.get(i).getPostings(index));
-                }
-		// TODO: program the merge for an OrQuery, by gathering the postings of the composed Query children and
-		// unioning the resulting postings.
-		
-		return result;
+		return null;
 	}
 	
         public List<Posting> merge(List<Posting> list1, List<Posting> list2)
@@ -73,7 +60,7 @@ public class OrQuery implements Query {
             }
             while(j<list2.size())
             {
-                result.add(list1.get(j++));
+                result.add(list2.get(j++));
             }
             return result;
         }
@@ -88,7 +75,19 @@ public class OrQuery implements Query {
 	}
 
     public List<Posting> getPostings(Index index, IntermediateTokenProcessor proc) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+List<Posting> result = new ArrayList();
+		
+                for(Posting p : mChildren.get(0).getPostings(index,proc))
+                {
+                    result.add(p);
+                }
+                for(int i=1;i<mChildren.size();i++)
+                {
+                    result=merge(result,mChildren.get(i).getPostings(index,proc));
+                }
+		// TODO: program the merge for an OrQuery, by gathering the postings of the composed Query children and
+		// unioning the resulting postings.
+		
+		return result;    }
 
 }

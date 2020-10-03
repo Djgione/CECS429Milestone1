@@ -34,28 +34,30 @@ public class Indexer {
     BooleanQueryParser parser;
     KGramIndex kgramindex;
 
-    public Indexer(Path path)
+    public Indexer(Path path,String extension)
     {
         parser= new BooleanQueryParser();
         biwordindex=new BiWordIndex();
         kgramindex=new KGramIndex();
         
-//        if(path.endsWith(".json"))
-//        {
-//            corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
-//        }
-//        else if(path.endsWith(".txt"))
-//        {
+        if(extension.equals("json"))
+        {
+            corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
+        }
+        else if(extension.equals("txt"))
+        {
             corpus=DirectoryCorpus.loadTextDirectory(path, ".txt");
-//        }
+        }
         index=index(corpus);
     }
     private Index index(DocumentCorpus corpus)
     {
         Index pInvertedIndex=new PositionalInvertedIndex();
         System.out.print(corpus.getCorpusSize());
+        
         for(Document doc:corpus.getDocuments())
         {
+            
             int pos=0;
             TokenStream stream=new EnglishTokenStream(doc.getContent());
             String s1="";
@@ -63,6 +65,7 @@ public class Indexer {
             int i=0;
             for(String str : stream.getTokens())
             {
+                //System.out.print(str);
                 for(String s: processor.processToken(str))
                 {
                     if(i==0)
@@ -76,6 +79,7 @@ public class Indexer {
                         biwordindex.addTerm(s1+" "+s2, doc.getId());
                         s1=s2;
                     }
+                    //System.out.println(s + "docid=" + doc.getId());
                     pInvertedIndex.addTerm(s,doc.getId(),pos++);
                 }
             }
@@ -87,14 +91,14 @@ public class Indexer {
         }
         
 
-        /*List<Posting> posting= pInvertedIndex.getPostings("whale");
-        for(Posting p:posting)
-        {
-            System.out.println(p.getDocumentId() +" "+String.valueOf(p.getPositions()) );
-        }
-            //System.out.println(String.valueOf(pInvertedIndex.getPostings("whale")));
-        //System.out.print(String.valueOf(pInvertedIndex.getVocabulary()));*/
-        kgramindex.print();
+//        List<Posting> posting= pInvertedIndex.getPostings("whale");
+//        for(Posting p:posting)
+//        {
+//            System.out.println(p.getDocumentId() +" "+String.valueOf(p.getPositions()) );
+//        }
+//            System.out.println(String.valueOf(pInvertedIndex.getPostings("whale")));
+//        System.out.print(String.valueOf(pInvertedIndex.getVocabulary()));
+       //build  kgramindex.print();
       //  biwordindex.print();
         return pInvertedIndex; 
     }

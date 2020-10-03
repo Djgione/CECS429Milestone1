@@ -39,7 +39,7 @@ public class main {
                 System.out.println("enter directory path");
                 //String path = scanner.nextLine();
                 
-                indexer=new Indexer(Paths.get("/Users/kabir/NetBeansProjects/CECS429Milestone1/Project1/src/corpus").toAbsolutePath());
+                indexer=new Indexer(Paths.get("/Users/kabir/NetBeansProjects/CECS429Milestone1/Project1/src/Parks1").toAbsolutePath(),"json");
                 
 
             } else if (str.equals("stem")) {
@@ -47,10 +47,15 @@ public class main {
             } else if (str.equals("vocab")) {
                 //TODO print first 1000 words of vocab in sorted manner one term per line
             } else if(str.equals("query")){
-                List<Posting> r = indexer.query("\"Where else but\"");
+                List<Posting> r = indexer.query("there");
                 for(Posting p:r)
                 {
-                    System.out.println(String.valueOf(p.getDocumentId()+" " +p.getPositions()));
+                    System.out.print(String.valueOf("docid"+p.getDocumentId()+" positions   " ));
+                    for(int i: p.getPositions())
+                    {
+                        System.out.print(i+" ");
+                    }
+                    System.out.println();
                 }
                 
                System.out.print(String.valueOf(r)); 
