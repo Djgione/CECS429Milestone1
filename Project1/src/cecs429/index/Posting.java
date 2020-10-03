@@ -15,6 +15,13 @@ public class Posting {
 		mPositions = new ArrayList<>();
 		mPositions.add(position);
 	}
+
+    public Posting(int documentId, List<Integer> matchpositions) {
+		mDocumentId = documentId;
+                System.out.println(String.valueOf(matchpositions));
+                mPositions = new ArrayList<>();
+                mPositions.addAll(matchpositions);
+    }
 	
 	public int getDocumentId() {
 		return mDocumentId;
