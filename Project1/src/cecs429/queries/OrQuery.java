@@ -19,7 +19,8 @@ public class OrQuery implements Query {
 	
 	public OrQuery(Collection<Query> children) {
 		
-                mChildren = new ArrayList<Query>(children);
+	mChildren = new ArrayList<Query>(children);
+
 	}
 	
 	@Override

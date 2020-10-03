@@ -6,6 +6,10 @@ import cecs429.text.IntermediateTokenProcessor;
 import cecs429.text.TokenProcessor;
 
 import java.util.ArrayList;
+<<<<<<< HEAD
+=======
+import java.util.Arrays;
+>>>>>>> master
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -23,12 +27,19 @@ public class PhraseLiteral implements Query {
 	 */
 	public PhraseLiteral(Collection<String> children) {
 		mChildren.addAll(children);
-                
+              
+	
+	@Override
+	public List<Posting> getPostings(Index index) {
+		return null;
+		// TODO: program this method. Retrieve the postings for the individual terms in the phrase,
+		// and positional merge them together.
 	}
 	
 	@Override
 	public String toString() {
 		return "\"" + mChildren.stream().map(c -> c.toString()).collect(Collectors.joining(" "))+ "\"";
+
 	}
 
     public List<Posting> getPostings(Index index, IntermediateTokenProcessor processor)
