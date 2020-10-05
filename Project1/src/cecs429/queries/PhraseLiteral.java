@@ -6,10 +6,8 @@ import cecs429.text.IntermediateTokenProcessor;
 import cecs429.text.TokenProcessor;
 
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Arrays;
-=======
->>>>>>> Omar
+
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;

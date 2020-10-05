@@ -28,6 +28,10 @@ public class IntermediateTokenProcessor implements TokenProcessor {
 			token = token.substring(0,token.length()-1);
 		}
 
+		if(token.length() == 0)
+		{
+			return new ArrayList<String>();
+		}
 		token = token.replaceAll("[\"\']","");
 		
 		
