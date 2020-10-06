@@ -13,11 +13,11 @@ import java.util.List;
  *
  * @author kabir
  */
-public class KGramIndex  {
+public class KGramIndex {
     HashMap<String,List<String>> kgramindex;
     public KGramIndex()
     {
-       kgramindex=new HashMap();
+       kgramindex=new HashMap<>();
     }
     public void addGram(String str)
     {
@@ -49,5 +49,12 @@ public class KGramIndex  {
             System.out.println();
         }
     }
+    
+    
+    public List<String> getPostings(String term)
+    {
+    	return kgramindex.get(term);
+    }
+    
     
 }
