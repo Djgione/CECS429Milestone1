@@ -35,7 +35,17 @@ public class PhraseLiteral implements Query {
 
     public List<Posting> getPostings(Index index, IntermediateTokenProcessor processor)
     {
-        List<Posting> result = index.getPostings(processor.processToken(mChildren.get(0)).get(0));
+    	List<Posting> result;
+    	if(mChildren.get(0).contains("*"))
+    	{
+    		Query query = new WildcardLiteral(mChildren.get(0));
+    		result = query.getPostings(index, processor);
+    	}
+    	else
+    	{
+    		result = index.getPostings(processor.processToken(mChildren.get(0)).get(0));
+    	}
+        
 //        System.out.println(processor.processToken(mChildren.get(0)).get(0));
 //        for(Posting p:result)
 //        {
@@ -50,7 +60,17 @@ public class PhraseLiteral implements Query {
 //        Sysbutem.out.println();
         for(int i=1; i<mChildren.size();i++)
         {
-            List<Posting> mChild = index.getPostings(processor.processToken(mChildren.get(i)).get(0));
+            List<Posting> mChild;
+            if(mChildren.get(i).contains("*"))
+            {
+            	Query query = new WildcardLiteral(mChildren.get(i));
+            	mChild = query.getPostings(index, processor);
+            }
+            else 
+            {
+            	mChild = index.getPostings(processor.processToken(mChildren.get(i)).get(0));
+            }
+          
             // System.out.println(processor.processToken(mChildren.get(i)).get(0));
 
 //            for(Posting p:mChild)
