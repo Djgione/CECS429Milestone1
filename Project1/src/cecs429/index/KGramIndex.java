@@ -14,28 +14,34 @@ import java.util.List;
  * @author kabir
  */
 public class KGramIndex {
-    HashMap<String,List<String>> kgramindex;
+    HashMap<String,List<String>> kGramIndex;
     public KGramIndex()
     {
-       kgramindex=new HashMap<>();
+       kGramIndex=new HashMap<>();
     }
     
+    /**
+     * Takes a string and the length of desired kgram, breaks the string down and adds it to the hashmap
+     * The string stored will begin and end with a $ for further processing by wildcardLiteral
+     * @param str
+     * @param len
+     */
     private void add(String str,int len)
     {
         for(int i=0;i+len<str.length();i=i+len)
         {
             if(str.substring(i,i+len).equals("$"))continue;
-            if(!kgramindex.containsKey(str.substring(i,i+len)))kgramindex.put(str.substring(i,i+len), new ArrayList<String>());
-            kgramindex.get(str.substring(i,i+len)).add(str.substring(1,str.length()-1));
+            if(!kGramIndex.containsKey(str.substring(i,i+len)))kGramIndex.put(str.substring(i,i+len), new ArrayList<String>());
+            kGramIndex.get(str.substring(i,i+len)).add(str);
 
         }
     }
     public void print()
     {
-        for(String s:kgramindex.keySet())
+        for(String s:kGramIndex.keySet())
         {
             System.out.print(s+"->");
-            for(String str: kgramindex.get(s))
+            for(String str: kGramIndex.get(s))
             {
                 System.out.print(str+"    ");
             }
@@ -43,6 +49,11 @@ public class KGramIndex {
         }
     }
 
+
+    public List<String> getPostings(String term)
+    {
+    	return kGramIndex.get(term);
+    }
 
 	public void addTerm(String str, int id, int i) {
 		str="$"+str+"$";

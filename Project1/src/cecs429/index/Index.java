@@ -20,4 +20,6 @@ public interface Index {
         public void addTerm(String s, int id, int i);
         
         public void setIndex(KGramIndex index);
+        
+        public KGramIndex getIndex();
 }
