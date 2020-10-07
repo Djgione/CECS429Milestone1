@@ -19,14 +19,7 @@ public class KGramIndex {
     {
        kgramindex=new HashMap<>();
     }
-    public void addGram(String str)
-    {
-        str="$"+str+"$";
-        add(str,1);
-        add(str,2);
-        add(str,3);
-        
-    }
+    
     private void add(String str,int len)
     {
         for(int i=0;i+len<str.length();i=i+len)
@@ -49,12 +42,17 @@ public class KGramIndex {
             System.out.println();
         }
     }
+
+
+	public void addTerm(String str, int id, int i) {
+		str="$"+str+"$";
+        add(str,1);
+        add(str,2);
+        add(str,3);
+		
+	}
     
     
-    public List<String> getPostings(String term)
-    {
-    	return kgramindex.get(term);
-    }
-    
+   
     
 }

@@ -81,15 +81,14 @@ public class Indexer {
                     }
                     //System.out.println(s + "docid=" + doc.getId());
                     pInvertedIndex.addTerm(s,doc.getId(),pos++);
+                    kgramindex.addTerm(s,0,0);
                 }
             }
+            
+            pInvertedIndex.setIndex(kgramindex);
 
         }
-        for(String s:pInvertedIndex.getVocabulary())
-        {
-            kgramindex.addGram(s);
-        }
-        
+
 
 //        List<Posting> posting= pInvertedIndex.getPostings("whale");
 //        for(Posting p:posting)

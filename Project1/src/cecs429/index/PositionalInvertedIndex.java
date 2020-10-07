@@ -7,12 +7,23 @@ import java.util.List;
 
 public class PositionalInvertedIndex implements Index {
 	private final HashMap<String, List<Posting>> mMap;
+	private KGramIndex index;
+	
 	
 	public PositionalInvertedIndex()
 	{
             mMap = new HashMap<>();
 	}
 	
+	public void setIndex(KGramIndex index)
+	{
+		this.index = index;
+	}
+	
+	public KGramIndex getIndex()
+	{
+		return index;
+	}
 	public void addTerm(String term, int documentId, int position)
 	{
 		//if the term does not exist in the index
