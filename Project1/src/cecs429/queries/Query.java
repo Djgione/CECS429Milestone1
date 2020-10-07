@@ -24,3 +24,4 @@ public interface Query {
 
     public List<Posting> getPosting(BiWordIndex biwordindex);
 }
+

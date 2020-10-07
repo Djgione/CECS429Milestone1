@@ -82,27 +82,15 @@ public class Indexer {
                     }
                     //System.out.println(s + "docid=" + doc.getId());
                     pInvertedIndex.addTerm(s,doc.getId(),pos++);
+                    kgramindex.addTerm(s,0,0);
                 }
             }
+            
+            
 
         }
-        for(String s:pInvertedIndex.getVocabulary())
-        {
-            kgramindex.addGram(s);
-        }
-        
-      //build  biwordindex.print();
-        
+      pInvertedIndex.setIndex(kgramindex);
 
-//        List<Posting> posting= pInvertedIndex.getPostings("whale");
-//        for(Posting p:posting)
-//        {
-//            System.out.println(p.getDocumentId() +" "+String.valueOf(p.getPositions()) );
-//        }
-//            System.out.println(String.valueOf(pInvertedIndex.getPostings("whale")));
-//        System.out.print(String.valueOf(pInvertedIndex.getVocabulary()));
-       //build  kgramindex.print();
-      //  biwordindex.print();
       pInvertedIndex.print();
         return pInvertedIndex; 
     }

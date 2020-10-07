@@ -17,7 +17,14 @@ public interface Index {
 	 */
 	List<String> getVocabulary();
 
-        public void addTerm(String s, int id, int i);
+    public void addTerm(String s, int id, int i);
+
 
     public void print();
+
+        
+    public void setIndex(KGramIndex index);
+        
+    public KGramIndex getIndex();
+
 }

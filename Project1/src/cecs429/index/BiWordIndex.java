@@ -17,6 +17,7 @@ import java.util.List;
  */
 public class BiWordIndex implements Index{
     private HashMap<String,List<Posting>> biwordindex;
+    private KGramIndex index;
     public BiWordIndex()
     {
         biwordindex=new HashMap();
@@ -53,6 +54,16 @@ public class BiWordIndex implements Index{
     public void addTerm(String s, int id, int i) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+	@Override
+	public void setIndex(KGramIndex index) {
+		this.index = index;
+		
+	}
+	@Override
+	public KGramIndex getIndex() {
+		// TODO Auto-generated method stub
+		return index;
+	}
 
     
   

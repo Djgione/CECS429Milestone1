@@ -3,6 +3,8 @@ package cecs429.text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.*;
+
 
 import org.tartarus.snowball.SnowballStemmer;
 
@@ -26,10 +28,17 @@ public class IntermediateTokenProcessor implements TokenProcessor {
 		{
 			token = token.substring(0,token.length()-1);
 		}
-		token = token.replaceAll("\"\'","");
+
+		if(token.length() == 0)
+		{
+			return new ArrayList<String>();
+		}
+		token = token.replaceAll("[\"\']","");
 		
 		
-		token=token.toLowerCase();
+		// Set to lower case
+		token = token.toLowerCase();
+
 		// Replace all hyphens with no space and make extra string out of it
 		
 		//Wont take as list and let u add on additional
