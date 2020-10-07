@@ -90,7 +90,7 @@ public class Indexer {
 
         }
       pInvertedIndex.setIndex(kgramindex);
-
+      biwordindex.setIndex(kgramindex);
       pInvertedIndex.print();
         return pInvertedIndex; 
     }
