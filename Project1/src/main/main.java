@@ -39,7 +39,7 @@ public class main {
                 System.out.println("enter directory path");
                 //String path = scanner.nextLine();
                 
-                indexer=new Indexer(Paths.get("/Users/kabir/NetBeansProjects/CECS429Milestone1/Project1/src/Parks1").toAbsolutePath(),"json");
+                indexer=new Indexer(Paths.get("/Users/kabir/NetBeansProjects/CECS429Milestone1/Project1/src/corpus").toAbsolutePath(),"txt");
                 
 
             } else if (str.equals("stem")) {
@@ -47,18 +47,19 @@ public class main {
             } else if (str.equals("vocab")) {
                 //TODO print first 1000 words of vocab in sorted manner one term per line
             } else if(str.equals("query")){
-                List<Posting> r = indexer.query("there");
+                DocumentCorpus dc=indexer.getCorpus();
+                List<Posting> r = indexer.query("\"Call me Ishmael\"");
                 for(Posting p:r)
                 {
-                    System.out.print(String.valueOf("docid"+p.getDocumentId()+" positions   " ));
-                    for(int i: p.getPositions())
-                    {
-                        System.out.print(i+" ");
-                    }
+                    System.out.print(String.valueOf("Title"+dc.getDocument(p.getDocumentId()).getTitle()+" positions   " ));
+//                    for(int i: p.getPositions())
+//                    {
+//                        System.out.print(i+" ");
+//                    }
                     System.out.println();
                 }
                 
-               System.out.print(String.valueOf(r)); 
+              // System.out.print(String.valueOf(r)); 
             }
             
 //         System.out.println("\nenter build index");

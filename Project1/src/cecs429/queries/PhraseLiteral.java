@@ -1,8 +1,10 @@
 package cecs429.queries;
 
+import cecs429.index.BiWordIndex;
 import cecs429.index.Index;
 import cecs429.index.Posting;
 import cecs429.text.IntermediateTokenProcessor;
+import cecs429.text.TokenProcessor;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,13 +24,12 @@ public class PhraseLiteral implements Query {
 	 */
 	public PhraseLiteral(Collection<String> children) {
 		mChildren.addAll(children);
-        }      
-	
+                
+	}
 	
 	@Override
 	public String toString() {
 		return "\"" + mChildren.stream().map(c -> c.toString()).collect(Collectors.joining(" "))+ "\"";
-
 	}
 
     public List<Posting> getPostings(Index index, IntermediateTokenProcessor processor)
@@ -118,7 +119,33 @@ public class PhraseLiteral implements Query {
         return result;
     }
 
+    @Override
     public List<Posting> getPostings(Index index) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void negative(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean getnegative() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isBiWord() {
+        return false;
+    }
+
+    @Override
+    public void setBiWord() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Posting> getPosting(BiWordIndex biwordindex) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

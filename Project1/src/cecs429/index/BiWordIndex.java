@@ -5,6 +5,8 @@
  */
 package cecs429.index;
 
+import cecs429.queries.Query;
+import cecs429.text.IntermediateTokenProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +15,8 @@ import java.util.List;
  *
  * @author kabir
  */
-public class BiWordIndex {
-    private HashMap<String,List<Integer>> biwordindex;
+public class BiWordIndex implements Index{
+    private HashMap<String,List<Posting>> biwordindex;
     public BiWordIndex()
     {
         biwordindex=new HashMap();
@@ -26,8 +28,8 @@ public class BiWordIndex {
         {
             biwordindex.put(string, new ArrayList());
         }
-        if(biwordindex.get(string).size()==0)biwordindex.get(string).add(documentId);
-        if(biwordindex.get(string).size()>0 && biwordindex.get(string).get(biwordindex.get(string).size()-1)!=documentId)biwordindex.get(string).add(documentId);
+        if(biwordindex.get(string).size()==0)biwordindex.get(string).add(new Posting(documentId));
+        if(biwordindex.get(string).size()>0 && biwordindex.get(string).get(biwordindex.get(string).size()-1).getDocumentId()!=documentId)biwordindex.get(string).add(new Posting(documentId));
         
     }
     public List<String> getVocabulary()
@@ -42,6 +44,16 @@ public class BiWordIndex {
             
         }
     }
+
+    public List<Posting> getPostings(String term) {
+        return biwordindex.get(term);
+    }
+
+    @Override
+    public void addTerm(String s, int id, int i) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
-    
+  
 }

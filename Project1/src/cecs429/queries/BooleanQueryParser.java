@@ -57,8 +57,9 @@ public class BooleanQueryParser {
 			String subquery = query.substring(nextSubquery.start, nextSubquery.start + nextSubquery.length);
 			int subStart = 0;
 			
-                        System.out.println("subquery: " + subquery);
+                       // System.out.println("subquery: " + subquery);
 			// Store all the individual components of this subquery.
+                        
 			List<Query> subqueryLiterals = new ArrayList<>(0);
 
 			do {
@@ -69,7 +70,7 @@ public class BooleanQueryParser {
 				
 				// Set the next index to start searching for a literal.
 				subStart = lit.bounds.start + lit.bounds.length;
-                                System.out.println(lit.bounds.length);
+                                //System.out.println(lit.bounds.length);
 				
 			} while (subStart < subquery.length());
 			
@@ -157,7 +158,24 @@ public class BooleanQueryParser {
 		}
                 // 1.if start index is " then scan till next " and put everything in a phrase 
                 // 2.set lengthout to the index of ending " +1
-		if(subquery.charAt(startIndex) == '\"')
+                if(subquery.charAt(startIndex)=='-')
+                {
+                    startIndex++;
+                    int nextSkip = subquery.indexOf(' ', startIndex);
+                    if (nextSkip < 0) {
+                            // No more literals in this subquery.
+                            lengthOut = subLength - startIndex;
+                    }
+                    else 
+                    {
+                        lengthOut = nextSkip - startIndex;
+                        //System.out.println("startIndex final: " + startIndex);
+                    }
+                    returnLiteral = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut));
+                    returnLiteral.negative(true);
+                    
+                }
+                else if(subquery.charAt(startIndex) == '\"')
                 {
                     //"whale not" for
                     // Locate the next space/double quote to find the end of this literal.
@@ -170,7 +188,14 @@ public class BooleanQueryParser {
                     
                     //lengthOut = subLength;
                     children.addAll(Arrays.asList(phrase.split(" ")));
-                    returnLiteral = new PhraseLiteral(children);
+                    if(children.size()==2)
+                    {
+                        returnLiteral=new BiWordQuery(children.get(0)+" "+children.get(1));
+                    }
+                    else
+                    {
+                        returnLiteral = new PhraseLiteral(children);
+                    }
                 }
                 else
                 {
@@ -183,11 +208,11 @@ public class BooleanQueryParser {
                     else 
                     {
                         lengthOut = nextSkip - startIndex;
-                        System.out.println("startIndex final: " + startIndex);
+                        //System.out.println("startIndex final: " + startIndex);
                     }
                     returnLiteral = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)); 
                 }
-                System.out.println("startIndex begin: " + startIndex);
+                //System.out.println("startIndex begin: " + startIndex);
 
                 
 		// This is a term literal containing a single term or a 2

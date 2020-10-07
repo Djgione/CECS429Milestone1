@@ -1,5 +1,6 @@
 package cecs429.queries;
 
+import cecs429.index.BiWordIndex;
 import cecs429.index.Index;
 import cecs429.index.Posting;
 import cecs429.text.IntermediateTokenProcessor;
@@ -16,13 +17,16 @@ import java.util.stream.Collectors;
 public class OrQuery implements Query {
 	// The components of the Or query.
 	private List<Query> mChildren;
+        Boolean negative=false;
 	
 	public OrQuery(Collection<Query> children) {
 		
-	mChildren = new ArrayList<Query>(children);
-
+                mChildren = new ArrayList<Query>(children);
 	}
-	
+	  @Override
+    public List<Posting> getPosting(BiWordIndex biwordindex) {
+return null;
+    }
 	@Override
 	public List<Posting> getPostings(Index index) {
 		return null;
@@ -75,6 +79,7 @@ public class OrQuery implements Query {
 		 + " )";
 	}
 
+        @Override
     public List<Posting> getPostings(Index index, IntermediateTokenProcessor proc) {
 List<Posting> result = new ArrayList();
 		
@@ -90,5 +95,25 @@ List<Posting> result = new ArrayList();
 		// unioning the resulting postings.
 		
 		return result;    }
+
+        @Override
+    public boolean isBiWord()
+    {
+        return false;
+    }
+        @Override
+    public void setBiWord()
+    {
+        
+    }
+        @Override
+    public boolean getnegative()
+    {
+        return false;
+    }
+    @Override
+    public void negative(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
 }

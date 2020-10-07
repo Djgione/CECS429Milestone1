@@ -58,4 +58,21 @@ public class PositionalInvertedIndex implements Index {
             return vocab;
 	}
 
+    @Override
+    public void print() {
+        for(String s:mMap.keySet())
+        {
+            System.out.print(s+" ");
+            for(Posting p: mMap.get(s))
+            {
+                System.out.print("docid: "+p.getDocumentId());
+                for(Integer i:p.getPositions())
+                {
+                    System.out.print(i+" ");
+                }
+                System.out.println();
+            }
+        }
+    }
+
 }

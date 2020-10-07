@@ -13,6 +13,7 @@ import cecs429.index.Index;
 import cecs429.index.KGramIndex;
 import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
+import cecs429.queries.BiWordQuery;
 import cecs429.queries.BooleanQueryParser;
 import cecs429.queries.Query;
 import cecs429.text.EnglishTokenStream;
@@ -90,6 +91,8 @@ public class Indexer {
             kgramindex.addGram(s);
         }
         
+      //build  biwordindex.print();
+        
 
 //        List<Posting> posting= pInvertedIndex.getPostings("whale");
 //        for(Posting p:posting)
@@ -100,14 +103,20 @@ public class Indexer {
 //        System.out.print(String.valueOf(pInvertedIndex.getVocabulary()));
        //build  kgramindex.print();
       //  biwordindex.print();
+      pInvertedIndex.print();
         return pInvertedIndex; 
+    }
+    public DocumentCorpus getCorpus()
+    {
+        return corpus;
     }
     public List<Posting> query(String query)
     {                          
+        List<Posting> p;
         Query q = parser.parseQuery(query);
+        if(q.isBiWord())p=q.getPosting(biwordindex);
+        else p= q.getPostings(index,new IntermediateTokenProcessor());
         
-        List<Posting> p = q.getPostings(index,new IntermediateTokenProcessor());
-
         
         return p;
                 

@@ -12,10 +12,15 @@ import java.util.List;
 public interface Query {
     /**
      * Retrieves a list of postings for the query, using an Index as the source.
+     * @param b
      * @param index
      */
+    void negative(boolean b);
+    boolean getnegative();
     List<Posting> getPostings(Index index);
-    
     List<Posting> getPostings(Index index, IntermediateTokenProcessor proc);
-}
+    public boolean isBiWord();
+    public void setBiWord();
 
+    public List<Posting> getPosting(BiWordIndex biwordindex);
+}
