@@ -28,13 +28,15 @@ public class KGramIndex {
      */
     private void add(String str,int len)
     {
-        for(int i=0;i+len<str.length();i=i+len)
-        {
-            if(str.substring(i,i+len).equals("$"))continue;
-            if(!kGramIndex.containsKey(str.substring(i,i+len)))kGramIndex.put(str.substring(i,i+len), new ArrayList<String>());
-            kGramIndex.get(str.substring(i,i+len)).add(str);
+    	for(int i=0;i<str.length()-(len-1);i++)
+    	{
+    		if(str.substring(i,i+len).equals("$"))
+    			continue;
+    		if(!kGramIndex.containsKey(str.substring(i,i+len)))
+    			kGramIndex.put(str.substring(i,i+len), new ArrayList<String>());
+    		kGramIndex.get(str.substring(i,i+len)).add(str);
 
-        }
+    	}
     }
     public void print()
     {
@@ -52,6 +54,9 @@ public class KGramIndex {
 
     public List<String> getPostings(String term)
     {
+    	
+    	if(kGramIndex.get(term)==null)
+    		return new ArrayList<String>();
     	return kGramIndex.get(term);
     }
 

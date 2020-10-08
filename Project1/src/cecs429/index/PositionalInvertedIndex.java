@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.HashMap.*;
 
 public class PositionalInvertedIndex implements Index {
 	private final HashMap<String, List<Posting>> mMap;
@@ -57,7 +59,19 @@ public class PositionalInvertedIndex implements Index {
 	@Override
 	public List<Posting> getPostings(String term) {
             // TODO Auto-generated method stub
-            return mMap.get(term);
+		if(mMap.get(term)== null)
+			return new ArrayList<Posting>();
+        return mMap.get(term);
+	}
+	
+	public List<Posting> getPostings()
+	{
+		List<Posting> allPostings = new ArrayList<>();
+		for(Entry<String,List<Posting>> entry: mMap.entrySet())
+		{
+			allPostings.addAll(entry.getValue());
+		}
+		return allPostings;
 	}
 
 	@Override

@@ -10,6 +10,7 @@ import cecs429.text.IntermediateTokenProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 /**
  *
@@ -49,6 +50,16 @@ public class BiWordIndex implements Index{
     public List<Posting> getPostings(String term) {
         return biwordindex.get(term);
     }
+    
+	public List<Posting> getPostings()
+	{
+		List<Posting> allPostings = new ArrayList<>();
+		for(Entry<String,List<Posting>> entry: biwordindex.entrySet())
+		{
+			allPostings.addAll(entry.getValue());
+		}
+		return allPostings;
+	}
 
     @Override
     public void addTerm(String s, int id, int i) {

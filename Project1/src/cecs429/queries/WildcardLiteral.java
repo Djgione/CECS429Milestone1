@@ -36,7 +36,10 @@ public class WildcardLiteral implements Query {
 	 */
 	@Override
 	public List<Posting> getPostings(Index index, IntermediateTokenProcessor proc) {
-		mTerm = proc.processToken(mTerm).get(0);
+		if(mTerm.equals("*"))
+		{
+			return index.getPostings();
+		}
 		String tempTerm = "$" + mTerm + "$";
 		List<String> kGrams = divideKGrams(tempTerm);
 		List<Query> queries;
@@ -46,13 +49,17 @@ public class WildcardLiteral implements Query {
 		List<String> terms = new ArrayList<>();
 		for(String s : kGrams)
 		{
+		
 			terms.addAll(index.getIndex().getPostings(s));
+			
 		}
 
 		queries = filterResults(terms, kGrams);
 
-		List<Posting> results = new ArrayList<Posting>();
+		//List<Posting> results = new ArrayList<Posting>();
 		//TODO: Or together posting finds from filtered Terms
+		if(queries.size()==0)
+			return new ArrayList<Posting>();
 		OrQuery orResults = new OrQuery(queries);
 
 		return orResults.getPostings(index, proc);
@@ -98,7 +105,11 @@ public class WildcardLiteral implements Query {
 
 		}
 
-		// Removes duplicate words
+		
+		if(filteredResults.size() == 0)
+		{
+			return new ArrayList<Query>();
+		}
 		HashSet<String> set = new HashSet<>(filteredResults);
 		List<Query> queries = new ArrayList<>();
 		for(String s : set)
@@ -118,25 +129,32 @@ public class WildcardLiteral implements Query {
 	private List<String> divideKGrams(String term)
 	{
 		List<String> terms = new ArrayList<>();
-
+		System.out.println(term);
 		if(term.length() <= 3)
 		{
 			term = removeAsterisk(term);
+			if(term.equals("$"))
+				return terms;
 			terms.add(term);
 			return terms;
 		}
 		for(int j = 3; j != 0; j--) {
-			for(int i = 0; i < mTerm.length()-(j-1); i++)
+			for(int i = 0; i < term.length()-(j-1); i++)
 			{
-				System.out.println(i);
-				String s = mTerm.substring(i, i+j);
+				//System.out.println("I:" + i + "\nJ:" + j);
+				String s = term.substring(i, i+j);
 				s = removeAsterisk(s);
 				boolean addable = true;
+				if(s.equals("$"))
+					addable = false;
 				//Checks kGram against existing kGrams to see if it is contained in one already, no duplicates
-				for(String existingTerm: terms)
+				for(int f = 0; f < terms.size(); f++)
 				{
-					if(existingTerm.contains(s))
+					if(terms.get(f).contains(s))
 						addable = false;
+					if(s.contains(terms.get(f)))
+						terms.remove(f);
+					
 				}
 				if(addable)
 					terms.add(s);
@@ -153,7 +171,7 @@ public class WildcardLiteral implements Query {
 			{
 				s = s.substring(1);
 			}
-			else if(s.charAt(0) == '*' && s.length() == 1)
+			else if (s.length() == 1 && s.charAt(0) == '*')
 			{
 				return "";
 			}

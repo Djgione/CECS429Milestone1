@@ -12,6 +12,14 @@ public interface Index {
 	 */
 	List<Posting> getPostings(String term);
 	
+	
+	/**
+	 * Retrieves a list of all postings
+	 * @return
+	 */
+	List<Posting> getPostings();
+	
+	
 	/**
 	 * A (sorted) list of all terms in the index vocabulary.
 	 */
