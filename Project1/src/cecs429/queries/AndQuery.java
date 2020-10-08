@@ -22,7 +22,7 @@ public class AndQuery implements Query {
 	
 	@Override
 	public List<Posting> getPostings(Index index, IntermediateTokenProcessor proc) {
-		List<Posting> result = new ArrayList();
+		List<Posting> result = new ArrayList<>();
                 
                 System.out.print(mChildren.get(0).getnegative() +" "+mChildren.get(0).toString());
                 for(Posting p : mChildren.get(0).getPostings(index,proc))

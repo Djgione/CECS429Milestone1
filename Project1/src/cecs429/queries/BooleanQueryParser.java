@@ -197,7 +197,7 @@ public class BooleanQueryParser {
                     
                     //lengthOut = subLength;
                     children.addAll(Arrays.asList(phrase.split(" ")));
-                    if(children.size()==2 && phrase.indexOf('*') !=0)
+                    if(children.size()==2 && phrase.indexOf('*') ==-1)
                     {
                         returnLiteral=new BiWordQuery(children.get(0)+" "+children.get(1));
                     }

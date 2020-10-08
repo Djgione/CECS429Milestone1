@@ -50,7 +50,7 @@ public class main {
         		{
         			Class<?> stemClass = Class.forName("org.tartarus.snowball.ext." + "english" + "Stemmer");
         			SnowballStemmer stemmer = (SnowballStemmer) stemClass.newInstance();
-        			stemmer.setCurrent("p*rk");
+        			stemmer.setCurrent("utilize");
         			stemmer.stem();
         			System.out.println(stemmer.getCurrent());
 
@@ -64,7 +64,7 @@ public class main {
                 //TODO print first 1000 words of vocab in sorted manner one term per line
             } else if(str.equals("query")){
                 DocumentCorpus dc=indexer.getCorpus();
-                List<Posting> r = indexer.query("-*");
+                List<Posting> r = indexer.query("-*z");
                 for(Posting p:r)
                 {
                     System.out.print(String.valueOf("Title"+dc.getDocument(p.getDocumentId()).getTitle()+" positions   " ));

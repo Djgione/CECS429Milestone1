@@ -36,7 +36,7 @@ public class PhraseLiteral implements Query {
     public List<Posting> getPostings(Index index, IntermediateTokenProcessor processor)
     {
     	List<Posting> result;
-    	if(mChildren.get(0).contains("*"))
+    	if(mChildren.get(0).indexOf('*') >= 0)
     	{
     		Query query = new WildcardLiteral(mChildren.get(0));
     		result = query.getPostings(index, processor);
@@ -152,7 +152,7 @@ public class PhraseLiteral implements Query {
 
     @Override
     public boolean getnegative() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override

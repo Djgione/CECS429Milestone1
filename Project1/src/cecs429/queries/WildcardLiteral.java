@@ -23,6 +23,12 @@ public class WildcardLiteral implements Query {
 		mTerm = term;
 
 	}
+	
+	public WildcardLiteral(String term, boolean neg)
+	{
+		mTerm = term;
+		mNegative = neg;
+	}
 
 	/**
 	 * Not supported
@@ -162,7 +168,7 @@ public class WildcardLiteral implements Query {
 				{
 					if(terms.get(f).contains(s))
 						addable = false;
-					if(s.contains(terms.get(f)))
+					if(s.contains(terms.get(f)) && !s.equals(terms.get(f)))
 						terms.remove(f);
 					
 				}

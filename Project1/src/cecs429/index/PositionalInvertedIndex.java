@@ -11,11 +11,17 @@ import java.util.HashSet;
 public class PositionalInvertedIndex implements Index {
 	private final HashMap<String, List<Posting>> mMap;
 	private KGramIndex index;
+	private int maxDoc;
 	
 	
 	public PositionalInvertedIndex()
 	{
-            mMap = new HashMap<>();
+        mMap = new HashMap<>();
+	}
+	public PositionalInvertedIndex(int num)
+	{
+		maxDoc = num;
+		mMap = new HashMap<>();
 	}
 	
 	public void setIndex(KGramIndex index)
@@ -67,12 +73,18 @@ public class PositionalInvertedIndex implements Index {
 	
 	public List<Posting> getPostings()
 	{
-		HashSet<Posting> allPostings = new HashSet<>();
-		for(Entry<String,List<Posting>> entry: mMap.entrySet())
+		List<Posting> posts = new ArrayList<>();
+		for(int i = 0; i < maxDoc; i++)
 		{
-			allPostings.addAll(entry.getValue());
+			posts.add(new Posting(i));
 		}
-		return new ArrayList<Posting>(allPostings);
+		return posts;
+//		HashSet<Posting> allPostings = new HashSet<>();
+//		for(Entry<String,List<Posting>> entry: mMap.entrySet())
+//		{
+//			allPostings.addAll(entry.getValue());
+//		}
+//		return new ArrayList<Posting>(allPostings);
 	}
 
 	@Override

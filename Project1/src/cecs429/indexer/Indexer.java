@@ -16,11 +16,13 @@ import cecs429.index.Posting;
 import cecs429.queries.BiWordQuery;
 import cecs429.queries.BooleanQueryParser;
 import cecs429.queries.Query;
+import cecs429.queries.WildcardLiteral;
 import cecs429.text.EnglishTokenStream;
 import cecs429.text.IntermediateTokenProcessor;
 import cecs429.text.TokenProcessor;
 import cecs429.text.TokenStream;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -53,12 +55,10 @@ public class Indexer {
     }
     private Index index(DocumentCorpus corpus)
     {
-        Index pInvertedIndex=new PositionalInvertedIndex();
+        Index pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
         System.out.print(corpus.getCorpusSize());
-        
         for(Document doc:corpus.getDocuments())
         {
-            
             int pos=0;
             TokenStream stream=new EnglishTokenStream(doc.getContent());
             String s1="";
@@ -91,7 +91,7 @@ public class Indexer {
         }
       pInvertedIndex.setIndex(kgramindex);
       biwordindex.setIndex(kgramindex);
-      pInvertedIndex.print();
+      //pInvertedIndex.print();
         return pInvertedIndex; 
     }
     public DocumentCorpus getCorpus()
@@ -102,12 +102,43 @@ public class Indexer {
     {                          
         List<Posting> p;
         Query q = parser.parseQuery(query);
-        if(q.isBiWord())p=q.getPosting(biwordindex);
+        if(q.isBiWord())
+        	p=q.getPosting(biwordindex);
+        else if(q.getnegative() && q.getClass() != WildcardLiteral.class) 
+        	return notmerge(index.getPostings(), q.getPostings(index, new IntermediateTokenProcessor()));
         else p= q.getPostings(index,new IntermediateTokenProcessor());
         
         
         return p;
                 
+    }
+    
+    private List<Posting> notmerge(List<Posting> list1, List<Posting> list2) {
+        List<Posting> result=new ArrayList<>();
+        int i=0;
+        int j=0;
+        while(i<list1.size() && j<list2.size())
+        {
+            if(list1.get(i).getDocumentId()==list2.get(j).getDocumentId())
+            {
+                i++;
+                j++;
+            }
+            else if(list1.get(i).getDocumentId()<list2.get(j).getDocumentId())
+            {
+                result.add(list1.get(i));
+                i++;
+            }
+            else if(list1.get(i).getDocumentId()>list2.get(j).getDocumentId())
+            {
+                j++;
+            }
+        }
+        while(i<list1.size())
+        {
+            result.add(list1.get(i++));
+        }
+        return result;
     }
 
 }
