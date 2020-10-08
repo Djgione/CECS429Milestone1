@@ -11,6 +11,7 @@ import cecs429.text.IntermediateTokenProcessor;
 
 public class WildcardLiteral implements Query {
 	private String mTerm;
+	private boolean mNegative;
 
 
 	/**
@@ -61,9 +62,16 @@ public class WildcardLiteral implements Query {
 		//TODO: Or together posting finds from filtered Terms
 		if(queries.size()==0)
 			return new ArrayList<Posting>();
-		OrQuery orResults = new OrQuery(queries);
-
-		return orResults.getPostings(index, proc);
+		Query results;
+		if(mNegative)
+		{
+			results = new AndQuery(queries);
+		}
+		else 
+		{
+			results = new OrQuery(queries);
+		}
+		return results.getPostings(index, proc);
 
 	}
 
@@ -115,7 +123,14 @@ public class WildcardLiteral implements Query {
 		List<Query> queries = new ArrayList<>();
 		for(String s : set)
 		{
-			queries.add(new TermLiteral(s));
+			if(mNegative)
+			{
+				queries.add(new TermLiteral(s,mNegative));
+			}
+			else
+			{
+				queries.add(new TermLiteral(s));
+			}
 		}
 		return queries;
 	}
@@ -200,14 +215,14 @@ public class WildcardLiteral implements Query {
 
 	@Override
 	public void negative(boolean b) {
-		// TODO Auto-generated method stub
+		mNegative = b;
 
 	}
 
 	@Override
 	public boolean getnegative() {
 		// TODO Auto-generated method stub
-		return false;
+		return mNegative;
 	}
 
 	@Override

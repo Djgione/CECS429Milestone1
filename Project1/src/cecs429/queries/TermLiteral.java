@@ -13,6 +13,12 @@ import java.util.List;
 public class TermLiteral implements Query {
 	private String mTerm;
 	boolean negative=false;
+	
+	public TermLiteral(String term, boolean neg)
+	{
+		mTerm = term;
+		negative = neg;
+	}
 	public TermLiteral(String term) {
 		mTerm = term;
 	}

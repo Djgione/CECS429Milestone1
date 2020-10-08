@@ -171,7 +171,7 @@ public class BooleanQueryParser {
                         lengthOut = nextSkip - startIndex;
                         //System.out.println("startIndex final: " + startIndex);
                     }
-                    if(subquery.indexOf('*', startIndex) >= 0)
+                    if(subquery.indexOf('*', startIndex) != -1)
                     {
                     	returnLiteral = new WildcardLiteral(subquery.substring(startIndex, startIndex + lengthOut));
                         returnLiteral.negative(true);
@@ -197,7 +197,7 @@ public class BooleanQueryParser {
                     
                     //lengthOut = subLength;
                     children.addAll(Arrays.asList(phrase.split(" ")));
-                    if(children.size()==2)
+                    if(children.size()==2 && phrase.indexOf('*') !=0)
                     {
                         returnLiteral=new BiWordQuery(children.get(0)+" "+children.get(1));
                     }
