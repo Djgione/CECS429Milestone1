@@ -49,6 +49,9 @@ public class BooleanQueryParser {
 		// query separated by + signs. In the end, build a single OR query that composes all of the built
 		// AND subqueries.
 		
+		if(query.isEmpty()) {
+			return new TermLiteral("",false);
+		}
 		List<Query> allSubqueries = new ArrayList<>();
 		do {
 			// Identify the next subquery: a portion of the query up to the next + sign.
@@ -148,7 +151,7 @@ public class BooleanQueryParser {
            int subLength = subquery.length();
 		int lengthOut = 0;
                 Query returnLiteral;
-                List<String> children = new ArrayList();
+                List<String> children = new ArrayList<>();
             
                 
                 // "whlae not"  for  
@@ -197,7 +200,11 @@ public class BooleanQueryParser {
                     
                     //lengthOut = subLength;
                     children.addAll(Arrays.asList(phrase.split(" ")));
-                    if(children.size()==2 && phrase.indexOf('*') ==-1)
+                    if(children.size() == 1 && children.get(0).equals("-"))
+                    {
+                    	returnLiteral = new WildcardLiteral("*", true);
+                    }
+                    else if(children.size()==2 && phrase.indexOf('*') ==-1)
                     {
                         returnLiteral=new BiWordQuery(children.get(0)+" "+children.get(1));
                     }

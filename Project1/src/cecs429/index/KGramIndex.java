@@ -7,6 +7,7 @@ package cecs429.index;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -34,7 +35,7 @@ public class KGramIndex {
     			continue;
     		if(!kGramIndex.containsKey(str.substring(i,i+len)))
     			kGramIndex.put(str.substring(i,i+len), new ArrayList<String>());
-    		kGramIndex.get(str.substring(i,i+len)).add(str);
+    		kGramIndex.get(str.substring(i,i+len)).add(str.replace("$", ""));
 
     	}
     }
@@ -57,7 +58,8 @@ public class KGramIndex {
     	
     	if(kGramIndex.get(term)==null)
     		return new ArrayList<String>();
-    	return kGramIndex.get(term);
+    	HashSet<String> terms = new HashSet<>(kGramIndex.get(term));
+    	return new ArrayList<String>(terms);
     }
 
 	public void addTerm(String str, int id, int i) {

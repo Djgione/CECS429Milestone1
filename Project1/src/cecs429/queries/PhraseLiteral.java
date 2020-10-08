@@ -36,6 +36,10 @@ public class PhraseLiteral implements Query {
     public List<Posting> getPostings(Index index, IntermediateTokenProcessor processor)
     {
     	List<Posting> result;
+    	if(mChildren.size() == 0)
+    	{
+    		return new ArrayList<Posting>();
+    	}
     	if(mChildren.get(0).indexOf('*') >= 0)
     	{
     		Query query = new WildcardLiteral(mChildren.get(0));
@@ -61,7 +65,7 @@ public class PhraseLiteral implements Query {
         for(int i=1; i<mChildren.size();i++)
         {
             List<Posting> mChild;
-            if(mChildren.get(i).contains("*"))
+            if(mChildren.get(i).indexOf('*') != -1)
             {
             	Query query = new WildcardLiteral(mChildren.get(i));
             	mChild = query.getPostings(index, processor);

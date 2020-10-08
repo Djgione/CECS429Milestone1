@@ -70,21 +70,22 @@ public class PositionalInvertedIndex implements Index {
 			return new ArrayList<Posting>();
         return mMap.get(term);
 	}
+    
 	
 	public List<Posting> getPostings()
 	{
-		List<Posting> posts = new ArrayList<>();
-		for(int i = 0; i < maxDoc; i++)
-		{
-			posts.add(new Posting(i));
-		}
-		return posts;
-//		HashSet<Posting> allPostings = new HashSet<>();
-//		for(Entry<String,List<Posting>> entry: mMap.entrySet())
+//		List<Posting> posts = new ArrayList<>();
+//		for(int i = 0; i < maxDoc; i++)
 //		{
-//			allPostings.addAll(entry.getValue());
+//			posts.add(new Posting(i));
 //		}
-//		return new ArrayList<Posting>(allPostings);
+//		return posts;
+		HashSet<Posting> allPostings = new HashSet<>();
+		for(Entry<String,List<Posting>> entry: mMap.entrySet())
+		{
+			allPostings.addAll(entry.getValue());
+		}
+		return new ArrayList<Posting>(allPostings);
 	}
 
 	@Override

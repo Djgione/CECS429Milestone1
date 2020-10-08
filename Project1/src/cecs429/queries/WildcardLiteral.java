@@ -102,9 +102,13 @@ public class WildcardLiteral implements Query {
 			for(int i = 0; i < kGrams.size(); i++)
 			{
 				// Checks to see if kGram is inside term, as well as further along than last kGram
-				if(term.indexOf(kGrams.get(i)) > lastIndex)
+				if(kGrams.size() > 1 && term.indexOf(kGrams.get(i)) > lastIndex)
 				{
 					lastIndex = term.indexOf(kGrams.get(i));
+				}
+				else if(kGrams.size() == 1)
+				{
+					lastIndex =-1;
 				}
 				else
 				{
