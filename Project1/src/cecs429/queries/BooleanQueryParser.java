@@ -171,8 +171,17 @@ public class BooleanQueryParser {
                         lengthOut = nextSkip - startIndex;
                         //System.out.println("startIndex final: " + startIndex);
                     }
-                    returnLiteral = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut));
-                    returnLiteral.negative(true);
+                    if(subquery.indexOf('*', startIndex) >= 0)
+                    {
+                    	returnLiteral = new WildcardLiteral(subquery.substring(startIndex, startIndex + lengthOut));
+                        returnLiteral.negative(true);
+                    }
+                    else 
+                    {
+                    	returnLiteral = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut));
+                        returnLiteral.negative(true);
+                    }
+                    
                     
                 }
                 else if(subquery.charAt(startIndex) == '\"')
@@ -210,12 +219,17 @@ public class BooleanQueryParser {
                         lengthOut = nextSkip - startIndex;
                         //System.out.println("startIndex final: " + startIndex);
                     }
-                    if(subquery.indexOf('*', startIndex) >= 0)
+                    
+                    String newTerm = subquery.substring(startIndex, startIndex + lengthOut);
+                    if(newTerm.indexOf('*') !=-1)
                     {
                     	returnLiteral = new WildcardLiteral(subquery.substring(startIndex, startIndex + lengthOut));
                     }
-                    returnLiteral = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)); 
-                }
+                    else
+                    {
+                    	returnLiteral = new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)); 
+                    }
+               }
                 //System.out.println("startIndex begin: " + startIndex);
 
                 

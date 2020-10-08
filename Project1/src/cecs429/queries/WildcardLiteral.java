@@ -11,8 +11,8 @@ import cecs429.text.IntermediateTokenProcessor;
 
 public class WildcardLiteral implements Query {
 	private String mTerm;
-	
-	
+
+
 	/**
 	 * WildCardLiteral is a literal term that contains a wildcard '*' character
 	 * @param term
@@ -20,7 +20,7 @@ public class WildcardLiteral implements Query {
 	public WildcardLiteral(String term)
 	{
 		mTerm = term;
-		
+
 	}
 
 	/**
@@ -40,74 +40,74 @@ public class WildcardLiteral implements Query {
 		String tempTerm = "$" + mTerm + "$";
 		List<String> kGrams = divideKGrams(tempTerm);
 		List<Query> queries;
-		
-		
+
+
 		// Adds all terms from kGramIndex to the Arraylist terms
 		List<String> terms = new ArrayList<>();
 		for(String s : kGrams)
 		{
 			terms.addAll(index.getIndex().getPostings(s));
 		}
-		
+
 		queries = filterResults(terms, kGrams);
-		
+
 		List<Posting> results = new ArrayList<Posting>();
 		//TODO: Or together posting finds from filtered Terms
 		OrQuery orResults = new OrQuery(queries);
-		
+
 		return orResults.getPostings(index, proc);
-		
+
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Filters results returned from parsing the kGramIndex
 	 * @param terms
 	 * @return List of Queries (termLiteral) that fit the wildCard
 	 */
-	 private List<Query> filterResults(List<String> terms, List<String> kGrams)
-	 {
-		 List<String> filteredResults = new ArrayList<>();
-		 
-		 for(String term : terms)
-		 {
-			 int lastIndex = -1;
-			 boolean addable = true;
-			 
-			 
-			 for(int i = 0; i < kGrams.size(); i++)
-			 {
-				 // Checks to see if kGram is inside term, as well as further along than last kGram
-				 if(term.indexOf(kGrams.get(i)) > lastIndex)
-				 {
-					 lastIndex = term.indexOf(kGrams.get(i));
-				 }
-				 else
-				 {
-					 addable = false;
-					 break;
-				 }
-				 
-				 // If all Kgrams exist inside the term, add the term
-				
-			 }
-			 if(addable)
-				 filteredResults.add(term);
-			 
-		 }
-		 
-		 // Removes duplicate words
-		 HashSet<String> set = new HashSet<>(filteredResults);
-		 List<Query> queries = new ArrayList<>();
-		 for(String s : set)
-		 {
-			 queries.add(new TermLiteral(s));
-		 }
-		 return queries;
-	 }
-	
+	private List<Query> filterResults(List<String> terms, List<String> kGrams)
+	{
+		List<String> filteredResults = new ArrayList<>();
+
+		for(String term : terms)
+		{
+			int lastIndex = -1;
+			boolean addable = true;
+
+
+			for(int i = 0; i < kGrams.size(); i++)
+			{
+				// Checks to see if kGram is inside term, as well as further along than last kGram
+				if(term.indexOf(kGrams.get(i)) > lastIndex)
+				{
+					lastIndex = term.indexOf(kGrams.get(i));
+				}
+				else
+				{
+					addable = false;
+					break;
+				}
+
+				// If all Kgrams exist inside the term, add the term
+
+			}
+			if(addable)
+				filteredResults.add(term);
+
+		}
+
+		// Removes duplicate words
+		HashSet<String> set = new HashSet<>(filteredResults);
+		List<Query> queries = new ArrayList<>();
+		for(String s : set)
+		{
+			queries.add(new TermLiteral(s));
+		}
+		return queries;
+	}
+
 	/**
 	 * Divides the term into a list of KGrams stored in the class
 	 * only for use by the getPostings method
@@ -118,29 +118,57 @@ public class WildcardLiteral implements Query {
 	private List<String> divideKGrams(String term)
 	{
 		List<String> terms = new ArrayList<>();
-		
+
 		if(term.length() <= 3)
 		{
-			term.replaceAll("\\*","");
+			term = removeAsterisk(term);
 			terms.add(term);
 			return terms;
 		}
-		for(int i = 0; i < mTerm.length()-3; i++)
-		{
-			String s = mTerm.substring(i, i+3);
-			s.replaceAll("\\*", "");
-			boolean addable = true;
-			//Checks kGram against existing kGrams to see if it is contained in one already, no duplicates
-			for(String existingTerm: terms)
+		for(int j = 3; j != 0; j--) {
+			for(int i = 0; i < mTerm.length()-(j-1); i++)
 			{
-				if(existingTerm.contains(s))
-					addable = false;
+				System.out.println(i);
+				String s = mTerm.substring(i, i+j);
+				s = removeAsterisk(s);
+				boolean addable = true;
+				//Checks kGram against existing kGrams to see if it is contained in one already, no duplicates
+				for(String existingTerm: terms)
+				{
+					if(existingTerm.contains(s))
+						addable = false;
+				}
+				if(addable)
+					terms.add(s);
 			}
-			if(addable)
-				terms.add(s);
 		}
 		return terms;
+
+	}
+
+	private String removeAsterisk(String s)
+	{
+		while(s.indexOf('*') >= 0) {
+			if(s.indexOf('*') == 0 && s.length() > 1)
+			{
+				s = s.substring(1);
+			}
+			else if(s.charAt(0) == '*' && s.length() == 1)
+			{
+				return "";
+			}
+			else if(s.indexOf('*') == s.length()-1)
+			{
+				s = s.substring(0, s.length()-1);
+			}
+			else
+			{
+				s = s.substring(0,s.indexOf('*'));
+			}
+			
+		}
 		
+		return s;
 	}
 
 	@Override
@@ -154,7 +182,7 @@ public class WildcardLiteral implements Query {
 	@Override
 	public void negative(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -172,7 +200,7 @@ public class WildcardLiteral implements Query {
 	@Override
 	public void setBiWord() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -180,6 +208,6 @@ public class WildcardLiteral implements Query {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 
 }

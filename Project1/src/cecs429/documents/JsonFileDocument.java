@@ -17,7 +17,7 @@ import java.nio.file.Path;
 public class JsonFileDocument implements FileDocument {
     private final int mDocumentId;
     private final Path mFilePath;
-    private static String title;
+    private String title;
     
     public JsonFileDocument(int id, Path absoluteFilePath)
     {

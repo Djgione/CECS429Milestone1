@@ -12,10 +12,13 @@ import cecs429.index.Index;
 import cecs429.index.Posting;
 import cecs429.index.PositionalInvertedIndex;
 import cecs429.text.EnglishTokenStream;
+
 import java.util.*;
 import cecs429.indexer.Indexer;
 import java.nio.file.Paths;
 import java.util.HashSet;
+
+import org.tartarus.snowball.SnowballStemmer;
 /**
  *
  * @author Kermite
@@ -39,16 +42,29 @@ public class main {
                 System.out.println("enter directory path");
                 //String path = scanner.nextLine();
                 
-                indexer=new Indexer(Paths.get("/Users/kabir/NetBeansProjects/CECS429Milestone1/Project1/src/corpus").toAbsolutePath(),"txt");
+                indexer=new Indexer(Paths.get("C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\Project1\\src\\Parks10").toAbsolutePath(),"json");
                 
 
             } else if (str.equals("stem")) {
-                //TODO implement stemmer code here;
+            	try 
+        		{
+        			Class<?> stemClass = Class.forName("org.tartarus.snowball.ext." + "english" + "Stemmer");
+        			SnowballStemmer stemmer = (SnowballStemmer) stemClass.newInstance();
+        			stemmer.setCurrent("p*rk");
+        			stemmer.stem();
+        			System.out.println(stemmer.getCurrent());
+
+        		}
+            	catch(Exception e)
+            	{
+            		
+            	}
+            	
             } else if (str.equals("vocab")) {
                 //TODO print first 1000 words of vocab in sorted manner one term per line
             } else if(str.equals("query")){
                 DocumentCorpus dc=indexer.getCorpus();
-                List<Posting> r = indexer.query("\"Call me Ishmael\"");
+                List<Posting> r = indexer.query("pa*k");
                 for(Posting p:r)
                 {
                     System.out.print(String.valueOf("Title"+dc.getDocument(p.getDocumentId()).getTitle()+" positions   " ));
