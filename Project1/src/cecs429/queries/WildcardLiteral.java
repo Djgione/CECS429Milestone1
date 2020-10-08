@@ -40,6 +40,7 @@ public class WildcardLiteral implements Query {
 		{
 			return index.getPostings();
 		}
+		mTerm = mTerm.toLowerCase();
 		String tempTerm = "$" + mTerm + "$";
 		List<String> kGrams = divideKGrams(tempTerm);
 		List<Query> queries;

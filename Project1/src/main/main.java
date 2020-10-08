@@ -64,7 +64,7 @@ public class main {
                 //TODO print first 1000 words of vocab in sorted manner one term per line
             } else if(str.equals("query")){
                 DocumentCorpus dc=indexer.getCorpus();
-                List<Posting> r = indexer.query("*rk");
+                List<Posting> r = indexer.query("\"this park\"");
                 for(Posting p:r)
                 {
                     System.out.print(String.valueOf("Title"+dc.getDocument(p.getDocumentId()).getTitle()+" positions   " ));
