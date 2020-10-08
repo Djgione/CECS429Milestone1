@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.HashMap.*;
+import java.util.HashSet;
 
 public class PositionalInvertedIndex implements Index {
 	private final HashMap<String, List<Posting>> mMap;
@@ -66,12 +67,12 @@ public class PositionalInvertedIndex implements Index {
 	
 	public List<Posting> getPostings()
 	{
-		List<Posting> allPostings = new ArrayList<>();
+		HashSet<Posting> allPostings = new HashSet<>();
 		for(Entry<String,List<Posting>> entry: mMap.entrySet())
 		{
 			allPostings.addAll(entry.getValue());
 		}
-		return allPostings;
+		return new ArrayList<Posting>(allPostings);
 	}
 
 	@Override

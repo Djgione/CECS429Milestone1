@@ -123,14 +123,8 @@ public class WildcardLiteral implements Query {
 		List<Query> queries = new ArrayList<>();
 		for(String s : set)
 		{
-			if(mNegative)
-			{
-				queries.add(new TermLiteral(s,mNegative));
-			}
-			else
-			{
-				queries.add(new TermLiteral(s));
-			}
+			
+			queries.add(new TermLiteral(s,mNegative));
 		}
 		return queries;
 	}
