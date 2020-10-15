@@ -48,6 +48,8 @@ public class BiWordIndex implements Index{
     }
 
     public List<Posting> getPostings(String term) {
+    	if(biwordindex.get(term) == null)
+    		return new ArrayList<Posting>();
         return biwordindex.get(term);
     }
     

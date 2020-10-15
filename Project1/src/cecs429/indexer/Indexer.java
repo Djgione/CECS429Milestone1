@@ -23,6 +23,7 @@ import cecs429.text.TokenProcessor;
 import cecs429.text.TokenStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -36,6 +37,7 @@ public class Indexer {
     private BiWordIndex biwordindex;
     BooleanQueryParser parser;
     KGramIndex kgramindex;
+    
 
     public Indexer(Path path,String extension)
     {
@@ -57,6 +59,7 @@ public class Indexer {
     {
         Index pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
         System.out.print(corpus.getCorpusSize());
+        HashSet<String> noDupes = new HashSet<>();
         for(Document doc:corpus.getDocuments())
         {
             int pos=0;
@@ -66,6 +69,7 @@ public class Indexer {
             int i=0;
             for(String str : stream.getTokens())
             {
+            	noDupes.add(str.toLowerCase());
                 //System.out.print(str);
                 for(String s: processor.processToken(str))
                 {
@@ -82,12 +86,19 @@ public class Indexer {
                     }
                     //System.out.println(s + "docid=" + doc.getId());
                     pInvertedIndex.addTerm(s,doc.getId(),pos++);
-                    kgramindex.addTerm(s,0,0);
+                    //kgramindex.addTerm(s,0,0);
                 }
             }
             
             
+            
 
+        }
+        
+        
+        for(String s: noDupes)
+        {
+        	kgramindex.addTerm(s, 0, 0);
         }
       pInvertedIndex.setIndex(kgramindex);
       biwordindex.setIndex(kgramindex);
@@ -98,6 +109,25 @@ public class Indexer {
     {
         return corpus;
     }
+    
+    
+    public List<String> getVocab1000()
+    {
+        List<String> thousandTerms = new ArrayList<String>();
+        List<String> allTerms = getVocabulary();
+
+        for(int i = 0; i < 999; i++)
+        {
+            thousandTerms.add(allTerms.get(i));
+        }
+
+        return thousandTerms;
+    }
+public List<String> getVocabulary()
+    {
+        return index.getVocabulary();
+    }
+    
     public List<Posting> query(String query)
     {                          
         List<Posting> p;

@@ -120,8 +120,11 @@ public class WildcardLiteral implements Query {
 
 			}
 			if(addable)
+			{
+				term = term.substring(1,term.length()-1);
 				filteredResults.add(term);
-
+			
+			}
 		}
 
 		

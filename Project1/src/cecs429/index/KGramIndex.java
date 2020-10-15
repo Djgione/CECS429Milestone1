@@ -35,7 +35,7 @@ public class KGramIndex {
     			continue;
     		if(!kGramIndex.containsKey(str.substring(i,i+len)))
     			kGramIndex.put(str.substring(i,i+len), new ArrayList<String>());
-    		kGramIndex.get(str.substring(i,i+len)).add(str.replace("$", ""));
+    		kGramIndex.get(str.substring(i,i+len)).add(str);
 
     	}
     }

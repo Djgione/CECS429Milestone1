@@ -24,7 +24,11 @@ public class BiWordQuery implements Query {
     }
    @Override
     public List<Posting> getPosting(BiWordIndex biwordindex) {
-        return biwordindex.getPostings(query);
+       IntermediateTokenProcessor processor=new IntermediateTokenProcessor();
+	   String[] arr=query.split(" ");
+	   query="";
+	   query=processor.processToken(arr[0]).get(0)+" "+processor.processToken(arr[1]).get(0);
+       return biwordindex.getPostings(query);
     }
 
     @Override
@@ -34,7 +38,7 @@ public class BiWordQuery implements Query {
 
     @Override
     public boolean getnegative() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override

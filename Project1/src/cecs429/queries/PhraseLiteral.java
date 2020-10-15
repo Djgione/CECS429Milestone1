@@ -40,6 +40,11 @@ public class PhraseLiteral implements Query {
     	{
     		return new ArrayList<Posting>();
     	}
+    	if(mChildren.get(0).length() == 1 && mChildren.size() > 1 && mChildren.get(0).indexOf('*')==0)
+    	{
+    		mChildren.remove(0);
+    		getPostings(index, processor);
+    	}
     	if(mChildren.get(0).indexOf('*') >= 0)
     	{
     		Query query = new WildcardLiteral(mChildren.get(0));
@@ -64,7 +69,11 @@ public class PhraseLiteral implements Query {
 //        Sysbutem.out.println();
         for(int i=1; i<mChildren.size();i++)
         {
-            List<Posting> mChild;
+        	List<Posting> mChild;
+        	if(mChildren.get(i).indexOf('*') == 0 && mChildren.get(i).length()==1)
+        	{
+        		continue;
+        	}
             if(mChildren.get(i).indexOf('*') != -1)
             {
             	Query query = new WildcardLiteral(mChildren.get(i));

@@ -1,11 +1,15 @@
 package cecs429.documents;
 
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Represents a document that is saved as a simple text file in the local file system.
@@ -50,4 +54,14 @@ public class TextFileDocument implements FileDocument {
 	public static FileDocument loadTextFileDocument(Path absolutePath, int documentId) {
 		return new TextFileDocument(documentId, absolutePath);
 	}
+
+    @Override
+    public String getBody() {
+            try {
+                return Files.newBufferedReader(mFilePath).lines().collect(Collectors.joining());
+            } catch (IOException ex) {
+                Logger.getLogger(TextFileDocument.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return "";
+    }
 }
