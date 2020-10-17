@@ -58,7 +58,6 @@ public class Indexer {
     private Index index(DocumentCorpus corpus)
     {
         Index pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
-        System.out.print(corpus.getCorpusSize());
         HashSet<String> noDupes = new HashSet<>();
         for(Document doc:corpus.getDocuments())
         {
@@ -105,7 +104,8 @@ public class Indexer {
     {
         return corpus;
     }
-    
+    //Omar added this
+    public Index getIndex() {return index;}
     
     public List<String> getVocab1000()
     {
