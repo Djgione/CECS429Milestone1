@@ -32,7 +32,7 @@ public class DiskIndexWriter {
             DataOutputStream out = 
                     new DataOutputStream(
                     new BufferedOutputStream(
-                    new FileOutputStream(path.toString() + "//postings.bin")));
+                    new FileOutputStream(path.toString() + "/index/postings.bin")));
             
             for(String term : index.getVocabulary())
             {
@@ -48,7 +48,7 @@ public class DiskIndexWriter {
                 
                 boolean firstDocIdOfFirstTerm = term.equals(index.getVocabulary().get(0));
                 
-                for(int i = 0; i < postingObjs.size(); i++)
+                for(int i = 0; i <= postingObjs.size() - 2; i++)
                 {
                     int docId = postingObjs.get(i).getDocumentId();
                     int idGap = postingObjs.get(i + 1).getDocumentId()
@@ -67,7 +67,7 @@ public class DiskIndexWriter {
                     int tftd = positions.size();                   
                     out.write(tftd);
                     
-                    for(int j = 0; j < tftd; j++)
+                    for(int j = 0; j <= tftd - 2; j++)
                     {
                         int position = positions.get(j);
                          int positionGap = positions.get(j + 1) 
