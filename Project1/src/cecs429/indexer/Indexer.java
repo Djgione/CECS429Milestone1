@@ -58,7 +58,6 @@ public class Indexer {
     private Index index(DocumentCorpus corpus)
     {
         Index pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
-        System.out.print(corpus.getCorpusSize());
         HashSet<String> noDupes = new HashSet<>();
         for(Document doc:corpus.getDocuments())
         {
@@ -89,10 +88,6 @@ public class Indexer {
                     //kgramindex.addTerm(s,0,0);
                 }
             }
-            
-            
-            
-
         }
         
         
@@ -109,7 +104,8 @@ public class Indexer {
     {
         return corpus;
     }
-    
+    //Omar added this
+    public Index getIndex() {return index;}
     
     public List<String> getVocab1000()
     {
@@ -139,8 +135,7 @@ public List<String> getVocabulary()
         else p= q.getPostings(index,new IntermediateTokenProcessor());
         
         
-        return p;
-                
+        return p;               
     }
     
     private List<Posting> notmerge(List<Posting> list1, List<Posting> list2) {
