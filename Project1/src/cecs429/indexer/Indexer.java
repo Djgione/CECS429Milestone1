@@ -89,10 +89,6 @@ public class Indexer {
                     //kgramindex.addTerm(s,0,0);
                 }
             }
-            
-            
-            
-
         }
         
         
@@ -139,8 +135,7 @@ public List<String> getVocabulary()
         else p= q.getPostings(index,new IntermediateTokenProcessor());
         
         
-        return p;
-                
+        return p;               
     }
     
     private List<Posting> notmerge(List<Posting> list1, List<Posting> list2) {
