@@ -49,6 +49,7 @@ public class DiskIndexWriter {
                     new BufferedOutputStream(
                     new FileOutputStream(path.toString() + "/index/postings.bin")));
             
+            int previousId = 0;
             for(String term : index.getVocabulary())
             {
                 List<Posting> postingObjs = index.getPostings(term);
@@ -60,39 +61,31 @@ public class DiskIndexWriter {
                 //current value of the counter written(byte position where postings for term begin?)
                 long postingsByteBegin = out.size();
                 map.put(term, postingsByteBegin);
-                
-                boolean firstDocIdOfFirstTerm = term.equals(index.getVocabulary().get(0));
-                
-                for(int i = 0; i <= postingObjs.size() - 2; i++)
+                                
+                for(int i = 0; i < postingObjs.size(); i++)
                 {
-                    int docId = postingObjs.get(i).getDocumentId();
-                    int idGap = postingObjs.get(i + 1).getDocumentId()
-                              - postingObjs.get(i).getDocumentId();
-                    //if it's the first term of the vocab list write docId
-                    //to disk otherwise take the gap of current docId & next
-                    //docId and write that to disk
-                    if(firstDocIdOfFirstTerm)
-                        out.write(docId);
-                    else
-                        out.write(idGap);
+                    int idGap = postingObjs.get(i).getDocumentId()
+                              - previousId;
+                    //take the gap of current docId & previousId and write that 
+                    //to disk
+                 
+                    out.write(idGap);
+                    //set the previous id as current id for next gap
+                    previousId = postingObjs.get(i).getDocumentId();
                     
                     List<Integer> positions = postingObjs.get(i).getPositions();
                     
                     //get and write tftd to disk
                     int tftd = positions.size();                   
                     out.write(tftd);
-                    
-                    for(int j = 0; j <= tftd - 2; j++)
+                    int previousPos = 0;
+
+                    for(int j = 0; j < tftd; j++)
                     {
-                        int position = positions.get(j);
-                        int positionGap = positions.get(j + 1) 
-                                        - positions.get(j);
-                        //if it's the first position in list, write position,
-                        //else write gap of current Position and next position
-                        if(j == 0)
-                            out.writeInt(position);
-                        else
-                            out.writeInt(positionGap);
+                        int positionGap = positions.get(j) 
+                                        - previousPos;
+                        out.writeInt(positionGap);
+                        previousPos = positions.get(j);
                     }
                 }             
             }
