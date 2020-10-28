@@ -14,7 +14,10 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -41,6 +44,10 @@ public class DiskIndexWriter {
                                     .keySerializer(Serializer.STRING)
                                     .valueSerializer(Serializer.LONG)
                                     .createOrOpen();
+         // Map the frequency of terms appearing
+         Map<String, Integer> freqMap = new HashMap<>();
+         
+         
         
         try
         {
@@ -56,12 +63,15 @@ public class DiskIndexWriter {
                 
                 //get dft and write to disk
                 int dft = postingObjs.size();               
+                
                 out.writeInt(dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
                 long postingsByteBegin = out.size();
                 map.put(term, postingsByteBegin);
                                 
+                
+                
                 for(int i = 0; i < postingObjs.size(); i++)
                 {
                     int idGap = postingObjs.get(i).getDocumentId()
@@ -76,7 +86,8 @@ public class DiskIndexWriter {
                     List<Integer> positions = postingObjs.get(i).getPositions();
                     
                     //get and write tftd to disk
-                    int tftd = positions.size();                   
+                    int tftd = positions.size();     
+                    
                     out.write(tftd);
                     int previousPos = 0;
 
