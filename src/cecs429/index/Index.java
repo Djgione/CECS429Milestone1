@@ -1,6 +1,8 @@
 package cecs429.index;
 
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * An Index can retrieve postings for a term from a data structure associating terms and the documents
@@ -34,5 +36,9 @@ public interface Index {
     public void setIndex(KGramIndex index);
         
     public KGramIndex getIndex();
+    
+    void setDocumentWeights(TreeMap<Integer,Double> map);
+    
+    TreeMap<Integer,Double> getDocumentWeights();
 
 }

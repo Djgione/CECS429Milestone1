@@ -67,7 +67,7 @@ public class Indexer {
 
 	private Index index(DocumentCorpus corpus)
 	{
-		PositionalInvertedIndex pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
+		Index pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
 		HashSet<String> noDupes = new HashSet<>();
 		Map<Integer,Map<String,Integer>> mapForCalculation = new HashMap<>();
 
@@ -127,10 +127,13 @@ public class Indexer {
 			kgramindex.addTerm(s, 0, 0);
 		}
 		
+		System.out.println(mapForCalculation.size());
 		// Sets the document weights into the inverted Index using the calculator from the constructor
-		pInvertedIndex.setDocumentWeights(calculator.
-				setDocumentTermFrequencies(mapForCalculation).
-				calculate());
+		//calculator.setDocumentTermFrequencies(mapForCalculation);
+		
+		
+		
+		pInvertedIndex.setDocumentWeights(calculator.calculate(mapForCalculation));
 		pInvertedIndex.setIndex(kgramindex);
 		biwordindex.setIndex(kgramindex);
 		//pInvertedIndex.print();

@@ -10,7 +10,9 @@ import cecs429.text.IntermediateTokenProcessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 /**
  *
@@ -76,6 +78,16 @@ public class BiWordIndex implements Index{
 	public KGramIndex getIndex() {
 		// TODO Auto-generated method stub
 		return index;
+	}
+	@Override
+	public void setDocumentWeights(TreeMap<Integer, Double> map) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public TreeMap<Integer, Double> getDocumentWeights() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
     

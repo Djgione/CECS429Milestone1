@@ -1,9 +1,11 @@
 package cecs429.weights;
 
 import java.util.Map;
+import java.util.TreeMap;
 
 public interface IWeightCalculator {
-
-	IWeightCalculator setDocumentTermFrequencies(Map<Integer,Map<String,Integer>> map);
-	Map<Integer, Double> calculate();
+	
+	
+	//void setDocumentTermFrequencies(Map<Integer,Map<String,Integer>> map);
+	TreeMap<Integer, Double> calculate(Map<Integer,Map<String,Integer>> map);
 }

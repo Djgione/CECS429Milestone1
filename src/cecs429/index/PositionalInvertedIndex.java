@@ -6,20 +6,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.HashMap.*;
 import java.util.HashSet;
 
 public class PositionalInvertedIndex implements Index {
 	private final HashMap<String, List<Posting>> mMap;
 	private KGramIndex index;
-	private Map<Integer,Double> documentWeights;
+	private TreeMap<Integer,Double> documentWeights;
 	private int maxDoc;
 	
 	
-	public PositionalInvertedIndex()
-	{
-        mMap = new HashMap<>();
-	}
 	public PositionalInvertedIndex(int num)
 	{
 		maxDoc = num;
@@ -36,9 +33,14 @@ public class PositionalInvertedIndex implements Index {
 		return index;
 	}
 	
-	public void setDocumentWeights(Map<Integer,Double> map)
+	public void setDocumentWeights(TreeMap<Integer,Double> map)
 	{
 		documentWeights = map;
+	}
+	
+	public TreeMap<Integer,Double> getDocumentWeights()
+	{
+		return documentWeights;
 	}
 	
 	public void addTerm(String term, int documentId, int position)

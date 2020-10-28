@@ -5,26 +5,27 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 public class DefaultWeightCalculator implements IWeightCalculator{
 
-	private Map<Integer,Map<String,Integer>> documentTermFrequencies;
+	//private Map<Integer,Map<String,Integer>> documentTermFrequencies;
 
 
-	public IWeightCalculator setDocumentTermFrequencies(Map<Integer, Map<String, Integer>> documentTermFrequencies) {
-		this.documentTermFrequencies = documentTermFrequencies;
-		return this;
+//	public void setDocumentTermFrequencies(Map<Integer, Map<String, Integer>> documentTermFrequencies) {
+//		this.documentTermFrequencies = documentTermFrequencies;
+		
 	
-	}
+	
 
 	public DefaultWeightCalculator() {
 		super();
 	}
 
-	public Map<Integer,Double> calculate()
+	public TreeMap<Integer,Double> calculate(Map<Integer,Map<String,Integer>> documentTermFrequencies)
 	{
 
-		Map<Integer,Double> map = new HashMap<>();
+		TreeMap<Integer,Double> map = new TreeMap<>();
 		if(documentTermFrequencies.isEmpty())
 			return map;
 		

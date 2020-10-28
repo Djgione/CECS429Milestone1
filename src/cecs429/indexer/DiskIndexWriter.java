@@ -12,9 +12,11 @@ import cecs429.index.Posting;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -107,7 +109,40 @@ public class DiskIndexWriter {
             e.printStackTrace();
         }
         
+        weightWriter(index,path);
         return map;
     }
+    
+    
+    /**
+     * Write the weight of documents to a file named docWeights.bin
+     * @param index
+     * @param path
+     * @return
+     */
+    private boolean weightWriter(Index index, Path path)
+    {
+    	try {
+    	FileOutputStream fos = new FileOutputStream(path.toString() + "/index/docWeights.bin");
+    	DataOutputStream dos = new DataOutputStream(fos);
+    	
+    	//This is in order due to index only containing a TreeMap
+    	for(Double d : index.getDocumentWeights().values()) {
+    		dos.writeDouble(d);
+    	}
+    	
+    	
+    	
+    	dos.close();
+    	}
+    	catch(IOException e)
+    	{
+    		System.out.println(e.getStackTrace());
+    		return false;
+    	}
+    	return true;
+    }
+    
+    
     
 }
