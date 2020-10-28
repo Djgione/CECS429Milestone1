@@ -51,7 +51,7 @@ public class Indexer {
 		parser= new BooleanQueryParser();
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
-
+		calculator = new DefaultWeightCalculator();
 		if(extension.equals("json"))
 		{
 			corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
@@ -61,7 +61,7 @@ public class Indexer {
 			corpus=DirectoryCorpus.loadTextDirectory(path, ".txt");
 		}
 		index=index(corpus);
-		calculator = new DefaultWeightCalculator();
+		
 	}
 
 

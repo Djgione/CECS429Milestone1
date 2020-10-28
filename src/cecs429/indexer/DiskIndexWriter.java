@@ -11,6 +11,7 @@ import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -122,18 +123,32 @@ public class DiskIndexWriter {
      */
     private boolean weightWriter(Index index, Path path)
     {
+    	String pathWeights = path.toString() + "/index/docWeights.bin";
+    	File file = new File(pathWeights);
+    	
     	try {
-    	FileOutputStream fos = new FileOutputStream(path.toString() + "/index/docWeights.bin");
-    	DataOutputStream dos = new DataOutputStream(fos);
+    		
+    		if(file.createNewFile())
+    		{
+    			System.out.println("File created at " + pathWeights);
+    		}
+    		else
+    		{
+    			file.delete();
+    			file.createNewFile();
+    		}
+    		DataOutputStream out = 
+    	                    new DataOutputStream(
+    	                    new BufferedOutputStream(
+    	                    new FileOutputStream(pathWeights)));
     	
     	//This is in order due to index only containing a TreeMap
     	for(Double d : index.getDocumentWeights().values()) {
-    		dos.writeDouble(d);
+    		out.writeDouble(d);
     	}
     	
     	
-    	
-    	dos.close();
+    	out.close();
     	}
     	catch(IOException e)
     	{

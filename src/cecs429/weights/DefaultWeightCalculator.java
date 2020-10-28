@@ -19,7 +19,7 @@ public class DefaultWeightCalculator implements IWeightCalculator{
 	
 
 	public DefaultWeightCalculator() {
-		super();
+	
 	}
 
 	public TreeMap<Integer,Double> calculate(Map<Integer,Map<String,Integer>> documentTermFrequencies)
