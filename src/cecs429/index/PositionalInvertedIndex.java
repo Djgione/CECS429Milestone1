@@ -114,4 +114,15 @@ public class PositionalInvertedIndex implements Index {
         }
     }
 
+    @Override
+    public List<Integer> getDocIds(String term) {
+        List<Posting> postings = mMap.get(term);
+        List<Integer> list=new ArrayList();
+        for(Posting p:postings)
+        {
+            list.add(p.getDocumentId());
+        }
+        return list;
+    }
+
 }
