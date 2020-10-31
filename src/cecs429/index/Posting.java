@@ -22,7 +22,7 @@ public class Posting {
 
     public Posting(int documentId, List<Integer> matchpositions) {
 		mDocumentId = documentId;
-                System.out.println(String.valueOf(matchpositions));
+                //System.out.println(String.valueOf(matchpositions));
                 mPositions = new ArrayList<>();
                 mPositions.addAll(matchpositions);
     }

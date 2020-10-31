@@ -68,6 +68,7 @@ public class Indexer {
             int i=0;
             for(String str : stream.getTokens())
             {
+                
             	noDupes.add(str.toLowerCase());
                 //System.out.print(str);
                 for(String s: processor.processToken(str))
