@@ -90,6 +90,11 @@ public class BiWordIndex implements Index{
 		return null;
 	}
 
+    @Override
+    public List<Integer> getDocIds(String term) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     
   
 }
