@@ -36,7 +36,7 @@ public class DefaultWeightCalculator implements IWeightCalculator{
 			List<Double> termWeights = new ArrayList<>();
 			
 			// Retreiving Integer values from internal map
-			for(Integer value : documentTermFrequencies.get(i).values()) 
+			for(int value : documentTermFrequencies.get(i).values()) 
 			{
 				// 1 + ln(integer)
 				termWeights.add(1 + Math.log(value));
@@ -52,6 +52,7 @@ public class DefaultWeightCalculator implements IWeightCalculator{
 			}
 			
 			documentWeight = Math.sqrt(documentWeight);
+			System.out.println("Document " + i + " Weight: " + documentWeight);
 			map.put(i, documentWeight);
 			
 			i++;

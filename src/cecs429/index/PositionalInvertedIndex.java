@@ -135,4 +135,16 @@ public class PositionalInvertedIndex implements Index {
         return list;
     }
 
+//	@Override
+//	public void setDocumentWeights(TreeMap<Integer, Double> map) {
+//		// TODO Auto-generated method stub
+//		
+//	}
+
+//	@Override
+//	public TreeMap<Integer, Double> getDocumentWeights(String path) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+
 }

@@ -39,6 +39,7 @@ public interface Index {
     
     void setDocumentWeights(TreeMap<Integer,Double> map);
     
+    //TreeMap<Integer,Double> getDocumentWeights(String path);
     TreeMap<Integer,Double> getDocumentWeights();
 
 }

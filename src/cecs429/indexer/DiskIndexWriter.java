@@ -67,7 +67,8 @@ public class DiskIndexWriter {
                                     .valueSerializer(Serializer.LONG)
                                     .createOrOpen();
          // Map the frequency of terms appearing
-         Map<String, Integer> freqMap = new HashMap<>();
+         Map<Integer, Map<String,Integer>> mapForCalculation = new HashMap<>();
+         
            
         
         try
@@ -78,20 +79,17 @@ public class DiskIndexWriter {
                     new FileOutputStream(path.toString() + "/index/postings.bin")));
             
             //int previousId = 0;
-            System.err.println("inside diw : "+index.getVocabulary().size());
             for(String term : index.getVocabulary())
             {
 
                 List<Posting> postingObjs = index.getPostings(term);
                 
                 //get dft and write to disk
-                System.out.println("term "+ term);
                 int dft = postingObjs.size();               
                 
                 // long postingsByteBegin = out.size();
                 // map.put(term, postingsByteBegin);
                 out.writeInt(dft);
-                System.out.println("dft "+dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
                 long postingsByteBegin = out.size();
@@ -104,7 +102,6 @@ public class DiskIndexWriter {
                     if(i==0)
                     {
                         out.writeInt(postingObjs.get(0).getDocumentId());
-                        System.out.println("debug "+ postingObjs.get(0).getDocumentId());
                     }
                     else 
                     {
@@ -112,8 +109,6 @@ public class DiskIndexWriter {
                         int idGap = postingObjs.get(i).getDocumentId()
                               - postingObjs.get(i-1).getDocumentId();
                         out.writeInt(idGap);
-                        System.out.println("debug: "+postingObjs.get(i).getDocumentId()
-                              +"    "+ postingObjs.get(i-1).getDocumentId());
                     }                    
                     
                     //take the gap of current docId & previousId and write that 
@@ -143,7 +138,7 @@ public class DiskIndexWriter {
                 }             
             }
             out.close();
-           db.close();
+            db.close();
         }
         catch(Exception e)
         {
@@ -164,20 +159,18 @@ public class DiskIndexWriter {
      */
     private boolean weightWriter(Index index, Path path)
     {
-    	String pathWeights = path.toString() + "/index/docWeights.bin";
+    	String pathWeights = path.toString() + "\\index\\docWeights.bin";
     	File file = new File(pathWeights);
     	
     	try {
     		
-    		if(file.createNewFile())
-    		{
-    			System.out.println("File created at " + pathWeights);
-    		}
-    		else
+    		if(!file.createNewFile())
     		{
     			file.delete();
     			file.createNewFile();
     		}
+    		
+    		System.out.println("File created at " + pathWeights);
     		DataOutputStream out = 
     	                    new DataOutputStream(
     	                    new BufferedOutputStream(

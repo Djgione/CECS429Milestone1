@@ -23,6 +23,7 @@ import cecs429.text.TokenProcessor;
 import cecs429.text.TokenStream;
 import cecs429.weights.DefaultWeightCalculator;
 import cecs429.weights.IWeightCalculator;
+import cecs429.weights.Tf_Idf_WeightCalculator;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -51,7 +52,7 @@ public class Indexer {
 		parser= new BooleanQueryParser();
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
-		calculator = new DefaultWeightCalculator();
+		calculator = new Tf_Idf_WeightCalculator();
 		if(extension.equals("json"))
 		{
 			corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
