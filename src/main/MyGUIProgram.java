@@ -39,16 +39,22 @@ public class MyGUIProgram extends Frame{
         TextField querySearchField;
         Button queryButton;
         List<Integer> docId; 
+
+        public void Milestone2Frame()
+        {
+        	
+        }
         public void InitFrame()
         {
-            f= new Frame("Milestone 1");
+            f= new Frame("Build Index");
             
             label = new Label();          
             label.setAlignment(Label.CENTER);  
             label.setSize(400,100);  
-            Checkbox checkbox1 = new Checkbox("json");  
+            CheckboxGroup initCbg = new CheckboxGroup();  
+            Checkbox checkbox1 = new Checkbox("json", initCbg,false);  
             checkbox1.setBounds(100,100, 50,50);  
-            Checkbox checkbox2 = new Checkbox("txt");  
+            Checkbox checkbox2 = new Checkbox("txt", initCbg,false);  
             checkbox2.setBounds(100,150, 50,50);  
             
             checkbox1.addItemListener((ItemEvent e) -> {               
@@ -99,16 +105,16 @@ public class MyGUIProgram extends Frame{
         {
             q = new Frame();        
             label.setAlignment(Label.CENTER); 
-
-            Checkbox checkbox1 = new Checkbox(":q");  
+            CheckboxGroup queryCbg = new CheckboxGroup();  
+            Checkbox checkbox1 = new Checkbox(":q",queryCbg, false);  
             checkbox1.setBounds(50,100, 25,25);  
-            Checkbox checkbox2 = new Checkbox(":stem");  
+            Checkbox checkbox2 = new Checkbox(":stem",queryCbg, false);  
             checkbox2.setBounds(50,105, 25,25);  
-            Checkbox checkbox3 = new Checkbox(":index");  
+            Checkbox checkbox3 = new Checkbox(":index",queryCbg, false);  
             checkbox3.setBounds(50,110, 25,25);  
-            Checkbox checkbox4 = new Checkbox(":vocab");  
+            Checkbox checkbox4 = new Checkbox(":vocab",queryCbg, false);  
             checkbox4.setBounds(50,115, 25,25);  
-            Checkbox checkbox5 = new Checkbox("srch");  
+            Checkbox checkbox5 = new Checkbox("srch",queryCbg, false);  
             checkbox5.setBounds(50,120, 25,50); 
 
              checkbox1.addItemListener(new ItemListener() {  
@@ -213,7 +219,6 @@ public class MyGUIProgram extends Frame{
                        jf.add(back, BorderLayout.AFTER_LAST_LINE);
                        jf.setSize(300,400);    
 
-                       System.out.println("invo");
                        jf.setVisible(true); 
                        back.addMouseListener(new MouseAdapter() 
                        {
@@ -281,8 +286,7 @@ public class MyGUIProgram extends Frame{
                                         return new Dimension(480, 320);
                                     }
                                     };
-                                JOptionPane.showMessageDialog(
-                null, jsp, "Content", JOptionPane.PLAIN_MESSAGE);
+                                JOptionPane.showMessageDialog( null, jsp, "Content", JOptionPane.PLAIN_MESSAGE);
                                    
                                   
                                 }
@@ -294,30 +298,12 @@ public class MyGUIProgram extends Frame{
                             public void mousePressed(MouseEvent e){
                                 jf2.setVisible(false);
                                 q.setVisible(true);
-                                //QueryFrame();
                             }
                         });
                     }               
                 }
             });             
         }
-//	
-//        
-//	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//		MyGUIProgram gui = new MyGUIProgram();
-//                
-//                gui.InitFrame();
-//		
-//	}
-//    
-     private static class QueryUI extends Frame {
-
-            public QueryUI(Label indexTime) {
-                Frame q = new Frame("Milestone 1");
-
-            }
-    }
      
      public static void main(String[] args)
      {
