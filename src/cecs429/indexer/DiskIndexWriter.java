@@ -62,19 +62,16 @@ public class DiskIndexWriter {
                     new FileOutputStream(path.toString() + "/index/postings.bin")));
             
             //int previousId = 0;
-            System.err.println("inside diw : "+index.getVocabulary().size());
             for(String term : index.getVocabulary())
             {
 
                 List<Posting> postingObjs = index.getPostings(term);
                 
                 //get dft and write to disk
-                System.out.println("term "+ term);
                 int dft = postingObjs.size();               
                 long postingsByteBegin = out.size();
                 map.put(term, postingsByteBegin);
                 out.writeInt(dft);
-                System.out.println("dft "+dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
                 
@@ -83,7 +80,6 @@ public class DiskIndexWriter {
                     if(i==0)
                     {
                         out.writeInt(postingObjs.get(0).getDocumentId());
-                        System.out.println("debug "+ postingObjs.get(0).getDocumentId());
                     }
                     else 
                     {
@@ -91,8 +87,6 @@ public class DiskIndexWriter {
                         int idGap = postingObjs.get(i).getDocumentId()
                               - postingObjs.get(i-1).getDocumentId();
                         out.writeInt(idGap);
-                        System.out.println("debug: "+postingObjs.get(i).getDocumentId()
-                              +"    "+ postingObjs.get(i-1).getDocumentId());
                     }                    
                     
                     //take the gap of current docId & previousId and write that 
@@ -121,13 +115,13 @@ public class DiskIndexWriter {
                 }             
             }
             out.close();
-           db.close();
+            db.close();
         }
         catch(Exception e)
         {
             e.printStackTrace();
         }
         
-            }
+    }
     
 }

@@ -32,41 +32,10 @@ public class DiskInvertedIndex implements Index{
     public DiskInvertedIndex(String path) throws FileNotFoundException, IOException
     {
         db = DBMaker.fileDB(path+"/theDB").make();
-        map = db.treeMap("map")
-                                    .keySerializer(Serializer.STRING)
-                                    .valueSerializer(Serializer.LONG)
-                                    .createOrOpen();
-        file=new RandomAccessFile(path+"/index/postings.bin","r");
-        
-//        for(Object s: map.keySet())
-//        {
-//            file.seek(map.get(s));
-//
-//            int dft=file.readInt();
-//            System.out.println("term :  "+ s +" dft: "+dft);
-//            int docId=0;
-//            for(int i=0;i<dft;i++)
-//            {
-//                
-//                docId = file.readInt()+docId;
-//                
-//                int tftd = file.readInt();
-//                System.out.print("docid: "+docId);
-//                System.out.print("     positions:   ");
-//                int gap=0;
-//                for(int j=0;j<tftd ;j++)
-//                {
-//                    gap=gap+file.readInt();
-//                    System.out.print(gap+" ");
-//                }
-//                System.out.println();
-//            }
-//            System.out.println();
-//            
-//            
-//        }
-       
-        
+        map = db.treeMap("map").keySerializer(Serializer.STRING)
+                               .valueSerializer(Serializer.LONG)
+                               .createOrOpen();
+        file=new RandomAccessFile(path+"/index/postings.bin","r");       
     }
 
     /**
@@ -77,7 +46,6 @@ public class DiskInvertedIndex implements Index{
      */
     @Override
     public List<Posting> getPostings(String term){
-        long address = map.get(term);
         List<Posting> answer=new ArrayList();
         
         try {
@@ -98,22 +66,55 @@ public class DiskInvertedIndex implements Index{
                 answer.add(new Posting(docId,positions)) ;
         }} catch (IOException ex) {
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
-        }
-           
-       
-
-            
+        }           
         return answer;
     }
 
     @Override
     public List<Posting> getPostings() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Posting> answer=new ArrayList();
+        try 
+        {
+        	for(int count = 0; count < getVocabulary().size(); count++)
+        	{
+        		int dft=file.readInt();
+                int docId=0;
+                for(int i=0;i<dft;i++)
+                {
+                    docId = file.readInt()+docId;
+                    int tftd = file.readInt();
+                    List<Integer> positions=new ArrayList();
+                    int gap=0;
+                    for(int j=0;j<tftd ;j++)
+                    {
+                        gap=gap+file.readInt();
+                        positions.add(gap);
+                    }
+                    answer.add(new Posting(docId,positions)) ;
+                }
+            
+        	 }
+    	} 
+        catch (IOException ex) {
+            Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return answer;
     }
 
     @Override
     public List<String> getVocabulary() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    	List<String> vocabulary = new ArrayList<>();
+        map.forEach((term,derp) -> {
+        	vocabulary.add(term);
+        });
+        
+        return vocabulary;
+    }
+    
+    public void closeDB()
+    {
+    	db.close();
     }
 
     @Override
