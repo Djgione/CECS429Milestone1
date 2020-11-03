@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.mapdb.BTreeMap;
@@ -27,6 +28,7 @@ public class DiskInvertedIndex implements Index{
 
     private DB db; 
     private BTreeMap <String,Long> map;
+    private TreeMap<Integer, Double> documentWeights;
     RandomAccessFile file;
     
     public DiskInvertedIndex(String path) throws FileNotFoundException, IOException
@@ -161,5 +163,18 @@ public class DiskInvertedIndex implements Index{
         }
         return ids;
     }
+
+	@Override
+	public void setDocumentWeights(TreeMap<Integer, Double> map) {
+		// TODO Auto-generated method stub
+		documentWeights = map;
+		
+	}
+
+	@Override
+	public TreeMap<Integer, Double> getDocumentWeights() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

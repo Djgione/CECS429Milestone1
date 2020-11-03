@@ -41,10 +41,10 @@ public class main {
         Indexer indexer = new Indexer(Paths.get("C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\src\\Parks10").toAbsolutePath(),"json");
         System.out.println("\n...index built\n\n");
         DiskIndexWriter diskWriter = new DiskIndexWriter();
-        BTreeMap<String,Long> results = diskWriter.writeIndex(indexer.getIndex()
+        diskWriter.writeIndex(indexer.getIndex()
         , Paths.get("C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\src\\Parks10")
         .toAbsolutePath());
-        DiskInvertedIndex di=new DiskInvertedIndex(path);
+        DiskInvertedIndex di=new DiskInvertedIndex("C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\src\\Parks10");
         List<String> vocab= indexer.getVocabulary();
         //System.out.print(vocab.size());
 //        diskWriter.writeIndex(indexer.getIndex()

@@ -34,6 +34,11 @@ public class DiskIndexWriter {
     //need to create a db that creates a db file in order to..
     private DB db; 
     private BTreeMap<String,Long> map;
+   
+    public DiskIndexWriter()
+    {
+    	
+    }
     public DiskIndexWriter(String path)
     {
         db = DBMaker.fileDB(path+"/theDB").make();
@@ -55,7 +60,7 @@ public class DiskIndexWriter {
     {
         //the list of 8 byte integer values consisting of byte positions where
         //start of postings list occurs in postings.bin
-        
+        db = DBMaker.fileDB(path+"/theDB").make();
         //..make a b+ tree using BTreeMap
          BTreeMap<String, Long> map = db.treeMap("map")
                                     .keySerializer(Serializer.STRING)
@@ -146,7 +151,7 @@ public class DiskIndexWriter {
         }
         
         weightWriter(index,path);
-        return map;
+       // return map;
     }
             
     
