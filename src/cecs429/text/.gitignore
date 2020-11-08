@@ -3,3 +3,5 @@
 /IntermediateTokenProcessor.class
 /TokenProcessor.class
 /TokenStream.class
+/BasicTokenProcessor.class
+/Constants.class

@@ -15,12 +15,16 @@ import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
 import cecs429.queries.BiWordQuery;
 import cecs429.queries.BooleanQueryParser;
+import cecs429.queries.DefaultRankedQuery;
+import cecs429.queries.IRankedQuery;
 import cecs429.queries.Query;
 import cecs429.queries.WildcardLiteral;
+import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 import cecs429.text.IntermediateTokenProcessor;
 import cecs429.text.TokenProcessor;
 import cecs429.text.TokenStream;
+import cecs429.weights.Accumulator;
 import cecs429.weights.DefaultDocumentWeightCalculator;
 import cecs429.weights.DocumentValuesModel;
 import cecs429.weights.IDocumentWeightCalculator;
@@ -41,11 +45,14 @@ import java.util.Map;
 public class Indexer {
 	private DocumentCorpus corpus;
 	private Index index;
+	private Index diskIndex;
 	TokenProcessor processor=new IntermediateTokenProcessor();
 	private BiWordIndex biwordindex;
 	BooleanQueryParser parser;
 	KGramIndex kgramindex;
 	IDocumentWeightCalculator calculator;
+	private IRankedQuery rankedQuery;
+	
 	
 
 
@@ -55,7 +62,9 @@ public class Indexer {
 		parser= new BooleanQueryParser();
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
-		calculator = new Tf_Idf_DocumentWeightCalculator();
+		calculator = new DefaultDocumentWeightCalculator();
+		rankedQuery = new DefaultRankedQuery();
+		
 		if(extension.equals("json"))
 		{
 			corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
@@ -208,6 +217,39 @@ public class Indexer {
 	public List<String> getVocabulary()
 	{
 		return index.getVocabulary();
+	}
+	
+	//Must break down query into simple tokens and send as list to the IRankedQuery.query call
+	//Returns the document title and the accumulator value
+	public List<String> rankedQuery(String query)
+	{
+		List<Accumulator> queryResults;
+		List<String> methodResults = new ArrayList<>();
+		TokenProcessor proc = new IntermediateTokenProcessor();
+		String[] queryTerms = query.split(" ");
+		
+		List<String> formattedTerms = new ArrayList<>();
+		
+		for(String s : queryTerms)
+		{
+			formattedTerms.add(proc.processToken(s).get(0));
+		}
+		
+		queryResults = rankedQuery.query(formattedTerms, diskIndex);
+		
+		for(Accumulator acc : queryResults)
+		{
+			StringBuilder s = new StringBuilder();
+			s.append("Title: ");
+			s.append(corpus.getDocument(acc.getDocId()).getTitle());
+			s.append(" | Accumulator Value : ");
+			s.append(acc.getaValue());
+			
+			methodResults.add(s.toString());
+		}
+		
+		
+		return methodResults;
 	}
 
 	public List<Posting> query(String query)

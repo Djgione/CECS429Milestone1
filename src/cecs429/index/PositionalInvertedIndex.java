@@ -140,6 +140,12 @@ public class PositionalInvertedIndex implements Index {
 		return model;
 	}
 
+	@Override
+	public int getDocCount() {
+		// TODO Auto-generated method stub
+		return maxDoc;
+	}
+
 	
 
 }

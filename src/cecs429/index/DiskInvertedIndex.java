@@ -34,6 +34,7 @@ public class DiskInvertedIndex implements Index{
     RandomAccessFile file;
     RandomAccessFile weightsFile;
     private DocumentValuesModel model;
+    private int docCount;
     
     public DiskInvertedIndex(String path) throws FileNotFoundException, IOException
     {
@@ -227,6 +228,16 @@ public class DiskInvertedIndex implements Index{
 	public DocumentValuesModel getDocumentValuesModel() {
 		// TODO Auto-generated method stub
 		return model;
+	}
+
+	@Override
+	public int getDocCount() {
+		// TODO Auto-generated method stub
+		if(docCount == 0)
+		{
+			docCount = getPostings().size();
+		}
+		return docCount;
 	}
     
 
