@@ -8,3 +8,5 @@
 /Query.class
 /TermLiteral.class
 /WildcardLiteral.class
+/IRankedQuery.class
+/DefaultRankedQuery.class

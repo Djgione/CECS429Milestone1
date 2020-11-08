@@ -7,6 +7,8 @@ package cecs429.index;
 
 import cecs429.queries.Query;
 import cecs429.text.IntermediateTokenProcessor;
+import cecs429.weights.DocumentValuesModel;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,21 +81,22 @@ public class BiWordIndex implements Index{
 		// TODO Auto-generated method stub
 		return index;
 	}
-	@Override
-	public void setDocumentWeights(TreeMap<Integer, Double> map) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public TreeMap<Integer, Double> getDocumentWeights() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
     @Override
     public List<Integer> getDocIds(String term) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+	@Override
+	public void setDocumentValuesModel(DocumentValuesModel model) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public DocumentValuesModel getDocumentValuesModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 
     
   

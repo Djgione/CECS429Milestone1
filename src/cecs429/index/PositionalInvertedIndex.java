@@ -7,14 +7,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+
+import cecs429.weights.DocumentValuesModel;
+
 import java.util.HashMap.*;
 import java.util.HashSet;
 
 public class PositionalInvertedIndex implements Index {
 	private final HashMap<String, List<Posting>> mMap;
 	private KGramIndex index;
-	private TreeMap<Integer,Double> documentWeights;
 	private int maxDoc;
+	private DocumentValuesModel model;
 	
 	
 	public PositionalInvertedIndex(int num)
@@ -33,15 +36,6 @@ public class PositionalInvertedIndex implements Index {
 		return index;
 	}
 	
-	public void setDocumentWeights(TreeMap<Integer,Double> map)
-	{
-		documentWeights = map;
-	}
-	
-	public TreeMap<Integer,Double> getDocumentWeights()
-	{
-		return documentWeights;
-	}
 	
 	public void addTerm(String term, int documentId, int position)
 	{
@@ -135,16 +129,17 @@ public class PositionalInvertedIndex implements Index {
         return list;
     }
 
-//	@Override
-//	public void setDocumentWeights(TreeMap<Integer, Double> map) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	@Override
+	public void setDocumentValuesModel(DocumentValuesModel model) {
+		this.model = model;
+	}
 
-//	@Override
-//	public TreeMap<Integer, Double> getDocumentWeights(String path) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
+	@Override
+	public DocumentValuesModel getDocumentValuesModel() {
+		// TODO Auto-generated method stub
+		return model;
+	}
+
+	
 
 }

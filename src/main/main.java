@@ -59,7 +59,7 @@ public class main {
             System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
             
         }
-        di.getDocumentWeights();
+        //di.getDocumentWeights();
         
     }
 

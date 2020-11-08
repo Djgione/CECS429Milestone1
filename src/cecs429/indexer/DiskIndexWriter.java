@@ -9,6 +9,8 @@ import cecs429.index.Index;
 import cecs429.index.KGramIndex;
 import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
+import cecs429.weights.DocumentValuesModel;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -67,7 +69,7 @@ public class DiskIndexWriter {
                                     .valueSerializer(Serializer.LONG)
                                     .createOrOpen();
          // Map the frequency of terms appearing
-         Map<Integer, Map<String,Integer>> mapForCalculation = new HashMap<>();
+        // Map<Integer, Map<String,Integer>> mapForCalculation = new HashMap<>();
          
            
         
@@ -177,8 +179,13 @@ public class DiskIndexWriter {
     	                    new FileOutputStream(pathWeights)));
     	
     	//This is in order due to index only containing a TreeMap
-    	for(Double d : index.getDocumentWeights().values()) {
-    		out.writeDouble(d);
+    	// Order of Creatoin : weights, averageTfd, length, byte
+    	DocumentValuesModel temp = index.getDocumentValuesModel();
+    	for(int i = 0; i < temp.getDocWeights().size(); i++) {
+    		out.writeDouble(temp.getDocWeights().get(i));
+    		out.writeDouble(temp.getDocAverageTFDs().get(i));
+    		out.writeInt(temp.getDocLengths().get(i));
+    		out.writeLong(temp.getByteSizes().get(i));
     	}
     	
     	

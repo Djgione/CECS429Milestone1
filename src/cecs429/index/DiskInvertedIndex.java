@@ -21,6 +21,8 @@ import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
+import cecs429.weights.DocumentValuesModel;
+
 /**
  *
  * @author kabir
@@ -29,9 +31,9 @@ public class DiskInvertedIndex implements Index{
 
     private DB db; 
     private BTreeMap <String,Long> map;
-    private TreeMap<Integer, Double> documentWeights;
     RandomAccessFile file;
     RandomAccessFile weightsFile;
+    private DocumentValuesModel model;
     
     public DiskInvertedIndex(String path) throws FileNotFoundException, IOException
     {
@@ -41,6 +43,7 @@ public class DiskInvertedIndex implements Index{
                                .createOrOpen();
         file=new RandomAccessFile(path+"/index/postings.bin","r");       
         weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
+        readFromDocWeights();
     }
 
     /**
@@ -167,32 +170,33 @@ public class DiskInvertedIndex implements Index{
         }
         return ids;
     }
-
-	@Override
-	public void setDocumentWeights(TreeMap<Integer, Double> map) {
-		// TODO Auto-generated method stub
-		documentWeights = map;
-		
-	}
-	
-
-	@Override
-	public TreeMap<Integer, Double> getDocumentWeights() {
-		TreeMap<Integer,Double> map = new TreeMap<>();
-		
-		int docNum = 1;
+    
+    /**
+     * Reads all values for the doc weight calculations from the 
+     */
+    public void readFromDocWeights()
+    {
+    	//Initialization of temporary storage
+    	List<Double> documentWeights = new ArrayList<>();
+    	List<Integer> documentLengths = new ArrayList<>();
+    	List<Long> documentBytes = new ArrayList<>();
+    	List<Double> documentAverageTFDs = new ArrayList<>();
+    	
 		try {
 			while(weightsFile.getFilePointer() != weightsFile.length())
 			{
-				map.put(docNum, weightsFile.readDouble());
-				docNum++;
+				documentWeights.add(weightsFile.readDouble());
+				documentAverageTFDs.add(weightsFile.readDouble());
+				documentLengths.add(weightsFile.readInt());
+				documentBytes.add(weightsFile.readLong());
 			}
 			
 			
-			for(int i = 1; i < map.size()+1; i++) {
-				System.out.println("Document " + i + " Weight: " + map.get(i));
+			for(int i = 0; i < documentWeights.size(); i++) {
+				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
+				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
 			}
-			return map;
+			
 		}
 		catch(EOFException ex)
 		{
@@ -206,8 +210,27 @@ public class DiskInvertedIndex implements Index{
 		{
 			
 		}
+    	   	
+		DocumentValuesModel tempModel = new DocumentValuesModel(documentBytes,documentLengths,documentAverageTFDs,documentWeights);
+    	// Sets the values gathered from docWeights.bin to the diskInvertedIndex
+    
+		setDocumentValuesModel(tempModel);
+    }
+
+	@Override
+	public void setDocumentValuesModel(DocumentValuesModel model) {
+		this.model = model;
 		
-		return null;
 	}
+
+	@Override
+	public DocumentValuesModel getDocumentValuesModel() {
+		// TODO Auto-generated method stub
+		return model;
+	}
+    
+
+	
+
     
 }

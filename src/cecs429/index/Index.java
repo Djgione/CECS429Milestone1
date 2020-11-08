@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import cecs429.weights.DocumentValuesModel;
+
 /**
  * An Index can retrieve postings for a term from a data structure associating terms and the documents
  * that contain them.
@@ -14,6 +16,8 @@ public interface Index {
 	 */
 	List<Posting> getPostings(String term) ;
 	
+	void setDocumentValuesModel(DocumentValuesModel model);
+	DocumentValuesModel getDocumentValuesModel();
 	
 	/**
 	 * Retrieves a list of all postings
@@ -37,9 +41,5 @@ public interface Index {
         
     public KGramIndex getIndex();
     
-    void setDocumentWeights(TreeMap<Integer,Double> map);
-    
-    //TreeMap<Integer,Double> getDocumentWeights(String path);
-    TreeMap<Integer,Double> getDocumentWeights();
 
 }

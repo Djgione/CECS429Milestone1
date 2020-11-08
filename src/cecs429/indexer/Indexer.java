@@ -21,10 +21,12 @@ import cecs429.text.EnglishTokenStream;
 import cecs429.text.IntermediateTokenProcessor;
 import cecs429.text.TokenProcessor;
 import cecs429.text.TokenStream;
-import cecs429.weights.DefaultWeightCalculator;
-import cecs429.weights.IWeightCalculator;
-import cecs429.weights.Tf_Idf_WeightCalculator;
+import cecs429.weights.DefaultDocumentWeightCalculator;
+import cecs429.weights.DocumentValuesModel;
+import cecs429.weights.IDocumentWeightCalculator;
+import cecs429.weights.Tf_Idf_DocumentWeightCalculator;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,7 +45,8 @@ public class Indexer {
 	private BiWordIndex biwordindex;
 	BooleanQueryParser parser;
 	KGramIndex kgramindex;
-	IWeightCalculator calculator;
+	IDocumentWeightCalculator calculator;
+	
 
 
 
@@ -52,7 +55,7 @@ public class Indexer {
 		parser= new BooleanQueryParser();
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
-		calculator = new Tf_Idf_WeightCalculator();
+		calculator = new Tf_Idf_DocumentWeightCalculator();
 		if(extension.equals("json"))
 		{
 			corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
@@ -61,31 +64,62 @@ public class Indexer {
 		{
 			corpus=DirectoryCorpus.loadTextDirectory(path, ".txt");
 		}
-		index=index(corpus);
+		index=index(corpus, path, extension);
 		
+	}
+	
+	
+	private List<Long> findByteSize(Path path, String extension)
+	{
+		List<Long> results = new ArrayList<>();
+		File directory = path.toFile();
+		File[] listing = directory.listFiles();
+		if(listing == null)
+			return results;
+		String ext = "";
+		for(File f : listing)
+		{
+			if(f.getPath().contains(extension))
+			{
+				results.add(f.length());
+			}
+		}
+//		
+//		for(Long l : results)
+//			System.out.println(l);
+		return results;
 	}
 
 
-	private Index index(DocumentCorpus corpus)
+	private Index index(DocumentCorpus corpus, Path path, String extension)
 	{
 		Index pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
 		HashSet<String> noDupes = new HashSet<>();
 		Map<Integer,Map<String,Integer>> mapForCalculation = new HashMap<>();
+		List<Integer> docLengths = new ArrayList<>();
+		List<Long> docBytes = findByteSize(path,extension);
+		
 
 		int docNumber = 1;
 		for(Document doc:corpus.getDocuments())
 		{
 
+			
 
 			Map<String, Integer> termFrequency = new HashMap<>();
-
+			
+			int docLength = 0;
 			int pos=0;
+			
 			TokenStream stream=new EnglishTokenStream(doc.getContent());
 			String s1="";
 			String s2="";
 			int i=0;
+			
 			for(String str : stream.getTokens())
 			{
+				
+				docLength++;
 				noDupes.add(str.toLowerCase());
 				//System.out.print(str);
 				for(String s: processor.processToken(str))
@@ -119,6 +153,7 @@ public class Indexer {
 			}
 
 			mapForCalculation.put(docNumber, termFrequency);
+			docLengths.add(docLength);
 			docNumber++;
 		}
 
@@ -132,9 +167,20 @@ public class Indexer {
 		// Sets the document weights into the inverted Index using the calculator from the constructor
 		//calculator.setDocumentTermFrequencies(mapForCalculation);
 		
+		DocumentValuesModel model = new DocumentValuesModel();
+		model.setDocLengths(docLengths);
+		model.setByteSizes(docBytes);
+		model.setMap(mapForCalculation);
+		
+		model.setDocAverageTFDs(
+				calculateAverageTFDs(mapForCalculation, docLengths));
+		//List<Double> docWeights = calculator.calculate(model);
+		model.setDocWeights(calculator.calculate(model));
 		
 		
-		pInvertedIndex.setDocumentWeights(calculator.calculate(mapForCalculation));
+		
+		
+		pInvertedIndex.setDocumentValuesModel(model);
 		pInvertedIndex.setIndex(kgramindex);
 		biwordindex.setIndex(kgramindex);
 		//pInvertedIndex.print();
@@ -206,4 +252,24 @@ public class Indexer {
 		return result;
 	}
 
+	
+	private List<Double> calculateAverageTFDs(Map<Integer,Map<String,Integer>> map, List<Integer> lengths)
+	{
+		List<Double> averageTFDResults = new ArrayList<>();
+		int i = 0;
+		for(Map<String,Integer> interiorMaps : map.values())
+		{
+			Double e = 0.0;
+			for(Integer value : interiorMaps.values())
+			{
+				e+=value;
+			}
+			
+			e/= lengths.get(i);
+			averageTFDResults.add(e);
+			i++;
+		}
+		
+		return averageTFDResults;
+	}
 }

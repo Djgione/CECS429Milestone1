@@ -5,17 +5,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Tf_Idf_WeightCalculator implements IWeightCalculator {
+public class Tf_Idf_DocumentWeightCalculator implements IDocumentWeightCalculator {
 
-	public Tf_Idf_WeightCalculator() {
+	public Tf_Idf_DocumentWeightCalculator() {
 		super();
 		
 	}
 
 	@Override
-	public TreeMap<Integer, Double> calculate(Map<Integer, Map<String, Integer>> map) {
+	public List<Double> calculate(DocumentValuesModel model) {
 		// TODO Auto-generated method stub
-		TreeMap<Integer,Double> results = new TreeMap<>();
+		Map<Integer, Map<String, Integer>> map = model.getMap();
+		List<Double> results = new ArrayList<>();
 		if(map.isEmpty())
 			return results;
 		
@@ -38,7 +39,7 @@ public class Tf_Idf_WeightCalculator implements IWeightCalculator {
 			
 			documentWeight = Math.sqrt(documentWeight);
 			System.out.println("Document " + i + " Weight: " + documentWeight);
-			results.put(i, documentWeight);
+			results.add(documentWeight);
 			i++;
 			
 		}while(i < map.size() + 1);		

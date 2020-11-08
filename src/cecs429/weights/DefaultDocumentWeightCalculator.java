@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class DefaultWeightCalculator implements IWeightCalculator{
+public class DefaultDocumentWeightCalculator implements IDocumentWeightCalculator{
 
 	//private Map<Integer,Map<String,Integer>> documentTermFrequencies;
 
@@ -18,14 +18,14 @@ public class DefaultWeightCalculator implements IWeightCalculator{
 	
 	
 
-	public DefaultWeightCalculator() {
+	public DefaultDocumentWeightCalculator() {
 	
 	}
 
-	public TreeMap<Integer,Double> calculate(Map<Integer,Map<String,Integer>> documentTermFrequencies)
+	public List<Double> calculate(DocumentValuesModel model)
 	{
-
-		TreeMap<Integer,Double> map = new TreeMap<>();
+	    Map<Integer, Map<String, Integer>> documentTermFrequencies = model.getMap();
+		List<Double> map = new ArrayList<>();
 		if(documentTermFrequencies.isEmpty())
 			return map;
 		
@@ -53,7 +53,7 @@ public class DefaultWeightCalculator implements IWeightCalculator{
 			
 			documentWeight = Math.sqrt(documentWeight);
 			System.out.println("Document " + i + " Weight: " + documentWeight);
-			map.put(i, documentWeight);
+			map.add(documentWeight);
 			
 			i++;
 		}while(i < documentTermFrequencies.size() +1);
