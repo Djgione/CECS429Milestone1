@@ -16,7 +16,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,18 +42,20 @@ public class DiskIndexWriter {
     //need to create a db that creates a db file in order to..
     private DB db; 
     private BTreeMap<String,Long> map;
+    private DB kgramdb;
+    private BTreeMap<String,Long> kGramMap;
    
     public DiskIndexWriter()
     {
     	
     }
+
     public DiskIndexWriter(String path)
     {
         db = DBMaker.fileDB(path+"/theDB").make();
-        map = db.treeMap("map")
-                                    .keySerializer(Serializer.STRING)
-                                    .valueSerializer(Serializer.LONG)
-                                    .createOrOpen();
+        map = db.treeMap("map") .keySerializer(Serializer.STRING)
+                                .valueSerializer(Serializer.LONG)
+                                .createOrOpen();
    
     }
     public DB getDb() {
@@ -73,6 +81,8 @@ public class DiskIndexWriter {
          
            
         
+        
+        //..make a b+ tree using BTreeMap       
         try
         {
             DataOutputStream out = 
@@ -200,5 +210,70 @@ public class DiskIndexWriter {
     }
     
     
+    
+    public void writeKgramIndex(KGramIndex kgramIndex,Path path) throws FileNotFoundException, IOException {
+        DataOutputStream out = 
+                    new DataOutputStream(
+                    new BufferedOutputStream(
+                    new FileOutputStream(path.toString() + "/Kgrampostings.bin")));
+        
+        List<String> vocab=kgramIndex.getVocab();
+        for(String s: vocab)
+        {
+            long currentpos=out.size();
+            //System.out.println(s+"->   "+currentpos);
+            kGramMap.put(s, currentpos);
+            List<String> postings=kgramIndex.getPostings(s);
+            out.writeInt(postings.size());
+            for(String str: postings)
+            {
+                byte[] b= str.getBytes(StandardCharsets.UTF_8);
+                out.writeInt(b.length);
+                out.write(b);
+                
+            }
+        }
+        //System.out.println(out.size()+"SIZE ");
+       // kgramdb.close();
+        out.close();
+        //kgramIndex.print();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        System.out.println();
+        //System.out.print(path);
+//        RandomAccessFile file=new RandomAccessFile(path.toString()+"/Kgrampostings.bin","r");
+//        file.seek(0);
+//        //System.out.print(file.length());
+//        
+//        for(Object s : KgramMap.keySet())
+//        {
+//            System.out.print(s+"  ->  ");
+//            //System.out.println(s+"->"+KgramMap.get(s));
+//            file.seek(KgramMap.get(s));
+//            int postings=file.readInt();
+//            //System.out.println(postings);
+//            for(int i=0;i<postings;i++)
+//            {
+//                int size=file.readInt();
+//                byte[] b=new byte[size];
+//                file.read(b);
+//                
+//                System.out.print(new String(b,StandardCharsets.UTF_8)+" ,");
+//                
+//            }
+//            System.out.println();
+            
+        
+        //file.close();
+        kgramdb.close();
+        
+    }
+    
+    public void DeleteBinFile(String path)throws FileNotFoundException, IOException
+    {
+		Files.deleteIfExists(Paths.get(path+ "\\index\\postings.bin").toAbsolutePath());
+    }
     
 }

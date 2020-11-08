@@ -50,6 +50,7 @@ public class KGramIndex {
             }
             System.out.println();
         }
+        System.out.print("OVER");
     }
 
 
@@ -62,15 +63,19 @@ public class KGramIndex {
     	return new ArrayList<String>(terms);
     }
 
-	public void addTerm(String str, int id, int i) {
+    public void addTerm(String str, int id, int i) {
 		str="$"+str+"$";
         add(str,1);
         add(str,2);
         add(str,3);
 		
 	}
-    
-    
+    public List<String> getVocab()
+    {
+       return List.copyOf(kGramIndex.keySet());
+       
+    }
+       
    
     
 }

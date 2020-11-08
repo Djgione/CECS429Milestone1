@@ -156,12 +156,12 @@ public class BooleanQueryParser {
                 
                 // "whlae not"  for  
 		// Skip past white space.
-		while (subquery.charAt(startIndex) == ' ') {
+		while (startIndex<subquery.length() && subquery.charAt(startIndex) == ' ') {
 			++startIndex;
 		}
                 // 1.if start index is " then scan till next " and put everything in a phrase 
                 // 2.set lengthout to the index of ending " +1
-                if(subquery.charAt(startIndex)=='-')
+                if(startIndex<subquery.length() && subquery.charAt(startIndex)=='-')
                 {
                     startIndex++;
                     int nextSkip = subquery.indexOf(' ', startIndex);
@@ -187,7 +187,7 @@ public class BooleanQueryParser {
                     
                     
                 }
-                else if(subquery.charAt(startIndex) == '\"')
+                else if(startIndex<subquery.length() && subquery.charAt(startIndex) == '\"')
                 {
                     //"whale not" for
                     // Locate the next space/double quote to find the end of this literal.

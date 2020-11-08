@@ -13,7 +13,7 @@ public interface Query {
     /**
      * Retrieves a list of postings for the query, using an Index as the source.
      * @param b
-     * @param index
+     * @param indexer
      */
     void negative(boolean b);
     boolean getnegative();
