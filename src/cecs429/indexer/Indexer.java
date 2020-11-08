@@ -68,6 +68,7 @@ public class Indexer {
             int i=0;
             for(String str : stream.getTokens())
             {
+                
             	noDupes.add(str.toLowerCase());
                 //System.out.print(str);
                 for(String s: processor.processToken(str))
@@ -98,7 +99,8 @@ public class Indexer {
       pInvertedIndex.setIndex(kgramindex);
       biwordindex.setIndex(kgramindex);
       //pInvertedIndex.print();
-        return pInvertedIndex; 
+
+        return pInvertedIndex;
     }
     public DocumentCorpus getCorpus()
     {
@@ -106,6 +108,7 @@ public class Indexer {
     }
     //Omar added this
     public Index getIndex() {return index;}
+    public KGramIndex getKgramIndex(){return kgramindex;}
     
     public List<String> getVocab1000()
     {

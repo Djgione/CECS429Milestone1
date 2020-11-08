@@ -3,19 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/corpus/chapter1.txt</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/queries/BooleanQueryParser.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/documents/DirectoryCorpus.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/indexer/DiskIndexWriter.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/corpus/chapter3.txt</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/main/main.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/text/TokenStream.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/text/EnglishTokenStream.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/documents/JsonFileDocument.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/main/MyGUIProgram.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/documents/DocumentCorpus.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/indexer/Indexer.java</file>
-            <file>file:/C:/Users/Kermite/Documents/NetBeansProjects/HW5.0/src/cecs429/documents/TextFileDocument.java</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/cecs429/index/PositionalInvertedIndex.java</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/cecs429/index/DiskInvertedIndex.java</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/main/main.java</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/cecs429/indexer/DiskIndexWriter.java</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/cecs429/index/Posting.java</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/corpus/chapter2.txt</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/corpus/chapter1.txt</file>
+            <file>file:/Users/kabir/NetBeansProjects/CECS429Milestone1/src/cecs429/index/Index.java</file>
         </group>
     </open-files>
 </project-private>
