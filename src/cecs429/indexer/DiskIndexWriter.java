@@ -9,8 +9,13 @@ import cecs429.index.Index;
 import cecs429.index.KGramIndex;
 import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
+import cecs429.weights.DocumentValuesModel;
+
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,7 +24,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
@@ -36,6 +44,12 @@ public class DiskIndexWriter {
     private BTreeMap<String,Long> map;
     private DB kgramdb;
     private BTreeMap<String,Long> kGramMap;
+   
+    public DiskIndexWriter()
+    {
+    	
+    }
+
     public DiskIndexWriter(String path)
     {
         db = DBMaker.fileDB(path+"/theDB").make();
@@ -56,6 +70,17 @@ public class DiskIndexWriter {
     {
         //the list of 8 byte integer values consisting of byte positions where
         //start of postings list occurs in postings.bin
+        db = DBMaker.fileDB(path+"/theDB").make();
+        //..make a b+ tree using BTreeMap
+         BTreeMap<String, Long> map = db.treeMap("map")
+                                    .keySerializer(Serializer.STRING)
+                                    .valueSerializer(Serializer.LONG)
+                                    .createOrOpen();
+         // Map the frequency of terms appearing
+        // Map<Integer, Map<String,Integer>> mapForCalculation = new HashMap<>();
+         
+           
+        
         
         //..make a b+ tree using BTreeMap       
         try
@@ -73,11 +98,16 @@ public class DiskIndexWriter {
                 
                 //get dft and write to disk
                 int dft = postingObjs.size();               
-                long postingsByteBegin = out.size();
-                map.put(term, postingsByteBegin);
+                
+                // long postingsByteBegin = out.size();
+                // map.put(term, postingsByteBegin);
                 out.writeInt(dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
+                long postingsByteBegin = out.size();
+                map.put(term, postingsByteBegin);
+                                
+                
                 
                 for(int i = 0; i < postingObjs.size(); i++)
                 {
@@ -106,6 +136,7 @@ public class DiskIndexWriter {
                     int tftd = positions.size();                   
                     out.writeInt(tftd);
                     System.out.println("tftd "+tftd);
+                    
                     int previousPos = 0;
 
                     for(int j = 0; j < tftd; j++)
@@ -126,7 +157,59 @@ public class DiskIndexWriter {
             e.printStackTrace();
         }
         
+        weightWriter(index,path);
+       // return map;
     }
+            
+    
+    
+    /**
+     * Write the weight of documents to a file named docWeights.bin
+     * @param index
+     * @param path
+     * @return
+     */
+    private boolean weightWriter(Index index, Path path)
+    {
+    	String pathWeights = path.toString() + "\\index\\docWeights.bin";
+    	File file = new File(pathWeights);
+    	
+    	try {
+    		
+    		if(!file.createNewFile())
+    		{
+    			file.delete();
+    			file.createNewFile();
+    		}
+    		
+    		System.out.println("File created at " + pathWeights);
+    		DataOutputStream out = 
+    	                    new DataOutputStream(
+    	                    new BufferedOutputStream(
+    	                    new FileOutputStream(pathWeights)));
+    	
+    	//This is in order due to index only containing a TreeMap
+    	// Order of Creatoin : weights, averageTfd, length, byte
+    	DocumentValuesModel temp = index.getDocumentValuesModel();
+    	for(int i = 0; i < temp.getDocWeights().size(); i++) {
+    		out.writeDouble(temp.getDocWeights().get(i));
+    		out.writeDouble(temp.getDocAverageTFDs().get(i));
+    		out.writeInt(temp.getDocLengths().get(i));
+    		out.writeLong(temp.getByteSizes().get(i));
+    	}
+    	
+    	
+    	out.close();
+    	}
+    	catch(IOException e)
+    	{
+    		System.out.println(e.getStackTrace());
+    		return false;
+    	}
+    	return true;
+    }
+    
+    
     
     public void writeKgramIndex(KGramIndex kgramIndex,Path path) throws FileNotFoundException, IOException {
         DataOutputStream out = 

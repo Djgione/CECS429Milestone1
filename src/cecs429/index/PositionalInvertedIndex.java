@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import cecs429.weights.DocumentValuesModel;
+
 import java.util.HashMap.*;
 import java.util.HashSet;
 
@@ -12,12 +17,9 @@ public class PositionalInvertedIndex implements Index {
 	private final HashMap<String, List<Posting>> mMap;
 	private KGramIndex index;
 	private int maxDoc;
+	private DocumentValuesModel model;
 	
 	
-	public PositionalInvertedIndex()
-	{
-        mMap = new HashMap<>();
-	}
 	public PositionalInvertedIndex(int num)
 	{
 		maxDoc = num;
@@ -33,6 +35,8 @@ public class PositionalInvertedIndex implements Index {
 	{
 		return index;
 	}
+	
+	
 	public void addTerm(String term, int documentId, int position)
 	{
 		//if the term does not exist in the index
@@ -124,5 +128,24 @@ public class PositionalInvertedIndex implements Index {
         }
         return list;
     }
+
+	@Override
+	public void setDocumentValuesModel(DocumentValuesModel model) {
+		this.model = model;
+	}
+
+	@Override
+	public DocumentValuesModel getDocumentValuesModel() {
+		// TODO Auto-generated method stub
+		return model;
+	}
+
+	@Override
+	public int getDocCount() {
+		// TODO Auto-generated method stub
+		return maxDoc;
+	}
+
+	
 
 }

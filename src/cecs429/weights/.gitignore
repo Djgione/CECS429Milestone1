@@ -1,0 +1,13 @@
+/DefaultWeightCalculator.class
+/WeightCalculator.class
+/IWeightCalculator.class
+/IWeightCarrier.class
+/Tf_Idf_WeightCalculator.class
+/IDocumentWeightCalculator.class
+/DefaultDocumentWeightCalculator.class
+/Tf_Idf_DocumentWeightCalculator.class
+/DocumentValuesModel.class
+/Okapi_BM25_DocumentWeightCalculator.class
+/WackyDocumentWeightCalculator.class
+/Accumulator.class
+/AccumulatorComparator.class

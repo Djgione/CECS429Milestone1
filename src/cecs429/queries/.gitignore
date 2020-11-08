@@ -1,0 +1,12 @@
+/AndQuery.class
+/BiWordQuery.class
+/BooleanQueryParser$Literal.class
+/BooleanQueryParser$StringBounds.class
+/BooleanQueryParser.class
+/OrQuery.class
+/PhraseLiteral.class
+/Query.class
+/TermLiteral.class
+/WildcardLiteral.class
+/IRankedQuery.class
+/DefaultRankedQuery.class
