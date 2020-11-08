@@ -11,8 +11,12 @@ import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
 import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,10 +36,9 @@ public class DiskIndexWriter {
     public DiskIndexWriter(String path)
     {
         db = DBMaker.fileDB(path+"/theDB").make();
-        map = db.treeMap("map")
-                                    .keySerializer(Serializer.STRING)
-                                    .valueSerializer(Serializer.LONG)
-                                    .createOrOpen();
+        map = db.treeMap("map") .keySerializer(Serializer.STRING)
+                                .valueSerializer(Serializer.LONG)
+                                .createOrOpen();
    
     }
     public DB getDb() {
@@ -51,9 +54,7 @@ public class DiskIndexWriter {
         //the list of 8 byte integer values consisting of byte positions where
         //start of postings list occurs in postings.bin
         
-        //..make a b+ tree using BTreeMap
-          
-        
+        //..make a b+ tree using BTreeMap       
         try
         {
             DataOutputStream out = 
@@ -122,6 +123,11 @@ public class DiskIndexWriter {
             e.printStackTrace();
         }
         
+    }
+    
+    public void DeleteBinFile(String path)throws FileNotFoundException, IOException
+    {
+		Files.deleteIfExists(Paths.get(path+ "\\index\\postings.bin").toAbsolutePath());
     }
     
 }

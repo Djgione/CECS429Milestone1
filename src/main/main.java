@@ -20,30 +20,33 @@ import org.mapdb.BTreeMap;
  * @author Kermite
  */
 public class main {
-    public static void main(String[] args) throws IOException, Exception {
+    public static void main(String[] args) throws IOException, Exception 
+    {
         System.out.println("Building index...");
         
         String path="C:\\Users\\Kermite\\CECS429Milestone1\\src\\corpus";
         
         Indexer indexer = new Indexer(Paths.get(path).toAbsolutePath(),"txt");
-      // indexer.getIndex().print();
-        //System.out.println("\n...index built\n\n");
-//        DiskIndexWriter diskWriter = new DiskIndexWriter(path);
-//        diskWriter.writeIndex(indexer.getIndex(),Paths.get(path).toAbsolutePath());
+       indexer.getIndex().print();
+        System.out.println("\n...index built\n\n");
+        DiskIndexWriter diskWriter = new DiskIndexWriter(path);
+       diskWriter.writeIndex(indexer.getIndex(),Paths.get(path).toAbsolutePath());
 
-        DiskInvertedIndex di=new DiskInvertedIndex(path);
-        List<String> vocab= di.getVocabulary();
-        List<String> indexVocab = indexer.getVocabulary();
-        System.out.println("vocab.size(): " + vocab.size());
-
-        System.out.println("indexer vocab size: " + indexVocab.size());
-       List<Posting> postings = di.getPostings();
-        for(int i = 0; i < vocab.size(); i++)
-        {
-            System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
-            
-        }
+       DiskInvertedIndex di=new DiskInvertedIndex(path);
+//       List<String> vocab= di.getVocabulary();
+//       List<String> indexVocab = indexer.getVocabulary();
+//       System.out.println("vocab.size(): " + vocab.size());
+//
+//       System.out.println("indexer vocab size: " + indexVocab.size());
+//      List<Posting> postings = di.getPostings();
+//       for(int i = 0; i < vocab.size(); i++)
+//       {
+//           System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
+//           
+//       }
         
+        di.closeandDeleteDB(path);
+        diskWriter.DeleteBinFile(path);
     }
 
 }

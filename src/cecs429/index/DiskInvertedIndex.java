@@ -10,6 +10,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -64,7 +67,8 @@ public class DiskInvertedIndex implements Index{
                     positions.add(gap);
                 }
                 answer.add(new Posting(docId,positions)) ;
-        }} catch (IOException ex) {
+            }
+        } catch (IOException ex) {
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
         }           
         return answer;
@@ -112,9 +116,18 @@ public class DiskInvertedIndex implements Index{
         return vocabulary;
     }
     
-    public void closeDB()
+    public void closeandDeleteDB(String path)
     {
+
     	db.close();
+    	try {
+            file.close();
+
+			Files.deleteIfExists(Paths.get(path+ "\\theDB").toAbsolutePath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     @Override
