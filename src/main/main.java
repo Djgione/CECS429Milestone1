@@ -6,7 +6,9 @@
 package main;
 import cecs429.documents.DirectoryCorpus;
 import cecs429.index.DiskInvertedIndex;
+import cecs429.index.DiskKgramIndex;
 import cecs429.index.Posting;
+import cecs429.index.SpellingCorrector;
 import cecs429.indexer.DiskIndexWriter;
 import cecs429.indexer.Indexer;
 import java.io.IOException;
@@ -44,7 +46,11 @@ public class main {
 //           System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
 //           
 //       }
-        
+        DiskKgramIndex dki=new DiskKgramIndex(path+"/index");
+//      System.out.print("dki   "+dki.getPostings("bro"));
+        SpellingCorrector sp= new SpellingCorrector(dki,di);
+        //System.out.print(sp.calculateJacard("gosling", sp.makegrams("$gost$")));
+        sp.checkFor("bst");
         di.closeandDeleteDB(path);
         diskWriter.DeleteBinFile(path);
     }
