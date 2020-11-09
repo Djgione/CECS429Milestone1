@@ -42,7 +42,11 @@ public class DiskIndexWriter {
         map = db.treeMap("map") .keySerializer(Serializer.STRING)
                                 .valueSerializer(Serializer.LONG)
                                 .createOrOpen();
-   
+        kgramdb=DBMaker.fileDB(path+"/KgramDB").make();
+        kGramMap=kgramdb.treeMap("kgrammap")
+                                    .keySerializer(Serializer.STRING)
+                                    .valueSerializer(Serializer.LONG)
+                                    .createOrOpen();
     }
     public DB getDb() {
         return db;
@@ -63,7 +67,7 @@ public class DiskIndexWriter {
             DataOutputStream out = 
                     new DataOutputStream(
                     new BufferedOutputStream(
-                    new FileOutputStream(path.toString() + "/index/postings.bin")));
+                    new FileOutputStream(path.toString() + "/postings.bin")));
             
             //int previousId = 0;
             for(String term : index.getVocabulary())
@@ -105,7 +109,7 @@ public class DiskIndexWriter {
                     //get and write tftd to disk
                     int tftd = positions.size();                   
                     out.writeInt(tftd);
-                    System.out.println("tftd "+tftd);
+                    //System.out.println("tftd "+tftd);
                     int previousPos = 0;
 
                     for(int j = 0; j < tftd; j++)
@@ -113,7 +117,7 @@ public class DiskIndexWriter {
                         int positionGap = positions.get(j) 
                                         - previousPos;
                         out.writeInt(positionGap);
-                        System.out.println("position gap " + positionGap);
+                        //System.out.println("position gap " + positionGap);
                         previousPos = positions.get(j);
                     }
                 }             
@@ -188,9 +192,13 @@ public class DiskIndexWriter {
         
     }
     
-    public void DeleteBinFile(String path)throws FileNotFoundException, IOException
+    public void DeleteBinFiles(String path)throws FileNotFoundException, IOException
     {
-		Files.deleteIfExists(Paths.get(path+ "\\index\\postings.bin").toAbsolutePath());
+		Files.deleteIfExists(Paths.get(path+ "\\postings.bin").toAbsolutePath());
     }
-    
+    public void DeleteKgramBinFiles(String path)throws FileNotFoundException, IOException
+    {
+		Files.deleteIfExists(Paths.get(path+ "\\Kgrampostings.bin").toAbsolutePath());
+
+    }
 }

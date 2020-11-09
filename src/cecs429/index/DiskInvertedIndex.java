@@ -38,7 +38,8 @@ public class DiskInvertedIndex implements Index{
         map = db.treeMap("map").keySerializer(Serializer.STRING)
                                .valueSerializer(Serializer.LONG)
                                .createOrOpen();
-        file=new RandomAccessFile(path+"/index/postings.bin","r");       
+        file=new RandomAccessFile(path+"/postings.bin","r");  
+        
     }
 
     /**
@@ -79,9 +80,11 @@ public class DiskInvertedIndex implements Index{
         List<Posting> answer=new ArrayList();
         try 
         {
+        	System.out.println("getVocabulary().size()" + getVocabulary().size());
         	for(int count = 0; count < getVocabulary().size(); count++)
         	{
         		int dft=file.readInt();
+        		System.out.println(dft);
                 int docId=0;
                 for(int i=0;i<dft;i++)
                 {
