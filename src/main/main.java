@@ -68,7 +68,13 @@ public class main {
 //      System.out.print("dki   "+dki.getPostings("bro"));
       //SpellingCorrector sp= new SpellingCorrector(dki,di);
         
-        
+//        List<String> vocab = di.getVocabulary();
+//        List<Posting> postings = di.getPostings("it");
+//        for(int i = 0; i < postings.size(); i++)
+//        {
+//        	System.out.println(vocab.get(i) + "=> " + postings.get(i).toString());
+//        }
+//        
         List<String> results = indexer.rankedQuery("it is the");
         
         for(String s : results)

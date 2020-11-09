@@ -43,6 +43,7 @@ public class DiskIndexWriter {
     private DB db; 
     private BTreeMap<String,Long> map;
     private DB kgramdb;
+    private BTreeMap<String,Long> KgramMap;
     private BTreeMap<String,Long> kGramMap;
    
     public DiskIndexWriter()
@@ -56,7 +57,12 @@ public class DiskIndexWriter {
         map = db.treeMap("map") .keySerializer(Serializer.STRING)
                                 .valueSerializer(Serializer.LONG)
                                 .createOrOpen();
-   
+//   
+//        kgramdb=DBMaker.fileDB(path+"/KgramDB").make();
+//        KgramMap=kgramdb.treeMap("kgrammap")
+//                                    .keySerializer(Serializer.STRING)
+//                                    .valueSerializer(Serializer.LONG)
+//                                    .createOrOpen();
     }
     public DB getDb() {
         return db;
@@ -99,13 +105,13 @@ public class DiskIndexWriter {
                 //get dft and write to disk
                 int dft = postingObjs.size();               
                 
-                // long postingsByteBegin = out.size();
-                // map.put(term, postingsByteBegin);
+                long postingsByteBegin = out.size();
+                map.put(term, postingsByteBegin);
                 out.writeInt(dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
-                long postingsByteBegin = out.size();
-                map.put(term, postingsByteBegin);
+               // long postingsByteBegin = out.size();
+                //map.put(term, postingsByteBegin);
                                 
                 
                 

@@ -262,7 +262,7 @@ public class Indexer {
 		}
 		
 		queryResults = rankedQuery.query(formattedTerms, diskIndex);
-		System.out.println(queryResults.size());
+		//System.out.println(queryResults.size());
 		if(queryResults.size() != 0) {
 			for(Accumulator acc : queryResults)
 			{
@@ -270,7 +270,7 @@ public class Indexer {
 					continue;
 				StringBuilder s = new StringBuilder();
 				s.append("Title: ");
-				System.out.println(acc.getDocId());
+				//System.out.println(acc.getDocId());
 				s.append(corpus.getDocument(acc.getDocId()).getTitle());
 				s.append(" | Accumulator Value : ");
 				s.append(acc.getaValue());

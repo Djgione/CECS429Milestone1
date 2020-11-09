@@ -63,6 +63,7 @@ public class DiskInvertedIndex implements Index{
         try {
             file.seek(map.get(term));
             int dft=file.readInt();
+            //System.out.println(dft);
             int docId=0;
             for(int i=0;i<dft;i++)
             {
@@ -80,6 +81,8 @@ public class DiskInvertedIndex implements Index{
         } catch (IOException ex) {
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
         }           
+        
+       
         return answer;
     }
 

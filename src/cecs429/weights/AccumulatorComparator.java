@@ -11,10 +11,10 @@ public class AccumulatorComparator implements Comparator<Accumulator> {
 			return 0;
 		}
 		else if(o1.getaValue() < o2.getaValue()) {
-			return -1;
+			return 1;
 		}
 		else {
-			return 1;
+			return -1;
 		}
 			
 	}
