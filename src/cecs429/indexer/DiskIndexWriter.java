@@ -247,6 +247,7 @@ public class DiskIndexWriter {
     public void DeleteKgramBinFiles(String path)throws FileNotFoundException, IOException
     {
 		Files.deleteIfExists(Paths.get(path+ "\\Kgrampostings.bin").toAbsolutePath());
+		Files.deleteIfExists(Paths.get(path+ "\\docweights.bin").toAbsolutePath());
 
     }
 }
