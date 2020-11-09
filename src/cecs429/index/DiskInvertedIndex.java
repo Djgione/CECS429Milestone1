@@ -210,10 +210,10 @@ public class DiskInvertedIndex implements Index{
 			}
 			
 			
-			for(int i = 0; i < documentWeights.size(); i++) {
-				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
-				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
-			}
+//			for(int i = 0; i < documentWeights.size(); i++) {
+//				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
+//				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
+//			}
 			
 		}
 		catch(EOFException ex)
