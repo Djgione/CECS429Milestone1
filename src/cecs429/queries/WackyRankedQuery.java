@@ -44,10 +44,13 @@ private PriorityQueue<Accumulator> queue;
 					
 					if(postingForTerm.size() == 0)
 						continue;
-					
+//					System.out.println("PostingForTermSize: " + postingForTerm.size());
+//					System.out.println("Max doc - postingForTermSize: " + (maxDocs - postingForTerm.size()));
+//					System.out.println("Whole log: " + Math.log( (maxDocs - postingForTerm.size() ) / postingForTerm.size() ) );
 					double wqt = Math.max(0, Math.log( (maxDocs - postingForTerm.size() ) / postingForTerm.size() ) );
-					
-					
+//					System.out.println("wqt: " + wqt);
+//					
+//					System.out.println();
 					
 					// ForEach doc d in postings of t
 					for(Posting p : postingForTerm)

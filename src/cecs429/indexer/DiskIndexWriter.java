@@ -189,7 +189,7 @@ public class DiskIndexWriter {
     	
     	try {
     		
-    		if(!file.createNewFile())
+    		if(file.exists())
     		{
     			file.delete();
     			file.createNewFile();
