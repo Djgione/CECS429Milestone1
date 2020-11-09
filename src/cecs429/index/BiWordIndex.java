@@ -96,12 +96,12 @@ public class BiWordIndex implements Index{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	@Override
-	public int getDocCount() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-	
+//	@Override
+//	public int getDocCount() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//	
 
     
   

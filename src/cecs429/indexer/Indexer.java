@@ -47,6 +47,7 @@ import cecs429.text.Constants;
  * @author kabir
  */
 public class Indexer {
+
 	private DocumentCorpus corpus;
 	private Index index;
 	private Index diskIndex;
@@ -67,26 +68,36 @@ public class Indexer {
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
 		
-		switch(Constants.RANK_CONFIG) {
-		case 0: 
+		if(Constants.rankConfig == 0) {
 			calculator = new DefaultDocumentWeightCalculator();
 			rankedQuery = new DefaultRankedQuery();
-		case 1:
+		}
+		else if(Constants.rankConfig == 1)
+		{
 			calculator = new TfIdfDocumentWeightCalculator();
 			rankedQuery = new Tf_IDF_RankedQuery();
-		case 2:
+		}
+		else if(Constants.rankConfig ==2)
+		{
 			calculator = new Okapi_BM25_DocumentWeightCalculator();
 			rankedQuery = new Okapi_BM25_RankedQuery();
-		case 3:
+		}
+		else if(Constants.rankConfig == 3)
+		{
 			calculator = new WackyDocumentWeightCalculator();
 			rankedQuery = new WackyRankedQuery();
-		default:
+		}
+		else
+		{
 			calculator = new DefaultDocumentWeightCalculator();
 			rankedQuery = new DefaultRankedQuery();
-			
 		}
+			
+		
 
 		
+		
+		System.out.println("Config" + Constants.rankConfig);
 		if(extension.equals("json"))
 		{
 			corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
@@ -151,7 +162,9 @@ public class Indexer {
 			{
 				
 				docLength++;
-				noDupes.add(str.toLowerCase());
+				TokenProcessor basicProc = new BasicTokenProcessor();
+				
+				noDupes.add(basicProc.processToken(str).get(0));
 				//System.out.print(str);
 				for(String s: processor.processToken(str))
 				{
@@ -192,6 +205,7 @@ public class Indexer {
 		for(String s: noDupes)
 		{
 			kgramindex.addTerm(s, 0, 0);
+			//System.out.print(s);
 		}
 		
 		System.out.println(mapForCalculation.size());
@@ -223,6 +237,7 @@ public class Indexer {
 	}
 	//Omar added this
 	public Index getIndex() {return index;}
+    public KGramIndex getKgramIndex(){return kgramindex;}
 
 	public List<String> getVocab1000()
 	{
@@ -255,22 +270,27 @@ public class Indexer {
 		for(String s : queryTerms)
 		{
 			formattedTerms.add(proc.processToken(s).get(0));
+			//System.out.println(proc.processToken(s).get(0));
 		}
 		
 		queryResults = rankedQuery.query(formattedTerms, diskIndex);
-		
-		for(Accumulator acc : queryResults)
-		{
-			StringBuilder s = new StringBuilder();
-			s.append("Title: ");
-			s.append(corpus.getDocument(acc.getDocId()).getTitle());
-			s.append(" | Accumulator Value : ");
-			s.append(acc.getaValue());
+		//System.out.println(queryResults.size());
+		if(queryResults.size() != 0) {
+			for(Accumulator acc : queryResults)
+			{
+				if(acc == null)
+					continue;
+				StringBuilder s = new StringBuilder();
+				s.append("Title: ");
+				//System.out.println(acc.getDocId());
+				s.append(corpus.getDocument(acc.getDocId()).getTitle());
+				s.append(" | Accumulator Value : ");
+				s.append(acc.getaValue());
+				
+				methodResults.add(s.toString());
+			}
 			
-			methodResults.add(s.toString());
 		}
-		
-		
 		return methodResults;
 	}
 
@@ -316,6 +336,7 @@ public class Indexer {
 		return result;
 	}
 
+
 	
 	private List<Double> calculateAverageTFDs(Map<Integer,Map<String,Integer>> map, List<Integer> lengths)
 	{
@@ -335,5 +356,10 @@ public class Indexer {
 		}
 		
 		return averageTFDResults;
+	}
+	
+	public void setDiskIndex(Index index)
+	{
+		diskIndex = index;
 	}
 }

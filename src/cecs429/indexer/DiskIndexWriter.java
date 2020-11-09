@@ -43,6 +43,7 @@ public class DiskIndexWriter {
     private DB db; 
     private BTreeMap<String,Long> map;
     private DB kgramdb;
+    private BTreeMap<String,Long> KgramMap;
     private BTreeMap<String,Long> kGramMap;
    
     public DiskIndexWriter()
@@ -52,11 +53,17 @@ public class DiskIndexWriter {
 
     public DiskIndexWriter(String path)
     {
-        db = DBMaker.fileDB(path+"/theDB").make();
+    	db = DBMaker.fileDB(path+"/theDB").make();
         map = db.treeMap("map") .keySerializer(Serializer.STRING)
                                 .valueSerializer(Serializer.LONG)
                                 .createOrOpen();
-   
+
+        kgramdb=DBMaker.fileDB(path+"/KgramDB").make();
+        kGramMap=kgramdb.treeMap("kgrammap")
+                                    .keySerializer(Serializer.STRING)
+                                    .valueSerializer(Serializer.LONG)
+                                    .createOrOpen();
+
     }
     public DB getDb() {
         return db;
@@ -70,16 +77,7 @@ public class DiskIndexWriter {
     {
         //the list of 8 byte integer values consisting of byte positions where
         //start of postings list occurs in postings.bin
-        db = DBMaker.fileDB(path+"/theDB").make();
-        //..make a b+ tree using BTreeMap
-         BTreeMap<String, Long> map = db.treeMap("map")
-                                    .keySerializer(Serializer.STRING)
-                                    .valueSerializer(Serializer.LONG)
-                                    .createOrOpen();
-         // Map the frequency of terms appearing
-        // Map<Integer, Map<String,Integer>> mapForCalculation = new HashMap<>();
-         
-           
+       
         
         
         //..make a b+ tree using BTreeMap       
@@ -88,7 +86,7 @@ public class DiskIndexWriter {
             DataOutputStream out = 
                     new DataOutputStream(
                     new BufferedOutputStream(
-                    new FileOutputStream(path.toString() + "/index/postings.bin")));
+                    new FileOutputStream(path.toString() + "/postings.bin")));
             
             //int previousId = 0;
             for(String term : index.getVocabulary())
@@ -99,8 +97,8 @@ public class DiskIndexWriter {
                 //get dft and write to disk
                 int dft = postingObjs.size();               
                 
-                // long postingsByteBegin = out.size();
-                // map.put(term, postingsByteBegin);
+                long postingsByteBegin = out.size();
+                map.put(term, postingsByteBegin);
                 out.writeInt(dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
@@ -128,15 +126,15 @@ public class DiskIndexWriter {
                  
                     //System.out.println("id gap "+idGap);
                     //set the previous id as current id for next gap
-                    //   previousId = postingObjs.get(i).getDocumentId();
+                     previousId = postingObjs.get(i).getDocumentId();
                     
                     List<Integer> positions = postingObjs.get(i).getPositions();
                     
                     //get and write tftd to disk
                     int tftd = positions.size();                   
                     out.writeInt(tftd);
-                    System.out.println("tftd "+tftd);
-                    
+                    //System.out.println("tftd "+tftd);
+
                     int previousPos = 0;
 
                     for(int j = 0; j < tftd; j++)
@@ -144,7 +142,9 @@ public class DiskIndexWriter {
                         int positionGap = positions.get(j) 
                                         - previousPos;
                         out.writeInt(positionGap);
-                        System.out.println("position gap " + positionGap);
+
+                        //System.out.println("position gap " + positionGap);
+
                         previousPos = positions.get(j);
                     }
                 }             
@@ -158,7 +158,6 @@ public class DiskIndexWriter {
         }
         
         weightWriter(index,path);
-       // return map;
     }
             
     
@@ -176,7 +175,7 @@ public class DiskIndexWriter {
     	
     	try {
     		
-    		if(!file.createNewFile())
+    		if(file.exists())
     		{
     			file.delete();
     			file.createNewFile();
@@ -212,10 +211,12 @@ public class DiskIndexWriter {
     
     
     public void writeKgramIndex(KGramIndex kgramIndex,Path path) throws FileNotFoundException, IOException {
+    	
+    	File file = new File(path.toString() + "\\Kgrampostings.bin");
         DataOutputStream out = 
                     new DataOutputStream(
                     new BufferedOutputStream(
-                    new FileOutputStream(path.toString() + "/Kgrampostings.bin")));
+                    new FileOutputStream(file)));
         
         List<String> vocab=kgramIndex.getVocab();
         for(String s: vocab)
@@ -233,47 +234,19 @@ public class DiskIndexWriter {
                 
             }
         }
-        //System.out.println(out.size()+"SIZE ");
-       // kgramdb.close();
         out.close();
-        //kgramIndex.print();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        System.out.println();
-        //System.out.print(path);
-//        RandomAccessFile file=new RandomAccessFile(path.toString()+"/Kgrampostings.bin","r");
-//        file.seek(0);
-//        //System.out.print(file.length());
-//        
-//        for(Object s : KgramMap.keySet())
-//        {
-//            System.out.print(s+"  ->  ");
-//            //System.out.println(s+"->"+KgramMap.get(s));
-//            file.seek(KgramMap.get(s));
-//            int postings=file.readInt();
-//            //System.out.println(postings);
-//            for(int i=0;i<postings;i++)
-//            {
-//                int size=file.readInt();
-//                byte[] b=new byte[size];
-//                file.read(b);
-//                
-//                System.out.print(new String(b,StandardCharsets.UTF_8)+" ,");
-//                
-//            }
-//            System.out.println();
-            
-        
-        //file.close();
+
         kgramdb.close();
         
     }
     
-    public void DeleteBinFile(String path)throws FileNotFoundException, IOException
+    public void DeleteBinFiles(String path)throws FileNotFoundException, IOException
     {
-		Files.deleteIfExists(Paths.get(path+ "\\index\\postings.bin").toAbsolutePath());
+		Files.deleteIfExists(Paths.get(path+ "\\postings.bin").toAbsolutePath());
     }
-    
+    public void DeleteKgramBinFiles(String path)throws FileNotFoundException, IOException
+    {
+		Files.deleteIfExists(Paths.get(path+ "\\Kgrampostings.bin").toAbsolutePath());
+
+    }
 }

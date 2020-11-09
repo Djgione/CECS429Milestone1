@@ -18,7 +18,7 @@ public interface Index {
 	
 	void setDocumentValuesModel(DocumentValuesModel model);
 	DocumentValuesModel getDocumentValuesModel();
-	int getDocCount();
+	//int getDocCount();
 	/**
 	 * Retrieves a list of all postings
 	 * @return

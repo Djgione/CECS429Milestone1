@@ -114,7 +114,7 @@ public class MyGUIProgram extends Frame{
             			 {
             				 di.closeandDeleteDB(textFieldPath.getText());
             		         try {
-    					 		dW.DeleteBinFile(textFieldPath.getText());
+    					 		dW.DeleteBinFiles(textFieldPath.getText());
     					 	 } catch (FileNotFoundException e1) {
     					 		// TODO Auto-generated catch block
     					 		e1.printStackTrace();
@@ -264,7 +264,7 @@ public class MyGUIProgram extends Frame{
                         indexer = null;
                         di.closeandDeleteDB(textFieldPath.getText());
 	       		        try {
-					 		dW.DeleteBinFile(textFieldPath.getText());
+					 		dW.DeleteBinFiles(textFieldPath.getText());
 					    } catch (FileNotFoundException e1) {
 					 		// TODO Auto-generated catch block
 					 		e1.printStackTrace();
@@ -298,7 +298,7 @@ public class MyGUIProgram extends Frame{
                        indexer = null;
                        di.closeandDeleteDB(textFieldPath.getText());
 	       		        try {
-					 		dW.DeleteBinFile(textFieldPath.getText());
+					 		dW.DeleteBinFiles(textFieldPath.getText());
 					    } catch (FileNotFoundException e1) {
 					 		// TODO Auto-generated catch block
 					 		e1.printStackTrace();

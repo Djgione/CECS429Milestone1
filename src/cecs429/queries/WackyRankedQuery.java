@@ -20,8 +20,8 @@ private PriorityQueue<Accumulator> queue;
 	
 	public WackyRankedQuery()
 	{
-		queue = new PriorityQueue<>(10,new AccumulatorComparator());
-		
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+		queue.clear();
 	}
 	@Override
 	public List<Accumulator> query(List<String> terms, Index index) {
@@ -32,7 +32,7 @@ private PriorityQueue<Accumulator> queue;
 				//Null check
 				if(terms.size() == 0)
 					return results;
-				int maxDocs = index.getPostings().size();		
+				int maxDocs = index.getDocumentValuesModel().getDocLengths().size();	
 				
 				Map<Integer,Double> accList = new HashMap<>();
 				//ForEach term t in query
@@ -42,9 +42,15 @@ private PriorityQueue<Accumulator> queue;
 									
 					List<Posting> postingForTerm = index.getPostings(term);
 					
+					if(postingForTerm.size() == 0)
+						continue;
+//					System.out.println("PostingForTermSize: " + postingForTerm.size());
+//					System.out.println("Max doc - postingForTermSize: " + (maxDocs - postingForTerm.size()));
+//					System.out.println("Whole log: " + Math.log( (maxDocs - postingForTerm.size() ) / postingForTerm.size() ) );
 					double wqt = Math.max(0, Math.log( (maxDocs - postingForTerm.size() ) / postingForTerm.size() ) );
-					
-					
+//					System.out.println("wqt: " + wqt);
+//					
+//					System.out.println();
 					
 					// ForEach doc d in postings of t
 					for(Posting p : postingForTerm)
@@ -66,7 +72,8 @@ private PriorityQueue<Accumulator> queue;
 
 				}
 				
-				
+				if(accList.size() == 0)
+					return results;
 				for(Entry<Integer,Double> e : accList.entrySet())
 				{
 					queue.add(
