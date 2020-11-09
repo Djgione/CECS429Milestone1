@@ -45,8 +45,8 @@ public class DiskInvertedIndex implements Index{
                                .valueSerializer(Serializer.LONG)
                                .createOrOpen();
 
-        file=new RandomAccessFile(path+"/index/postings.bin","r");       
-        weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
+           
+        weightsFile = new RandomAccessFile(path+"/docWeights.bin","r");
         readFromDocWeights();
         file=new RandomAccessFile(path+"/postings.bin","r");  
 
