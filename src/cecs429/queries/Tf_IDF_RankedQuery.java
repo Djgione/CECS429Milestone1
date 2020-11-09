@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.PriorityQueue;
-import java.util.TreeMap;
 
 import cecs429.index.Index;
 import cecs429.index.Posting;
@@ -14,34 +13,34 @@ import cecs429.text.Constants;
 import cecs429.weights.Accumulator;
 import cecs429.weights.AccumulatorComparator;
 
-public class DefaultRankedQuery implements IRankedQuery {
+public class Tf_IDF_RankedQuery implements IRankedQuery {
 
 	private PriorityQueue<Accumulator> queue;
 	
-	public DefaultRankedQuery()
+	public Tf_IDF_RankedQuery()
 	{
-		queue = new PriorityQueue<>(10, new AccumulatorComparator());
+		queue = new PriorityQueue<>(10,new AccumulatorComparator());
+		
 	}
-	
 	@Override
 	public List<Accumulator> query(List<String> terms, Index index) {
 		// TODO Auto-generated method stub
-		List<Accumulator> results = new ArrayList<>();
+List<Accumulator> results = new ArrayList<>();
 		
 		//Null check
 		if(terms.size() == 0)
 			return results;
-		int maxDocs = index.getPostings().size();		
 		
+		int maxDocs = index.getPostings().size();	
 		Map<Integer,Double> accList = new HashMap<>();
 		//ForEach term t in query
 		for(String term : terms)
 		{
 			
-							
+								
 			List<Posting> postingForTerm = index.getPostings(term);
 			
-			double wqt = Math.log(1 + (maxDocs /postingForTerm.size()));
+			double wqt = Math.log(maxDocs /postingForTerm.size());
 			
 			
 			
@@ -49,7 +48,7 @@ public class DefaultRankedQuery implements IRankedQuery {
 			for(Posting p : postingForTerm)
 			{
 				
-				double wdt = 1 + Math.log(p.getPositions().size());
+				double wdt = p.getPositions().size();
 				if(accList.containsKey(p.getDocumentId())) 
 				{
 					accList.computeIfPresent(p.getDocumentId(), (key,value) -> value + (wqt * wdt) );
@@ -79,6 +78,5 @@ public class DefaultRankedQuery implements IRankedQuery {
 		
 		return results;
 	}
-
 
 }

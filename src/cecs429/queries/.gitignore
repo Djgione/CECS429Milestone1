@@ -10,3 +10,7 @@
 /WildcardLiteral.class
 /IRankedQuery.class
 /DefaultRankedQuery.class
+/Tf_IDF_RankedQuery.class
+/Okapi_BM25_RankedQuery.class
+/WackyRankedQuery.class
+/WackyRankedQuer.class

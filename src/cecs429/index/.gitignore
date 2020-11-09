@@ -4,3 +4,7 @@
 /PositionalInvertedIndex.class
 /Posting.class
 /DiskInvertedIndex.class
+/DiskKgramIndex.class
+/SpellingCorrector$Comp.class
+/SpellingCorrector$Pair.class
+/SpellingCorrector.class
