@@ -151,7 +151,9 @@ public class Indexer {
 			{
 				
 				docLength++;
-				noDupes.add(str.toLowerCase());
+				TokenProcessor basicProc = new BasicTokenProcessor();
+				
+				noDupes.add(basicProc.processToken(str).get(0));
 				//System.out.print(str);
 				for(String s: processor.processToken(str))
 				{
@@ -192,6 +194,7 @@ public class Indexer {
 		for(String s: noDupes)
 		{
 			kgramindex.addTerm(s, 0, 0);
+			//System.out.print(s);
 		}
 		
 		System.out.println(mapForCalculation.size());
@@ -255,22 +258,27 @@ public class Indexer {
 		for(String s : queryTerms)
 		{
 			formattedTerms.add(proc.processToken(s).get(0));
+			//System.out.println(proc.processToken(s).get(0));
 		}
 		
 		queryResults = rankedQuery.query(formattedTerms, diskIndex);
-		
-		for(Accumulator acc : queryResults)
-		{
-			StringBuilder s = new StringBuilder();
-			s.append("Title: ");
-			s.append(corpus.getDocument(acc.getDocId()).getTitle());
-			s.append(" | Accumulator Value : ");
-			s.append(acc.getaValue());
+		System.out.println(queryResults.size());
+		if(queryResults.size() != 0) {
+			for(Accumulator acc : queryResults)
+			{
+				if(acc == null)
+					continue;
+				StringBuilder s = new StringBuilder();
+				s.append("Title: ");
+				System.out.println(acc.getDocId());
+				s.append(corpus.getDocument(acc.getDocId()).getTitle());
+				s.append(" | Accumulator Value : ");
+				s.append(acc.getaValue());
+				
+				methodResults.add(s.toString());
+			}
 			
-			methodResults.add(s.toString());
 		}
-		
-		
 		return methodResults;
 	}
 
@@ -335,5 +343,10 @@ public class Indexer {
 		}
 		
 		return averageTFDResults;
+	}
+	
+	public void setDiskIndex(Index index)
+	{
+		diskIndex = index;
 	}
 }

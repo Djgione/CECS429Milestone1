@@ -139,12 +139,12 @@ public class PositionalInvertedIndex implements Index {
 		// TODO Auto-generated method stub
 		return model;
 	}
-
-	@Override
-	public int getDocCount() {
-		// TODO Auto-generated method stub
-		return maxDoc;
-	}
+//
+//	@Override
+//	public int getDocCount() {
+//		// TODO Auto-generated method stub
+//		return maxDoc;
+//	}
 
 	
 

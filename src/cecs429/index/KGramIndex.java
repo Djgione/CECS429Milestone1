@@ -72,8 +72,13 @@ public class KGramIndex {
 	}
     public List<String> getVocab()
     {
-       return List.copyOf(kGramIndex.keySet());
-       
+       List<String> list = new ArrayList<>();
+       for(String s :kGramIndex.keySet())
+       {
+    	   list.add(s);
+    	   System.out.print(s);
+       }
+       return list;
     }
        
    

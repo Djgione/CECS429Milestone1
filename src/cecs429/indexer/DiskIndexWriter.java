@@ -70,12 +70,12 @@ public class DiskIndexWriter {
     {
         //the list of 8 byte integer values consisting of byte positions where
         //start of postings list occurs in postings.bin
-        db = DBMaker.fileDB(path+"/theDB").make();
+
         //..make a b+ tree using BTreeMap
-         BTreeMap<String, Long> map = db.treeMap("map")
-                                    .keySerializer(Serializer.STRING)
-                                    .valueSerializer(Serializer.LONG)
-                                    .createOrOpen();
+//         BTreeMap<String, Long> map = db.treeMap("map")
+//                                    .keySerializer(Serializer.STRING)
+//                                    .valueSerializer(Serializer.LONG)
+//                                    .createOrOpen();
          // Map the frequency of terms appearing
         // Map<Integer, Map<String,Integer>> mapForCalculation = new HashMap<>();
          
@@ -135,7 +135,7 @@ public class DiskIndexWriter {
                     //get and write tftd to disk
                     int tftd = positions.size();                   
                     out.writeInt(tftd);
-                    System.out.println("tftd "+tftd);
+                    //System.out.println("tftd "+tftd);
                     
                     int previousPos = 0;
 
@@ -144,7 +144,7 @@ public class DiskIndexWriter {
                         int positionGap = positions.get(j) 
                                         - previousPos;
                         out.writeInt(positionGap);
-                        System.out.println("position gap " + positionGap);
+                       //System.out.println("position gap " + positionGap);
                         previousPos = positions.get(j);
                     }
                 }             
@@ -158,6 +158,13 @@ public class DiskIndexWriter {
         }
         
         weightWriter(index,path);
+        try {
+        //writeKgramIndex(index.getIndex(),path);
+        }
+        catch(Exception e)
+        {
+        	e.printStackTrace();
+        }
        // return map;
     }
             
@@ -212,10 +219,12 @@ public class DiskIndexWriter {
     
     
     public void writeKgramIndex(KGramIndex kgramIndex,Path path) throws FileNotFoundException, IOException {
+    	
+    	File file = new File(path.toString() + "\\Kgrampostings.bin");
         DataOutputStream out = 
                     new DataOutputStream(
                     new BufferedOutputStream(
-                    new FileOutputStream(path.toString() + "/Kgrampostings.bin")));
+                    new FileOutputStream(file)));
         
         List<String> vocab=kgramIndex.getVocab();
         for(String s: vocab)
@@ -267,6 +276,7 @@ public class DiskIndexWriter {
             
         
         //file.close();
+        
         kgramdb.close();
         
     }

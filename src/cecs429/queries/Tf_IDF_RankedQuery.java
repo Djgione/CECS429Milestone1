@@ -19,7 +19,8 @@ public class Tf_IDF_RankedQuery implements IRankedQuery {
 	
 	public Tf_IDF_RankedQuery()
 	{
-		queue = new PriorityQueue<>(10,new AccumulatorComparator());
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+
 		
 	}
 	@Override
@@ -31,7 +32,7 @@ List<Accumulator> results = new ArrayList<>();
 		if(terms.size() == 0)
 			return results;
 		
-		int maxDocs = index.getPostings().size();	
+		int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
 		Map<Integer,Double> accList = new HashMap<>();
 		//ForEach term t in query
 		for(String term : terms)
@@ -39,6 +40,9 @@ List<Accumulator> results = new ArrayList<>();
 			
 								
 			List<Posting> postingForTerm = index.getPostings(term);
+			
+			if(postingForTerm.size() == 0)
+				continue;
 			
 			double wqt = Math.log(maxDocs /postingForTerm.size());
 			
@@ -60,7 +64,8 @@ List<Accumulator> results = new ArrayList<>();
 			}
 
 		}
-		
+		if(accList.size() == 0)
+			return results;
 		
 		for(Entry<Integer,Double> e : accList.entrySet())
 		{

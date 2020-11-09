@@ -18,8 +18,8 @@ private PriorityQueue<Accumulator> queue;
 	
 	public Okapi_BM25_RankedQuery()
 	{
-		queue = new PriorityQueue<>(10,new AccumulatorComparator());
-		
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+		queue.clear();
 	}
 	
 	@Override
@@ -31,7 +31,7 @@ private PriorityQueue<Accumulator> queue;
 		//Null check
 		if(terms.size() == 0)
 			return results;
-		int maxDocs = index.getPostings().size();	
+		int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
 		
 		Map<Integer,Double> accList = new HashMap<>();
 		//ForEach term t in query
@@ -40,6 +40,10 @@ private PriorityQueue<Accumulator> queue;
 			
 								
 			List<Posting> postingForTerm = index.getPostings(term);
+			
+			
+			if(postingForTerm.size() == 0)
+				continue;
 			
 			double wqt = Math.max(0.1, Math.log(
 					( maxDocs - postingForTerm.size() +.5) /
@@ -73,6 +77,8 @@ private PriorityQueue<Accumulator> queue;
 
 		}
 		
+		if(accList.size() == 0)
+			return results;
 		
 		for(Entry<Integer,Double> e : accList.entrySet())
 		{
