@@ -17,7 +17,10 @@ import cecs429.queries.BiWordQuery;
 import cecs429.queries.BooleanQueryParser;
 import cecs429.queries.DefaultRankedQuery;
 import cecs429.queries.IRankedQuery;
+import cecs429.queries.Okapi_BM25_RankedQuery;
 import cecs429.queries.Query;
+import cecs429.queries.Tf_IDF_RankedQuery;
+import cecs429.queries.WackyRankedQuery;
 import cecs429.queries.WildcardLiteral;
 import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenStream;
@@ -28,7 +31,7 @@ import cecs429.weights.Accumulator;
 import cecs429.weights.DefaultDocumentWeightCalculator;
 import cecs429.weights.DocumentValuesModel;
 import cecs429.weights.IDocumentWeightCalculator;
-import cecs429.weights.Tf_Idf_DocumentWeightCalculator;
+import cecs429.weights.*;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -37,6 +40,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import cecs429.text.Constants;
 
 /**
  *
@@ -62,8 +66,26 @@ public class Indexer {
 		parser= new BooleanQueryParser();
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
-		calculator = new DefaultDocumentWeightCalculator();
-		rankedQuery = new DefaultRankedQuery();
+		
+		switch(Constants.RANK_CONFIG) {
+		case 0: 
+			calculator = new DefaultDocumentWeightCalculator();
+			rankedQuery = new DefaultRankedQuery();
+		case 1:
+			calculator = new TfIdfDocumentWeightCalculator();
+			rankedQuery = new Tf_IDF_RankedQuery();
+		case 2:
+			calculator = new Okapi_BM25_DocumentWeightCalculator();
+			rankedQuery = new Okapi_BM25_RankedQuery();
+		case 3:
+			calculator = new WackyDocumentWeightCalculator();
+			rankedQuery = new WackyRankedQuery();
+		default:
+			calculator = new DefaultDocumentWeightCalculator();
+			rankedQuery = new DefaultRankedQuery();
+			
+		}
+
 		
 		if(extension.equals("json"))
 		{

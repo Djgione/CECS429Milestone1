@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class Tf_Idf_DocumentWeightCalculator implements IDocumentWeightCalculator {
+public class TfIdfDocumentWeightCalculator implements IDocumentWeightCalculator {
 
-	public Tf_Idf_DocumentWeightCalculator() {
-		super();
+
+	public TfIdfDocumentWeightCalculator()
+	{
 		
 	}
 

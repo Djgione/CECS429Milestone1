@@ -1,12 +1,10 @@
 package cecs429.queries;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.PriorityQueue;
-import java.util.TreeMap;
+import java.util.Map.Entry;
 
 import cecs429.index.Index;
 import cecs429.index.Posting;
@@ -14,42 +12,55 @@ import cecs429.text.Constants;
 import cecs429.weights.Accumulator;
 import cecs429.weights.AccumulatorComparator;
 
-public class DefaultRankedQuery implements IRankedQuery {
+public class Okapi_BM25_RankedQuery implements IRankedQuery{
 
-	private PriorityQueue<Accumulator> queue;
+private PriorityQueue<Accumulator> queue;
 	
-	public DefaultRankedQuery()
+	public Okapi_BM25_RankedQuery()
 	{
-		queue = new PriorityQueue<>(10, new AccumulatorComparator());
+		queue = new PriorityQueue<>(10,new AccumulatorComparator());
+		
 	}
 	
 	@Override
 	public List<Accumulator> query(List<String> terms, Index index) {
 		// TODO Auto-generated method stub
+
 		List<Accumulator> results = new ArrayList<>();
 		
 		//Null check
 		if(terms.size() == 0)
 			return results;
-		int maxDocs = index.getPostings().size();		
+		int maxDocs = index.getPostings().size();	
 		
 		Map<Integer,Double> accList = new HashMap<>();
 		//ForEach term t in query
 		for(String term : terms)
 		{
 			
-							
+								
 			List<Posting> postingForTerm = index.getPostings(term);
 			
-			double wqt = Math.log(1 + (maxDocs /postingForTerm.size()));
+			double wqt = Math.max(0.1, Math.log(
+					( maxDocs - postingForTerm.size() +.5) /
+						(postingForTerm.size() +.5 ) 
+							) 
+								);
 			
 			
 			
 			// ForEach doc d in postings of t
 			for(Posting p : postingForTerm)
 			{
-				
-				double wdt = 1 + Math.log(p.getPositions().size());
+				int totalLength = 0;
+				for(Integer i : index.getDocumentValuesModel().getDocLengths())
+				{
+					totalLength+= i;
+				}
+				int docLength = index.getDocumentValuesModel().getDocLengths().get(p.getDocumentId());
+				double wdt = (2.2 - p.getPositions().size()) / (
+						(1.2) * (.25 + (.75 * (docLength/totalLength)  ) + p.getPositions().size())
+							);
 				if(accList.containsKey(p.getDocumentId())) 
 				{
 					accList.computeIfPresent(p.getDocumentId(), (key,value) -> value + (wqt * wdt) );
@@ -79,6 +90,5 @@ public class DefaultRankedQuery implements IRankedQuery {
 		
 		return results;
 	}
-
 
 }
