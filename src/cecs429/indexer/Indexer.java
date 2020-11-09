@@ -47,6 +47,7 @@ import cecs429.text.Constants;
  * @author kabir
  */
 public class Indexer {
+
 	private DocumentCorpus corpus;
 	private Index index;
 	private Index diskIndex;
@@ -236,6 +237,7 @@ public class Indexer {
 	}
 	//Omar added this
 	public Index getIndex() {return index;}
+    public KGramIndex getKgramIndex(){return kgramindex;}
 
 	public List<String> getVocab1000()
 	{
@@ -333,6 +335,7 @@ public class Indexer {
 		}
 		return result;
 	}
+
 
 	
 	private List<Double> calculateAverageTFDs(Map<Integer,Map<String,Integer>> map, List<Integer> lengths)

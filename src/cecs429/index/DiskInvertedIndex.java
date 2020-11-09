@@ -23,7 +23,6 @@ import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
-
 import cecs429.weights.DocumentValuesModel;
 
 /**
@@ -45,9 +44,12 @@ public class DiskInvertedIndex implements Index{
         map = db.treeMap("map").keySerializer(Serializer.STRING)
                                .valueSerializer(Serializer.LONG)
                                .createOrOpen();
+
         file=new RandomAccessFile(path+"/index/postings.bin","r");       
         weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
         readFromDocWeights();
+        file=new RandomAccessFile(path+"/postings.bin","r");  
+
     }
 
     /**
@@ -92,9 +94,11 @@ public class DiskInvertedIndex implements Index{
         
         try 
         {
+        	System.out.println("getVocabulary().size()" + getVocabulary().size());
         	for(int count = 0; count < getVocabulary().size(); count++)
         	{
         		int dft=file.readInt();
+        		System.out.println(dft);
                 int docId=0;
                 for(int i=0;i<dft;i++)
                 {
@@ -230,6 +234,7 @@ public class DiskInvertedIndex implements Index{
 		}
     	   	
 		DocumentValuesModel tempModel = new DocumentValuesModel(documentBytes,documentLengths,documentAverageTFDs,documentWeights);
+
     	// Sets the values gathered from docWeights.bin to the diskInvertedIndex
     
 		setDocumentValuesModel(tempModel);
