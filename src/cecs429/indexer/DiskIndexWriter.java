@@ -243,11 +243,12 @@ public class DiskIndexWriter {
     public void DeleteBinFiles(String path)throws FileNotFoundException, IOException
     {
 		Files.deleteIfExists(Paths.get(path+ "\\postings.bin").toAbsolutePath());
+		Files.deleteIfExists(Paths.get(path+ "\\docWeights.bin").toAbsolutePath());
+
     }
     public void DeleteKgramBinFiles(String path)throws FileNotFoundException, IOException
     {
 		Files.deleteIfExists(Paths.get(path+ "\\Kgrampostings.bin").toAbsolutePath());
-		Files.deleteIfExists(Paths.get(path+ "\\docweights.bin").toAbsolutePath());
 
     }
 }
