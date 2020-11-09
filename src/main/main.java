@@ -21,17 +21,37 @@ import org.mapdb.BTreeMap;
  *
  * @author Kermite
  */
+
+
+/**
+ * 
+ * Path List
+ * 
+ * "C:\\Users\\Kermite\\Documents\\NetBeansProjects\\HW5.0\\src\\corpus"
+ * "C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\src\\corpus"
+ * 
+ * Parks
+ * "C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\src\\Parks10"
+ * "C:\\Users\\Kermite\\Documents\\NetBeansProjects\\HW5.0\\src\\Parks10"
+ * @author Daniel
+ *
+ */
+
 public class main {
     public static void main(String[] args) throws IOException, Exception 
     {
         System.out.println("Building index...");
         
+
         String path="C:\\Users\\Kermite\\CECS429Milestone1\\src\\corpus\\index";
+
         
         Indexer indexer = new Indexer(Paths.get(path).toAbsolutePath(),"txt");
         //indexer.getIndex().print();
         System.out.println("\n...index built\n\n");
         DiskIndexWriter diskWriter = new DiskIndexWriter(path);
+
+        
        diskWriter.writeIndex(indexer.getIndex(),Paths.get(path).toAbsolutePath());
        diskWriter.writeKgramIndex(indexer.getKgramIndex(),Paths.get(path).toAbsolutePath());
 
@@ -52,6 +72,15 @@ public class main {
         SpellingCorrector sp= new SpellingCorrector(dki,di);
         System.out.print(sp.calculateJacard("gosling", sp.makegrams("$gost$")));
         sp.checkFor("bst");
+        indexer.setDiskIndex(di);
+        
+        List<String> results = indexer.rankedQuery("it is the");
+        
+        for(String s : results)
+        {
+        	System.out.println(s);
+        }
+
         di.closeandDeleteDB(path);
         diskWriter.DeleteBinFiles(path);
         dki.closeandDeleteDB(path);

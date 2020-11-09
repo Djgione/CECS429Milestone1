@@ -6,6 +6,7 @@
 package cecs429.index;
 
 import java.io.DataInputStream;
+import java.io.EOFException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -15,12 +16,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
+import cecs429.weights.DocumentValuesModel;
 
 /**
  *
@@ -31,6 +34,9 @@ public class DiskInvertedIndex implements Index{
     private DB db; 
     private BTreeMap <String,Long> map;
     RandomAccessFile file;
+    RandomAccessFile weightsFile;
+    private DocumentValuesModel model;
+    //private int docCount;
     
     public DiskInvertedIndex(String path) throws FileNotFoundException, IOException
     {
@@ -38,8 +44,12 @@ public class DiskInvertedIndex implements Index{
         map = db.treeMap("map").keySerializer(Serializer.STRING)
                                .valueSerializer(Serializer.LONG)
                                .createOrOpen();
+
+        file=new RandomAccessFile(path+"/index/postings.bin","r");       
+        weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
+        readFromDocWeights();
         file=new RandomAccessFile(path+"/postings.bin","r");  
-        
+
     }
 
     /**
@@ -55,6 +65,7 @@ public class DiskInvertedIndex implements Index{
         try {
             file.seek(map.get(term));
             int dft=file.readInt();
+            //System.out.println(dft);
             int docId=0;
             for(int i=0;i<dft;i++)
             {
@@ -72,12 +83,15 @@ public class DiskInvertedIndex implements Index{
         } catch (IOException ex) {
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
         }           
+        
+       
         return answer;
     }
 
     @Override
     public List<Posting> getPostings() {
         List<Posting> answer=new ArrayList();
+        
         try 
         {
         	System.out.println("getVocabulary().size()" + getVocabulary().size());
@@ -178,5 +192,68 @@ public class DiskInvertedIndex implements Index{
         }
         return ids;
     }
+    
+    /**
+     * Reads all values for the doc weight calculations from the 
+     */
+    public void readFromDocWeights()
+    {
+    	//Initialization of temporary storage
+    	List<Double> documentWeights = new ArrayList<>();
+    	List<Integer> documentLengths = new ArrayList<>();
+    	List<Long> documentBytes = new ArrayList<>();
+    	List<Double> documentAverageTFDs = new ArrayList<>();
+    	
+		try {
+			while(weightsFile.getFilePointer() != weightsFile.length())
+			{
+				documentWeights.add(weightsFile.readDouble());
+				documentAverageTFDs.add(weightsFile.readDouble());
+				documentLengths.add(weightsFile.readInt());
+				documentBytes.add(weightsFile.readLong());
+			}
+			
+			
+//			for(int i = 0; i < documentWeights.size(); i++) {
+//				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
+//				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
+//			}
+			
+		}
+		catch(EOFException ex)
+		{
+			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
+		}
+		catch(IOException ex)
+		{
+			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
+		}
+		catch(Exception ex)
+		{
+			
+		}
+    	   	
+		DocumentValuesModel tempModel = new DocumentValuesModel(documentBytes,documentLengths,documentAverageTFDs,documentWeights);
+
+    	// Sets the values gathered from docWeights.bin to the diskInvertedIndex
+    
+		setDocumentValuesModel(tempModel);
+    }
+
+	@Override
+	public void setDocumentValuesModel(DocumentValuesModel model) {
+		this.model = model;
+		
+	}
+
+	@Override
+	public DocumentValuesModel getDocumentValuesModel() {
+		// TODO Auto-generated method stub
+		return model;
+	}
+
+
+	
+
     
 }
