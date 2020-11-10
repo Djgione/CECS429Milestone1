@@ -359,4 +359,7 @@ public class Indexer {
 	{
 		diskIndex = index;
 	}
+	public KGramIndex getKgramIndex() {
+        	return kgramindex;
+	}
 }
