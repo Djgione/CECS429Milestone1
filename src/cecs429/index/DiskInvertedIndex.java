@@ -47,7 +47,7 @@ public class DiskInvertedIndex implements Index{
         map = db.treeMap("map").keySerializer(Serializer.STRING)
                                .valueSerializer(Serializer.LONG)
                                .createOrOpen();
-        file=new RandomAccessFile(path+"/index/postings.bin","r");       
+        file=new RandomAccessFile(path+"/postings.bin","r");       
         weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
         readFromDocWeights();
     }
