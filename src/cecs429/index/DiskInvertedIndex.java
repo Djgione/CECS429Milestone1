@@ -178,14 +178,10 @@ public class DiskInvertedIndex implements Index{
                 if(i==0)ids.add(file.readInt());
                 else ids.add(file.readInt()+ids.get(ids.size()-1));
                 int tftd=file.readInt();
-                for(int j=0;j<tftd;j++)
-                {
-                    file.readInt();
-                }
-                //file.seek(address);
+                file.seek(file.getFilePointer()+(tftd*4));
             }
             
-        } catch (IOException ex) {
+        } catch (IOException ex) {file.seek(file.getFilePointer()+(tftd*4));
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;
