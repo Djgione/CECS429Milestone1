@@ -9,6 +9,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +29,7 @@ public class DiskKgramIndex {
     RandomAccessFile file;
     public DiskKgramIndex(String path) throws FileNotFoundException
     {
-        db = DBMaker.fileDB(path+"/KgramDB").make();
+        db = DBMaker.fileDB(path+"\\KgramDB").make();
         map = db.treeMap("kgrammap")
                                     .keySerializer(Serializer.STRING)
                                     .valueSerializer(Serializer.LONG)
@@ -49,5 +51,19 @@ public class DiskKgramIndex {
         }
         
         return list;
+    }
+    
+    public void closeandDeleteDB(String path)
+    {
+
+    	db.close();
+    	try {
+            file.close();
+
+			Files.deleteIfExists(Paths.get(path+ "\\KgramDB").toAbsolutePath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

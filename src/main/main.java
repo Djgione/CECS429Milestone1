@@ -45,51 +45,49 @@ public class main {
     {
         System.out.println("Building index...");
         
-        String path="C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\src\\corpus";
+
+        String path="C:\\Users\\Kermite\\CECS429Milestone1\\src\\corpus\\index";
+
         
         Indexer indexer = new Indexer(Paths.get(path).toAbsolutePath(),"txt");
         //indexer.getIndex().print();
         System.out.println("\n...index built\n\n");
         DiskIndexWriter diskWriter = new DiskIndexWriter(path);
-        
-        diskWriter.writeIndex(indexer.getIndex(),Paths.get(path).toAbsolutePath());
 
-        DiskInvertedIndex di=new DiskInvertedIndex(path);
-        indexer.setDiskIndex(di);
-//       List<String> vocab= di.getVocabulary();
-//       List<String> indexVocab = indexer.getVocabulary();
-//       System.out.println("vocab.size(): " + vocab.size());
-//
-//       System.out.println("indexer vocab size: " + indexVocab.size());
-//      List<Posting> postings = di.getPostings();
-//       for(int i = 0; i < vocab.size(); i++)
-//       {
-//           System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
-//           
-//       }
-        //DiskKgramIndex dki=new DiskKgramIndex(path+"/index");
-//      System.out.print("dki   "+dki.getPostings("bro"));
-      //SpellingCorrector sp= new SpellingCorrector(dki,di);
         
-//        List<String> vocab = di.getVocabulary();
-//        List<Posting> postings = di.getPostings("it");
-//        for(int i = 0; i < postings.size(); i++)
-//        {
-//        	System.out.println(vocab.get(i) + "=> " + postings.get(i).toString());
-//        }
-//        
+       diskWriter.writeIndex(indexer.getIndex(),Paths.get(path).toAbsolutePath());
+       diskWriter.writeKgramIndex(indexer.getKgramIndex(),Paths.get(path).toAbsolutePath());
+
+       DiskInvertedIndex di=new DiskInvertedIndex(path);
+       List<String> vocab= di.getVocabulary();
+       List<String> indexVocab = indexer.getVocabulary();
+       System.out.println("vocab.size(): " + vocab.size());
+
+       System.out.println("indexer vocab size: " + indexVocab.size());
+      List<Posting> postings = di.getPostings("it");
+       for(int i = 0; i < postings.size(); i++)
+       {
+           System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
+           
+       }
+        DiskKgramIndex dki=new DiskKgramIndex(path);
+        System.out.print("dki   "+dki.getPostings("bro"));
+        SpellingCorrector sp= new SpellingCorrector(dki,di);
+        System.out.print(sp.calculateJacard("gosling", sp.makegrams("$gost$")));
+        sp.checkFor("bst");
+        indexer.setDiskIndex(di);
+        
         List<String> results = indexer.rankedQuery("it is the");
         
         for(String s : results)
         {
         	System.out.println(s);
         }
-        
-        //System.out.print(sp.calculateJacard("gosling", sp.makegrams("$gost$")));
-        //sp.checkFor("bst");
-        di.closeandDeleteDB(path);
-        diskWriter.DeleteBinFile(path);
 
+        di.closeandDeleteDB(path);
+        diskWriter.DeleteBinFiles(path);
+        dki.closeandDeleteDB(path);
+        diskWriter.DeleteKgramBinFiles(path);
     }
 
 }
