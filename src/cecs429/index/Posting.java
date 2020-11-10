@@ -36,4 +36,23 @@ public class Posting {
 		return mPositions;
 	}
 	
+	@Override
+	public String toString()
+	{
+		String posting = "(";
+		
+		posting += mDocumentId + " [";
+		
+		
+		for(int position : getPositions())
+		{
+			posting += position;
+			posting += " ";
+		}
+		posting += "])";
+		
+		return posting;
+		
+	}
+	
 }

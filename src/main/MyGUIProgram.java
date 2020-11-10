@@ -2,15 +2,22 @@ package main;
 
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
+import cecs429.index.DiskInvertedIndex;
 import cecs429.index.Posting;
 import java.awt.*;
+
+import cecs429.indexer.DiskIndexWriter;
 import cecs429.indexer.Indexer;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import javax.swing.BoxLayout;
@@ -26,29 +33,116 @@ import javax.swing.JTextArea;
 import org.tartarus.snowball.SnowballStemmer;
 
 
+
 public class MyGUIProgram extends Frame{
         String queryOption = ""; 
         String corpType;
-        static Indexer index = null;
+        String milestone;
+        Boolean queryDiskIndex = false;
+        static Indexer indexer = null;
+        DiskIndexWriter dW = null;
+        DiskInvertedIndex di = null;
         Frame f;
         Frame q;
+        Frame e;
         Label label;
         Label label2;
+        Label buildQuery_label = new Label();
         Button buildIndexButton;
+        Button buildOrQuery_button = new Button("GO");
         TextField textFieldPath;
         TextField querySearchField;
+        TextField buildOrQuery_textField;
         Button queryButton;
         List<Integer> docId; 
-        public void InitFrame()
+
+        public void BuildorQueryIndex()
         {
-            f= new Frame("Milestone 1");
+        	 e = new Frame("Milestone 2");
+        	
+        	 CheckboxGroup initCbg = new CheckboxGroup();  
+             Checkbox checkbox1 = new Checkbox("Build Index", initCbg,false);  
+             checkbox1.setBounds(100,100, 50,50);  
+             Checkbox checkbox2 = new Checkbox("Query Index", initCbg,false);  
+             checkbox2.setBounds(100,150, 50,50);  
+             textFieldPath = new TextField("Enter Corpus Path");
+             textFieldPath.setBounds(50,20, 200,30);  
+             textFieldPath.setLocation(150, 150);
+             checkbox1.addItemListener((ItemEvent e) -> {               
+            	 buildQuery_label.setText("Build new index");
+            	 queryDiskIndex = false;
+
+                 textFieldPath.setVisible(false);
+             });  
+             checkbox2.addItemListener((ItemEvent e) -> {
+            	 buildQuery_label.setText("Query existing index on disk");
+            	 queryDiskIndex = true;
+            	 textFieldPath.setVisible(true);
+             });
+             
+             e.add(checkbox1,BorderLayout.NORTH); 
+             e.add(checkbox2,BorderLayout.NORTH); 
+             e.add(buildQuery_label);  
+             e.add(textFieldPath,BorderLayout.SOUTH);
+             e.add(buildOrQuery_button,BorderLayout.AFTER_LAST_LINE);
+             e.setSize(400,400);  
+             e.setLayout(new BoxLayout(e, BoxLayout.Y_AXIS));
+             e.setVisible(true); 
+             
+             buildOrQuery_button.addMouseListener(new MouseAdapter() 
+             {
+            	 @Override
+            	 public void mousePressed(MouseEvent me) {
+            		 e.setVisible(false);
+            		 
+            		 if(queryDiskIndex)
+            		 {
+            			 try
+                		 {
+    						di = new DiskInvertedIndex(textFieldPath.getText());		
+    					 } catch (IOException e1) {
+    						// TODO Auto-generated catch block
+    						e1.printStackTrace();
+    					 }
+            			 
+            			 QueryFrame();
+            		 }
+            		 else
+            		 {
+            			 if(Files.exists(Paths.get(textFieldPath.getText() + "\\theDB").toAbsolutePath()) 
+    					 && Files.exists(Paths.get(textFieldPath.getText() + "\\index\\postings.bin").toAbsolutePath()))
+            			 {
+            				 di.closeandDeleteDB(textFieldPath.getText());
+            		         try {
+    					 		dW.DeleteBinFile(textFieldPath.getText());
+    					 	 } catch (FileNotFoundException e1) {
+    					 		// TODO Auto-generated catch block
+    					 		e1.printStackTrace();
+    					 	 } catch (IOException e1) {
+    					 		// TODO Auto-generated catch block
+    					 		e1.printStackTrace();
+    					  	 }
+            			 }
+            			
+        		         
+        		         BuildIndex();           		     
+            		 }
+            		 
+            	 }
+             });
+             
+        }
+        public void BuildIndex()
+        {
+            f= new Frame("Build Index");
             
             label = new Label();          
             label.setAlignment(Label.CENTER);  
             label.setSize(400,100);  
-            Checkbox checkbox1 = new Checkbox("json");  
+            CheckboxGroup initCbg = new CheckboxGroup();  
+            Checkbox checkbox1 = new Checkbox("json", initCbg,false);  
             checkbox1.setBounds(100,100, 50,50);  
-            Checkbox checkbox2 = new Checkbox("txt");  
+            Checkbox checkbox2 = new Checkbox("txt", initCbg,false);  
             checkbox2.setBounds(100,150, 50,50);  
             
             checkbox1.addItemListener((ItemEvent e) -> {               
@@ -73,9 +167,8 @@ public class MyGUIProgram extends Frame{
             f.setLayout(new BoxLayout(f, BoxLayout.Y_AXIS));
             f.setVisible(true); 
             
-            if(index == null){
-              
-
+            if(indexer == null)
+            {
                 buildIndexButton.addMouseListener(new MouseAdapter() 
                 { 
                    @Override
@@ -84,11 +177,13 @@ public class MyGUIProgram extends Frame{
                        long st = System.currentTimeMillis();
                 
                        System.out.println("textFieldPath.getText(): " + textFieldPath.getText());
-                       index = new Indexer(Paths.get(textFieldPath.getText()).toAbsolutePath(),corpType);
+                       indexer = new Indexer(Paths.get(textFieldPath.getText()).toAbsolutePath(),corpType);
                        long et = System.currentTimeMillis();
                        
                        long indexTime = (et - st);
                        label2 = new Label("Corpus Indexed in : " + indexTime + "ms");
+                       dW = new DiskIndexWriter(textFieldPath.getText());
+                       dW.writeIndex(indexer.getIndex(), Paths.get(textFieldPath.getText()).toAbsolutePath());
                        QueryFrame();
                    }  
                 });
@@ -99,16 +194,16 @@ public class MyGUIProgram extends Frame{
         {
             q = new Frame();        
             label.setAlignment(Label.CENTER); 
-
-            Checkbox checkbox1 = new Checkbox(":q");  
+            CheckboxGroup queryCbg = new CheckboxGroup();  
+            Checkbox checkbox1 = new Checkbox(":q",queryCbg, false);  
             checkbox1.setBounds(50,100, 25,25);  
-            Checkbox checkbox2 = new Checkbox(":stem");  
+            Checkbox checkbox2 = new Checkbox(":stem",queryCbg, false);  
             checkbox2.setBounds(50,105, 25,25);  
-            Checkbox checkbox3 = new Checkbox(":index");  
+            Checkbox checkbox3 = new Checkbox(":index",queryCbg, false);  
             checkbox3.setBounds(50,110, 25,25);  
-            Checkbox checkbox4 = new Checkbox(":vocab");  
+            Checkbox checkbox4 = new Checkbox(":vocab",queryCbg, false);  
             checkbox4.setBounds(50,115, 25,25);  
-            Checkbox checkbox5 = new Checkbox("srch");  
+            Checkbox checkbox5 = new Checkbox("srch",queryCbg, false);  
             checkbox5.setBounds(50,120, 25,50); 
 
              checkbox1.addItemListener(new ItemListener() {  
@@ -141,7 +236,7 @@ public class MyGUIProgram extends Frame{
                    queryOption = "srch";
                 }  
              });
-            querySearchField = new TextField("Enter Query Search");
+            querySearchField = new TextField("Enter Ranked Query Search");
             querySearchField.setBounds(50,20, 200,30);  
             querySearchField.setLocation(150, 150);
             queryButton = new Button("Query");
@@ -166,7 +261,17 @@ public class MyGUIProgram extends Frame{
                     if(queryOption.equals(":q")){
                         q.setVisible(false);
                         f.setVisible(true);
-                        index = null;
+                        indexer = null;
+                        di.closeandDeleteDB(textFieldPath.getText());
+	       		        try {
+					 		dW.DeleteBinFile(textFieldPath.getText());
+					    } catch (FileNotFoundException e1) {
+					 		// TODO Auto-generated catch block
+					 		e1.printStackTrace();
+					 	} catch (IOException e1) {
+					 		// TODO Auto-generated catch block
+					 		e1.printStackTrace();
+					  	}
                     }
                     else if(queryOption.equals(":stem"))
                     {
@@ -178,26 +283,36 @@ public class MyGUIProgram extends Frame{
                            stemmer.stem();
                            String stemmed = stemmer.getCurrent();
                            JOptionPane.showInputDialog(querySearchField.getText() + " -> " + stemmed, null);
-                   } catch (ClassNotFoundException ex) {
+                        } catch (ClassNotFoundException ex) {
                            Logger.getLogger(MyGUIProgram.class.getName()).log(Level.SEVERE, null, ex);
-                       } catch (InstantiationException ex) {
+                        } catch (InstantiationException ex) {
                            Logger.getLogger(MyGUIProgram.class.getName()).log(Level.SEVERE, null, ex);
-                       } catch (IllegalAccessException ex) {
+                        } catch (IllegalAccessException ex) {
                            Logger.getLogger(MyGUIProgram.class.getName()).log(Level.SEVERE, null, ex);
-                       }
+                        }
                    }
                    else if(queryOption.equals(":index")){
                        textFieldPath.setText(querySearchField.getText());
                        q.setVisible(false);
                        f.setVisible(true);
-                       index = null;
-
+                       indexer = null;
+                       di.closeandDeleteDB(textFieldPath.getText());
+	       		        try {
+					 		dW.DeleteBinFile(textFieldPath.getText());
+					    } catch (FileNotFoundException e1) {
+					 		// TODO Auto-generated catch block
+					 		e1.printStackTrace();
+					 	} catch (IOException e1) {
+					 		// TODO Auto-generated catch block
+					 		e1.printStackTrace();
+					  	}
+                       
                    }
                    else if(queryOption.equals(":vocab"))
                    {
                        q.setVisible(false);
                        Frame jf =new Frame();
-                       List<String> vocab = index.getVocab1000();
+                       List<String> vocab = di.getVocabulary();
                        String data[][]= new String[vocab.size()][1];
 
                        for(int i = 0; i < vocab.size(); i++)
@@ -213,7 +328,6 @@ public class MyGUIProgram extends Frame{
                        jf.add(back, BorderLayout.AFTER_LAST_LINE);
                        jf.setSize(300,400);    
 
-                       System.out.println("invo");
                        jf.setVisible(true); 
                        back.addMouseListener(new MouseAdapter() 
                        {
@@ -228,8 +342,11 @@ public class MyGUIProgram extends Frame{
                 {
                         q.setVisible(false);
                         Frame jf2 =new Frame();
-                        DocumentCorpus dc = index.getCorpus();
-                        List<Posting> queryResults = index.query(querySearchField.getText());
+                        DocumentCorpus dc = indexer.getCorpus();
+                        //**********************************************************************
+                        //*** This is where the ranked query function call goes Daniel/Kabir ***
+                        //**********************************************************************
+                        List<Posting> queryResults = indexer.query(querySearchField.getText());
                         
                         String data[][]= new String[queryResults.size()][1];
 
@@ -256,35 +373,32 @@ public class MyGUIProgram extends Frame{
                         jt.addMouseListener(new MouseAdapter() {
                             public void mouseClicked(MouseEvent me)
                             {
-                                                                    System.out.println("clicked item");
+                                    System.out.println("clicked item");
                                     JTable target = (JTable)me.getSource();
                                     Point p = me.getPoint();
                                     int row = target.rowAtPoint(p); // select a row
                                     int column = target.columnAtPoint(p); // select a column
                                 
-                                jt.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-                                if(column == 0 && me.getClickCount() == 2){
-                             
-                                   System.out.println("row: " + row +" col: " + column);
+                                    jt.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
+                                    if(column == 0 && me.getClickCount() == 2)
+                                    {                           
+                                    	System.out.println("row: " + row +" col: " + column);
                             
-                                   String str = target.getValueAt(row, column).toString();
-                                                                 System.out.println(str);
+                                    	String str = target.getValueAt(row, column).toString();
+                                    	System.out.println(str);
                                                                     
-                                   str=str.split(" ")[0];
-                                   System.out.println("clicked twice");
-                                   //File file=new File(dc.getDocument(Integer.parseInt(str)).getBody())
-                                   JOptionPane op = new JOptionPane();
-                                   JTextArea jta = new JTextArea(dc.getDocument(Integer.parseInt(str)).getBody());
-                                  JScrollPane jsp = new JScrollPane(jta){
-                                    @Override
-                                    public Dimension getPreferredSize() {
-                                        return new Dimension(480, 320);
-                                    }
-                                    };
-                                JOptionPane.showMessageDialog(
-                null, jsp, "Content", JOptionPane.PLAIN_MESSAGE);
-                                   
-                                  
+                                    	str=str.split(" ")[0];
+                                    	System.out.println("clicked twice");
+                                    	//File file=new File(dc.getDocument(Integer.parseInt(str)).getBody())
+                                    	JOptionPane op = new JOptionPane();
+                                    	JTextArea jta = new JTextArea(dc.getDocument(Integer.parseInt(str)).getBody());
+                                    	JScrollPane jsp = new JScrollPane(jta){
+		                                    @Override
+		                                    public Dimension getPreferredSize() {
+		                                        return new Dimension(480, 320);
+		                                    }
+                                    	};
+                                    	JOptionPane.showMessageDialog( null, jsp, "Content", JOptionPane.PLAIN_MESSAGE);                                  
                                 }
                             }
                         });
@@ -294,34 +408,16 @@ public class MyGUIProgram extends Frame{
                             public void mousePressed(MouseEvent e){
                                 jf2.setVisible(false);
                                 q.setVisible(true);
-                                //QueryFrame();
                             }
                         });
                     }               
                 }
             });             
         }
-//	
-//        
-//	public static void main(String[] args) {
-//		// TODO Auto-generated method stub
-//		MyGUIProgram gui = new MyGUIProgram();
-//                
-//                gui.InitFrame();
-//		
-//	}
-//    
-     private static class QueryUI extends Frame {
-
-            public QueryUI(Label indexTime) {
-                Frame q = new Frame("Milestone 1");
-
-            }
-    }
      
      public static void main(String[] args)
      {
     	 MyGUIProgram prog = new MyGUIProgram();
-    	 prog.InitFrame();
+    	 prog.BuildorQueryIndex();
      }
 }

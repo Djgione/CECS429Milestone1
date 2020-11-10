@@ -7,10 +7,14 @@ package cecs429.index;
 
 import cecs429.queries.Query;
 import cecs429.text.IntermediateTokenProcessor;
+import cecs429.weights.DocumentValuesModel;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+//import java.util.TreeMap;
 
 /**
  *
@@ -21,14 +25,14 @@ public class BiWordIndex implements Index{
     private KGramIndex index;
     public BiWordIndex()
     {
-        biwordindex=new HashMap();
+        biwordindex=new HashMap<>();
     }
     public void addTerm(String string,int documentId)
     {
         
         if(!biwordindex.containsKey(string))
         {
-            biwordindex.put(string, new ArrayList());
+            biwordindex.put(string, new ArrayList<>());
         }
         if(biwordindex.get(string).size()==0)biwordindex.get(string).add(new Posting(documentId));
         if(biwordindex.get(string).size()>0 && biwordindex.get(string).get(biwordindex.get(string).size()-1).getDocumentId()!=documentId)biwordindex.get(string).add(new Posting(documentId));
@@ -82,6 +86,22 @@ public class BiWordIndex implements Index{
     public List<Integer> getDocIds(String term) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+	@Override
+	public void setDocumentValuesModel(DocumentValuesModel model) {
+		// TODO Auto-generated method stub
+		
+	}
+	@Override
+	public DocumentValuesModel getDocumentValuesModel() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+//	@Override
+//	public int getDocCount() {
+//		// TODO Auto-generated method stub
+//		return 0;
+//	}
+//	
 
     
   
