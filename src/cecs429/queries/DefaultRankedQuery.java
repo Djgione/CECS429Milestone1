@@ -1,5 +1,6 @@
 package cecs429.queries;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,12 +15,19 @@ import cecs429.text.Constants;
 import cecs429.weights.Accumulator;
 import cecs429.weights.AccumulatorComparator;
 
-public class DefaultRankedQuery implements IRankedQuery {
+public class DefaultRankedQuery extends IRankedQuery {
 
 	private PriorityQueue<Accumulator> queue;
-
+	
 	public DefaultRankedQuery()
 	{
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+		queue.clear();
+	}
+
+	public DefaultRankedQuery(String path) throws FileNotFoundException 
+	{
+		super(path);
 		queue = new PriorityQueue<>(1, new AccumulatorComparator());
 		queue.clear();
 	}
@@ -33,7 +41,7 @@ public class DefaultRankedQuery implements IRankedQuery {
 		if(terms.size() == 0)
 			return results;
 
-		int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
+		//int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
 		//System.out.println(maxDocs);
 
 		Map<Integer,Double> accList = new HashMap<>();
@@ -54,7 +62,7 @@ public class DefaultRankedQuery implements IRankedQuery {
 			if(postingForTerm.size() != 0)
 			{
 
-				wqt = Math.log(1 + (maxDocs /postingForTerm.size()));
+				wqt = Math.log(1 + (docAmount /postingForTerm.size()));
 
 
 
@@ -85,7 +93,7 @@ public class DefaultRankedQuery implements IRankedQuery {
 			queue.add(
 					new Accumulator( 
 							e.getKey(),
-							( e.getValue() / index.getDocumentValuesModel().getDocWeights().get(e.getKey() ) )
+							( e.getValue() / readWeight(e.getKey() ) )
 							) );
 		}
 

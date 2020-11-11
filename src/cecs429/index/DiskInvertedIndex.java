@@ -49,7 +49,7 @@ public class DiskInvertedIndex implements Index{
                                .createOrOpen();
         file=new RandomAccessFile(path+"/postings.bin","r");       
         weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
-        readFromDocWeights();
+        //readFromDocWeights();
     }
 
     /**
@@ -194,48 +194,48 @@ public class DiskInvertedIndex implements Index{
     /**
      * Reads all values for the doc weight calculations from the 
      */
-    public void readFromDocWeights()
-    {
-    	//Initialization of temporary storage
-    	List<Double> documentWeights = new ArrayList<>();
-    	List<Integer> documentLengths = new ArrayList<>();
-    	List<Long> documentBytes = new ArrayList<>();
-    	List<Double> documentAverageTFDs = new ArrayList<>();
-    	
-		try {
-			while(weightsFile.getFilePointer() != weightsFile.length())
-			{
-				documentWeights.add(weightsFile.readDouble());
-				documentAverageTFDs.add(weightsFile.readDouble());
-				documentLengths.add(weightsFile.readInt());
-				documentBytes.add(weightsFile.readLong());
-			}
-			
-			
-//			for(int i = 0; i < documentWeights.size(); i++) {
-//				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
-//				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
+//    public void readFromDocWeights()
+//    {
+//    	//Initialization of temporary storage
+//    	List<Double> documentWeights = new ArrayList<>();
+//    	List<Integer> documentLengths = new ArrayList<>();
+//    	List<Long> documentBytes = new ArrayList<>();
+//    	List<Double> documentAverageTFDs = new ArrayList<>();
+//    	
+//		try {
+//			while(weightsFile.getFilePointer() != weightsFile.length())
+//			{
+//				documentWeights.add(weightsFile.readDouble());
+//				documentAverageTFDs.add(weightsFile.readDouble());
+//				documentLengths.add(weightsFile.readInt());
+//				documentBytes.add(weightsFile.readLong());
 //			}
-			
-		}
-		catch(EOFException ex)
-		{
-			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
-		}
-		catch(IOException ex)
-		{
-			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
-		}
-		catch(Exception ex)
-		{
-			
-		}
-    	   	
-		DocumentValuesModel tempModel = new DocumentValuesModel(documentBytes,documentLengths,documentAverageTFDs,documentWeights);
-    	// Sets the values gathered from docWeights.bin to the diskInvertedIndex
-    
-		setDocumentValuesModel(tempModel);
-    }
+//			
+//			
+////			for(int i = 0; i < documentWeights.size(); i++) {
+////				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
+////				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
+////			}
+//			
+//		}
+//		catch(EOFException ex)
+//		{
+//			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
+//		}
+//		catch(IOException ex)
+//		{
+//			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
+//		}
+//		catch(Exception ex)
+//		{
+//			
+//		}
+//    	   	
+//		DocumentValuesModel tempModel = new DocumentValuesModel(documentBytes,documentLengths,documentAverageTFDs,documentWeights);
+//    	// Sets the values gathered from docWeights.bin to the diskInvertedIndex
+//    
+//		setDocumentValuesModel(tempModel);
+//    }
 
 	@Override
 	public void setDocumentValuesModel(DocumentValuesModel model) {

@@ -1,4 +1,5 @@
 package cecs429.queries;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,14 +13,22 @@ import cecs429.text.Constants;
 import cecs429.weights.Accumulator;
 import cecs429.weights.AccumulatorComparator;
 
-public class Okapi_BM25_RankedQuery implements IRankedQuery{
+public class Okapi_BM25_RankedQuery extends IRankedQuery{
 
 private PriorityQueue<Accumulator> queue;
-	
+
 	public Okapi_BM25_RankedQuery()
 	{
 		queue = new PriorityQueue<>(1,new AccumulatorComparator());
 		queue.clear();
+	}
+	
+	public Okapi_BM25_RankedQuery(String path) throws FileNotFoundException
+	{
+		super(path);
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+		queue.clear();
+		
 	}
 	
 	@Override
@@ -31,7 +40,7 @@ private PriorityQueue<Accumulator> queue;
 		//Null check
 		if(terms.size() == 0)
 			return results;
-		int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
+		//int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
 		
 		Map<Integer,Double> accList = new HashMap<>();
 		//ForEach term t in query
@@ -46,7 +55,7 @@ private PriorityQueue<Accumulator> queue;
 				continue;
 			
 			double wqt = Math.max(0.1, Math.log(
-					( maxDocs - postingForTerm.size() +.5) /
+					( docAmount - postingForTerm.size() +.5) /
 						(postingForTerm.size() +.5 ) 
 							) 
 								);
@@ -56,12 +65,8 @@ private PriorityQueue<Accumulator> queue;
 			// ForEach doc d in postings of t
 			for(Posting p : postingForTerm)
 			{
-				int totalLength = 0;
-				for(Integer i : index.getDocumentValuesModel().getDocLengths())
-				{
-					totalLength+= i;
-				}
-				int docLength = index.getDocumentValuesModel().getDocLengths().get(p.getDocumentId());
+				int totalLength = readTotalLength();
+				int docLength = readLength(p.getDocumentId());
 				double wdt = (2.2 - p.getPositions().size()) / (
 						(1.2) * (.25 + (.75 * (docLength/totalLength)  ) + p.getPositions().size())
 							);
@@ -85,7 +90,7 @@ private PriorityQueue<Accumulator> queue;
 			queue.add(
 					new Accumulator( 
 							e.getKey(),
-							( e.getValue() / index.getDocumentValuesModel().getDocWeights().get(e.getKey() ) )
+							( e.getValue() / readWeight(e.getKey() ) )
 							) );
 		}
 		

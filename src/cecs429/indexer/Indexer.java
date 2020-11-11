@@ -56,6 +56,7 @@ public class Indexer {
 	KGramIndex kgramindex;
 	IDocumentWeightCalculator calculator;
 	private IRankedQuery rankedQuery;
+	private Path path;
 	
 	
 
@@ -63,6 +64,7 @@ public class Indexer {
 
 	public Indexer(Path path,String extension)
 	{
+		this.path = path;
 		parser= new BooleanQueryParser();
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
@@ -93,7 +95,6 @@ public class Indexer {
 		}
 			
 		
-
 		
 		
 		System.out.println("Config" + Constants.rankConfig);
@@ -161,9 +162,9 @@ public class Indexer {
 			{
 				
 				docLength++;
-				TokenProcessor basicProc = new BasicTokenProcessor();
+				//TokenProcessor basicProc = new BasicTokenProcessor();
 				
-				noDupes.add(basicProc.processToken(str).get(0));
+				noDupes.addAll(processor.processToken(str));
 				//System.out.print(str);
 				for(String s: processor.processToken(str))
 				{
@@ -258,6 +259,16 @@ public class Indexer {
 	//Returns the document title and the accumulator value
 	public List<String> rankedQuery(String query)
 	{
+		
+		try 
+		{
+		rankedQuery.setPath(path.toString()+"/index/docWeights.bin");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 		List<Accumulator> queryResults;
 		List<String> methodResults = new ArrayList<>();
 		TokenProcessor proc = new IntermediateTokenProcessor();

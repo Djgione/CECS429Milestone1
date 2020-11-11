@@ -1,5 +1,6 @@
 package cecs429.queries;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,13 +14,19 @@ import cecs429.text.Constants;
 import cecs429.weights.Accumulator;
 import cecs429.weights.AccumulatorComparator;
 
-public class WackyRankedQuery implements IRankedQuery {
+public class WackyRankedQuery extends IRankedQuery {
 
 	
 private PriorityQueue<Accumulator> queue;
 	
 	public WackyRankedQuery()
 	{
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+		queue.clear();
+	}
+	public WackyRankedQuery(String path) throws FileNotFoundException
+	{
+		super(path);
 		queue = new PriorityQueue<>(1,new AccumulatorComparator());
 		queue.clear();
 	}
@@ -32,7 +39,7 @@ private PriorityQueue<Accumulator> queue;
 				//Null check
 				if(terms.size() == 0)
 					return results;
-				int maxDocs = index.getDocumentValuesModel().getDocLengths().size();	
+				
 				
 				Map<Integer,Double> accList = new HashMap<>();
 				//ForEach term t in query
@@ -47,7 +54,7 @@ private PriorityQueue<Accumulator> queue;
 //					System.out.println("PostingForTermSize: " + postingForTerm.size());
 //					System.out.println("Max doc - postingForTermSize: " + (maxDocs - postingForTerm.size()));
 //					System.out.println("Whole log: " + Math.log( (maxDocs - postingForTerm.size() ) / postingForTerm.size() ) );
-					double wqt = Math.max(0, Math.log( (maxDocs - postingForTerm.size() ) / postingForTerm.size() ) );
+					double wqt = Math.max(0, Math.log( (docAmount - postingForTerm.size() ) / postingForTerm.size() ) );
 //					System.out.println("wqt: " + wqt);
 //					
 //					System.out.println();
@@ -57,8 +64,7 @@ private PriorityQueue<Accumulator> queue;
 					{
 						
 						double wdt = 1 + Math.log(p.getPositions().size()) / 
-								(1 + Math.log( index.getDocumentValuesModel().
-										getDocAverageTFDs().get(p.getDocumentId()) ));
+								(1 + Math.log( readAveTFD(p.getDocumentId()) ));
 						
 						if(accList.containsKey(p.getDocumentId())) 
 						{
@@ -79,7 +85,7 @@ private PriorityQueue<Accumulator> queue;
 					queue.add(
 							new Accumulator( 
 									e.getKey(),
-									( e.getValue() / index.getDocumentValuesModel().getDocWeights().get(e.getKey() ) )
+									( e.getValue() / readWeight(e.getKey() ) )
 									) );
 				}
 				

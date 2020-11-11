@@ -217,16 +217,19 @@ public class DiskIndexWriter {
     	                    new BufferedOutputStream(
     	                    new FileOutputStream(pathWeights)));
     	
+    		int totalLength = 0;
     	//This is in order due to index only containing a TreeMap
     	// Order of Creatoin : weights, averageTfd, length, byte
     	DocumentValuesModel temp = index.getDocumentValuesModel();
     	for(int i = 0; i < temp.getDocWeights().size(); i++) {
     		out.writeDouble(temp.getDocWeights().get(i));
+    		totalLength+= temp.getDocLengths().get(i);
     		out.writeDouble(temp.getDocAverageTFDs().get(i));
     		out.writeInt(temp.getDocLengths().get(i));
     		out.writeLong(temp.getByteSizes().get(i));
     	}
     	
+    	out.writeInt(totalLength);
     	
     	out.close();
     	}
