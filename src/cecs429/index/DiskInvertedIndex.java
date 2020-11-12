@@ -47,7 +47,8 @@ public class DiskInvertedIndex implements Index{
                                .valueSerializer(Serializer.LONG)
                                .createOrOpen();
         file=new RandomAccessFile(path+"/postings.bin","r");       
-        weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
+        weightsFile = new RandomAccessFile(path+"/docWeights.bin","r");
+        
         //readFromDocWeights();
     }
 
@@ -182,7 +183,9 @@ public class DiskInvertedIndex implements Index{
                 file.seek(file.getFilePointer()+(tftd*4));
             }
             
-        } catch (IOException ex) {file.seek(file.getFilePointer()+(tftd*4));
+        } catch (IOException ex) 
+        {
+        	//file.seek(file.getFilePointer()+(tftd*4));
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;

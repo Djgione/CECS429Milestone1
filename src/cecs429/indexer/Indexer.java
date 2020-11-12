@@ -238,7 +238,7 @@ public class Indexer {
 	}
 	//Omar added this
 	public Index getIndex() {return index;}
-    public KGramIndex getKgramIndex(){return kgramindex;}
+   // public KGramIndex getKgramIndex(){return kgramindex;}
 
 	public List<String> getVocab1000()
 	{
@@ -264,7 +264,7 @@ public class Indexer {
 		
 		try 
 		{
-		rankedQuery.setPath(path.toString()+"/index/docWeights.bin");
+			rankedQuery.setPath(path.toString()+"/docWeights.bin");
 		}
 		catch(Exception e)
 		{
@@ -280,7 +280,7 @@ public class Indexer {
 		
 		for(String s : queryTerms)
 		{
-			formattedTerms.add(proc.processToken(s).get(0));
+			formattedTerms.addAll(proc.processToken(s));
 			//System.out.println(proc.processToken(s).get(0));
 		}
 		

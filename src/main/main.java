@@ -46,7 +46,7 @@ public class main {
         System.out.println("Building index...");
         
 
-        String path="C:\\Users\\Kermite\\CECS429Milestone1\\src\\corpus\\index";
+        String path="C:\\Users\\Daniel\\Desktop\\CECS 429\\CECS429Milestone1\\src\\corpus";
 
         
         Indexer indexer = new Indexer(Paths.get(path).toAbsolutePath(),"txt");
@@ -64,17 +64,17 @@ public class main {
        System.out.println("vocab.size(): " + vocab.size());
 
        System.out.println("indexer vocab size: " + indexVocab.size());
-      List<Posting> postings = di.getPostings("it");
-       for(int i = 0; i < postings.size(); i++)
-       {
-           System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
-           
-       }
+//       List<Posting> postings = di.getPostings("it");
+//       for(int i = 0; i < postings.size(); i++)
+//       {
+//           System.out.println(vocab.get(i)+ " -> "+ postings.get(i).toString());
+//           
+//       }
         DiskKgramIndex dki=new DiskKgramIndex(path);
-        System.out.print("dki   "+dki.getPostings("bro"));
-        SpellingCorrector sp= new SpellingCorrector(dki,di);
-        System.out.print(sp.calculateJacard("gosling", sp.makegrams("$gost$")));
-        sp.checkFor("bst");
+//        System.out.print("dki   "+dki.getPostings("bro"));
+//        SpellingCorrector sp= new SpellingCorrector(dki,di);
+//        System.out.print(sp.calculateJacard("gosling", sp.makegrams("$gost$")));
+//        sp.checkFor("bst");
         indexer.setDiskIndex(di);
         
         List<String> results = indexer.rankedQuery("it is the");

@@ -105,8 +105,8 @@ public class DiskIndexWriter {
                 out.writeInt(dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
-                long postingsByteBegin = out.size();
-                map.put(term, postingsByteBegin);
+                //long postingsByteBegin = out.size();
+                //map.put(term, postingsByteBegin);
                                 
                 
 
@@ -126,7 +126,7 @@ public class DiskIndexWriter {
                                    
                     
                     //set the previous id as current id for next gap
-                     previousId = postingObjs.get(i).getDocumentId();
+                    //int previousId = postingObjs.get(i).getDocumentId();
                     
                 
                     List<Integer> positions = postingObjs.get(i).getPositions();
@@ -246,7 +246,7 @@ public class DiskIndexWriter {
     public void DeleteBinFiles(String path)throws FileNotFoundException, IOException
     {
 		Files.deleteIfExists(Paths.get(path+ "\\postings.bin").toAbsolutePath());
-		Files.deleteIfExists(Paths.get(path+ "\\docWeights.bin").toAbsolutePath());
+		//Files.deleteIfExists(Paths.get(path+ "\\docWeights.bin").toAbsolutePath());
 
     }
     public void DeleteKgramBinFiles(String path)throws FileNotFoundException, IOException
