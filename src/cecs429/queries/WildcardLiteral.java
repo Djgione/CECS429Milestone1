@@ -8,8 +8,9 @@ import cecs429.index.BiWordIndex;
 import cecs429.index.Index;
 import cecs429.index.Posting;
 import cecs429.text.IntermediateTokenProcessor;
+import cecs429.weights.Accumulator;
 
-public class WildcardLiteral implements Query {
+public class WildcardLiteral extends IRankedQuery implements Query {
 	private String mTerm;
 	private boolean mNegative;
 
@@ -247,6 +248,14 @@ public class WildcardLiteral implements Query {
 	@Override
 	public List<Posting> getPosting(BiWordIndex biwordindex) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Accumulator> query(List<String> terms, Index index) {
+
+		
+		
 		return null;
 	}
 
