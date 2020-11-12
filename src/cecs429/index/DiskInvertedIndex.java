@@ -38,6 +38,7 @@ public class DiskInvertedIndex implements Index{
     RandomAccessFile file;
     RandomAccessFile weightsFile;
     private DocumentValuesModel model;
+    DiskKgramIndex dki;
     //private int docCount;
     
     public DiskInvertedIndex(String path) throws FileNotFoundException, IOException
@@ -63,6 +64,9 @@ public class DiskInvertedIndex implements Index{
         List<Posting> answer=new ArrayList<>();
         
         try {
+        	if(map.get(term)==null)
+        		return answer;
+
             file.seek(map.get(term));
             int dft=file.readInt();
             //System.out.println(dft);
@@ -78,6 +82,7 @@ public class DiskInvertedIndex implements Index{
                     gap=gap+file.readInt();
                     positions.add(gap);
                 }
+                
                 answer.add(new Posting(docId,positions)) ;
             }
         } catch (IOException ex) {
@@ -154,7 +159,20 @@ public class DiskInvertedIndex implements Index{
 
     @Override
     public void print() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    	for(Object s:map.keySet())
+        {
+            System.out.print(s+" ->");
+            
+            for(Posting p: getPostings(s.toString()))
+            {
+                System.out.print("docid:"+p.getDocumentId()+"  ");
+                for(Integer i:p.getPositions())
+                {
+                    System.out.print(i+" ");
+                }
+                System.out.println();
+            }
+        }
     }
 
     @Override
@@ -166,6 +184,11 @@ public class DiskInvertedIndex implements Index{
     public KGramIndex getIndex() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    public void setKgram(DiskKgramIndex dki)
+    {
+        this.dki=dki;
+    }
+    
 
     @Override
     public List<Integer> getDocIds(String term) {

@@ -171,7 +171,7 @@ public class DiskIndexWriter {
      */
     private boolean weightWriter(Index index, Path path)
     {
-    	String pathWeights = path.toString() + "/docWeights.bin";
+    	String pathWeights = path.toString() + "\\docWeights.bin";
     	File file = new File(pathWeights);
     	
     	try {

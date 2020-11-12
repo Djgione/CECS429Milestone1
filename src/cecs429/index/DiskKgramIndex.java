@@ -14,6 +14,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -23,7 +25,7 @@ import org.mapdb.Serializer;
  *
  * @author kabir
  */
-public class DiskKgramIndex {
+public class DiskKgramIndex{
     private DB db; 
     private BTreeMap <String,Long> map;
     RandomAccessFile file;
@@ -38,7 +40,7 @@ public class DiskKgramIndex {
     }
     public List<String> getPostings(String term) throws IOException
     {
-    	List<String> list=new ArrayList();
+    	List<String> list=new ArrayList<>();
     	if(!map.containsKey(term)) return list;
         file.seek(map.get(term));
         int postings=file.readInt();
@@ -52,6 +54,13 @@ public class DiskKgramIndex {
         
         return list;
     }
+    
+    public List<String> getPostings() throws IOException
+    {
+    	Set<String> set = map.keySet();
+    	return new ArrayList<String>(set);
+    }
+    
     
     public void closeandDeleteDB(String path)
     {

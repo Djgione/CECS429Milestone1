@@ -30,22 +30,32 @@ public class CheckForSpellings {
     }
     public String suggest(String s) throws IOException
     {
-        tokens=s.split(" ");
+    	if(s.contains("*"))
+    		return "";
+    	
+        if(s.contains(" + "))       	
+        	tokens=s.split(" + ");
+        else
+        	tokens=s.split(" ");
+        
+       System.out.println("tokens length: "+ tokens.length);
         for(int i=0;i<tokens.length;i++)
         {
-            if(di.getPostings(itp.processToken(tokens[i]).get(0)).size()<5)
+            if(dki.getPostings(itp.processToken(tokens[i]).get(0)).size()<5)
             {
-                System.out.println("correcting"+tokens[i]);
                 SpellingCorrector sp=new SpellingCorrector(dki,di);
-                tokens[i]=sp.checkFor(tokens[i]).get(0);
+                if(sp.checkFor(tokens[i]).size()>0)
+                	tokens[i]=sp.checkFor(tokens[i]).get(0);
             }
         }
         String answer="";
         for(String str:tokens)
         {
-            answer=answer+str+" ";
+        	answer=answer+str;
+        	
+        	if(!str.equals(tokens[tokens.length - 1]))
+        		answer += " ";
         }
-        System.out.print(answer);
         return answer;
     }
     

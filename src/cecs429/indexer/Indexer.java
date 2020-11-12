@@ -9,6 +9,7 @@ import cecs429.documents.DirectoryCorpus;
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
 import cecs429.index.BiWordIndex;
+import cecs429.index.DiskKgramIndex;
 import cecs429.index.Index;
 import cecs429.index.KGramIndex;
 import cecs429.index.PositionalInvertedIndex;
@@ -58,7 +59,7 @@ public class Indexer {
 	IDocumentWeightCalculator calculator;
 	private IRankedQuery rankedQuery;
 	private Path path;
-	
+	private DiskKgramIndex diskKgram;
 	
 
 
@@ -280,29 +281,58 @@ public class Indexer {
 		
 		for(String s : queryTerms)
 		{
-			formattedTerms.addAll(proc.processToken(s));
+			if(s.length() == 1 && s.indexOf('*')>= 0)
+				formattedTerms.add(s);
+			else
+				formattedTerms.addAll(proc.processToken(s));
 			//System.out.println(proc.processToken(s).get(0));
 		}
 		
-		queryResults = rankedQuery.query(formattedTerms, diskIndex);
-		//System.out.println(queryResults.size());
-		if(queryResults.size() != 0) {
-			for(Accumulator acc : queryResults)
+		try {
+			List<String> temps = new ArrayList<>();
+			for(int i = 0; i <  formattedTerms.size(); i++)
 			{
-				if(acc == null)
-					continue;
-				StringBuilder s = new StringBuilder();
-				s.append("Title: ");
-				//System.out.println(acc.getDocId());
-				s.append(corpus.getDocument(acc.getDocId()).getTitle());
-				s.append(" | Accumulator Value : ");
-				s.append(acc.getaValue());
 				
-				methodResults.add(s.toString());
+				if(formattedTerms.get(i).length() > 1 && formattedTerms.get(i).indexOf('*') >= 0)
+				{
+					WildcardLiteral lit = new WildcardLiteral(formattedTerms.get(i));
+					formattedTerms.remove(formattedTerms.get(i));
+					i--;
+					temps.addAll(lit.getKGrams(diskKgram));
+				}
+				else if(formattedTerms.get(i).length() == 1 && formattedTerms.get(i).indexOf('*') == 0)
+				{
+					formattedTerms.addAll(diskIndex.getVocabulary());
+					formattedTerms.remove(formattedTerms.get(i));
+				}
 			}
 			
+			formattedTerms.addAll(temps);
+			
+			queryResults = rankedQuery.query(formattedTerms, diskIndex);
+			//System.out.println(queryResults.size());
+			if(queryResults.size() != 0) {
+				for(Accumulator acc : queryResults)
+				{
+					if(acc == null)
+						continue;
+					StringBuilder s = new StringBuilder();
+					s.append("Title: ");
+					//System.out.println(acc.getDocId());
+					s.append(corpus.getDocument(acc.getDocId()).getTitle());
+					s.append(" | Accumulator Value : ");
+					s.append(acc.getaValue());
+					
+					methodResults.add(s.toString());
+				}
+				
+			}
+			return methodResults;
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			return new ArrayList<String>();
 		}
-		return methodResults;
 	}
 
 	public List<Posting> query(String query)
@@ -347,6 +377,15 @@ public class Indexer {
 		return result;
 	}
 
+	public void delIndex() 
+	{
+		index = null;
+	}
+	
+	public void delKgram()
+	{
+		kgramindex=null;
+	}
 
 	
 	private List<Double> calculateAverageTFDs(Map<Integer,Map<String,Integer>> map, List<Integer> lengths)
@@ -367,6 +406,11 @@ public class Indexer {
 		}
 		
 		return averageTFDResults;
+	}
+	
+	public void setDiskKgram(DiskKgramIndex index)
+	{
+		diskKgram = index;
 	}
 	
 	public void setDiskIndex(Index index)

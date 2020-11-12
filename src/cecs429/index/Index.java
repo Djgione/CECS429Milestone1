@@ -39,6 +39,7 @@ public interface Index {
 
         
     public void setIndex(KGramIndex index);
+    
         
     public KGramIndex getIndex();
     
