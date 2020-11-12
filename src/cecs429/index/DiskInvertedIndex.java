@@ -11,6 +11,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.List;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -44,12 +46,9 @@ public class DiskInvertedIndex implements Index{
         map = db.treeMap("map").keySerializer(Serializer.STRING)
                                .valueSerializer(Serializer.LONG)
                                .createOrOpen();
-
-           
-        weightsFile = new RandomAccessFile(path+"/docWeights.bin","r");
-        readFromDocWeights();
-        file=new RandomAccessFile(path+"/postings.bin","r");  
-
+        file=new RandomAccessFile(path+"/postings.bin","r");       
+        weightsFile = new RandomAccessFile(path+"/index/docWeights.bin","r");
+        //readFromDocWeights();
     }
 
     /**
@@ -60,7 +59,7 @@ public class DiskInvertedIndex implements Index{
      */
     @Override
     public List<Posting> getPostings(String term){
-        List<Posting> answer=new ArrayList();
+        List<Posting> answer=new ArrayList<>();
         
         try {
             file.seek(map.get(term));
@@ -71,7 +70,7 @@ public class DiskInvertedIndex implements Index{
             {
                 docId = file.readInt()+docId;
                 int tftd = file.readInt();
-                List<Integer> positions=new ArrayList();
+                List<Integer> positions=new ArrayList<>();
                 int gap=0;
                 for(int j=0;j<tftd ;j++)
                 {
@@ -90,7 +89,7 @@ public class DiskInvertedIndex implements Index{
 
     @Override
     public List<Posting> getPostings() {
-        List<Posting> answer=new ArrayList();
+        List<Posting> answer=new ArrayList<>();
         
         try 
         {
@@ -104,7 +103,7 @@ public class DiskInvertedIndex implements Index{
                 {
                     docId = file.readInt()+docId;
                     int tftd = file.readInt();
-                    List<Integer> positions=new ArrayList();
+                    List<Integer> positions=new ArrayList<>();
                     int gap=0;
                     for(int j=0;j<tftd ;j++)
                     {
@@ -180,14 +179,10 @@ public class DiskInvertedIndex implements Index{
                 if(i==0)ids.add(file.readInt());
                 else ids.add(file.readInt()+ids.get(ids.size()-1));
                 int tftd=file.readInt();
-                for(int j=0;j<tftd;j++)
-                {
-                    file.readInt();
-                }
-                //file.seek(address);
+                file.seek(file.getFilePointer()+(tftd*4));
             }
             
-        } catch (IOException ex) {
+        } catch (IOException ex) {file.seek(file.getFilePointer()+(tftd*4));
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;
@@ -196,49 +191,48 @@ public class DiskInvertedIndex implements Index{
     /**
      * Reads all values for the doc weight calculations from the 
      */
-    public void readFromDocWeights()
-    {
-    	//Initialization of temporary storage
-    	List<Double> documentWeights = new ArrayList<>();
-    	List<Integer> documentLengths = new ArrayList<>();
-    	List<Long> documentBytes = new ArrayList<>();
-    	List<Double> documentAverageTFDs = new ArrayList<>();
-    	
-		try {
-			while(weightsFile.getFilePointer() != weightsFile.length())
-			{
-				documentWeights.add(weightsFile.readDouble());
-				documentAverageTFDs.add(weightsFile.readDouble());
-				documentLengths.add(weightsFile.readInt());
-				documentBytes.add(weightsFile.readLong());
-			}
-			
-			
-//			for(int i = 0; i < documentWeights.size(); i++) {
-//				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
-//				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
+//    public void readFromDocWeights()
+//    {
+//    	//Initialization of temporary storage
+//    	List<Double> documentWeights = new ArrayList<>();
+//    	List<Integer> documentLengths = new ArrayList<>();
+//    	List<Long> documentBytes = new ArrayList<>();
+//    	List<Double> documentAverageTFDs = new ArrayList<>();
+//    	
+//		try {
+//			while(weightsFile.getFilePointer() != weightsFile.length())
+//			{
+//				documentWeights.add(weightsFile.readDouble());
+//				documentAverageTFDs.add(weightsFile.readDouble());
+//				documentLengths.add(weightsFile.readInt());
+//				documentBytes.add(weightsFile.readLong());
 //			}
-			
-		}
-		catch(EOFException ex)
-		{
-			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
-		}
-		catch(IOException ex)
-		{
-			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
-		}
-		catch(Exception ex)
-		{
-			
-		}
-    	   	
-		DocumentValuesModel tempModel = new DocumentValuesModel(documentBytes,documentLengths,documentAverageTFDs,documentWeights);
-
-    	// Sets the values gathered from docWeights.bin to the diskInvertedIndex
-    
-		setDocumentValuesModel(tempModel);
-    }
+//			
+//			
+////			for(int i = 0; i < documentWeights.size(); i++) {
+////				System.out.println("Document " + (i+1) +  " Weight: " + documentWeights.get(i) + "; ByteSize: " + documentBytes.get(i)
+////				+ "; DocumentLength: " + documentLengths.get(i) + "; AverageTfd: " + documentAverageTFDs.get(i));
+////			}
+//			
+//		}
+//		catch(EOFException ex)
+//		{
+//			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
+//		}
+//		catch(IOException ex)
+//		{
+//			Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE,null,ex);
+//		}
+//		catch(Exception ex)
+//		{
+//			
+//		}
+//    	   	
+//		DocumentValuesModel tempModel = new DocumentValuesModel(documentBytes,documentLengths,documentAverageTFDs,documentWeights);
+//    	// Sets the values gathered from docWeights.bin to the diskInvertedIndex
+//    
+//		setDocumentValuesModel(tempModel);
+//    }
 
 	@Override
 	public void setDocumentValuesModel(DocumentValuesModel model) {

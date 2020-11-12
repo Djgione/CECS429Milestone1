@@ -12,5 +12,5 @@ public class Constants {
 	 * 2 = okapi bm25
 	 * 3 = wacky
 	 */
-	public static int rankConfig = 3;
+	public static int rankConfig = 0;
 }

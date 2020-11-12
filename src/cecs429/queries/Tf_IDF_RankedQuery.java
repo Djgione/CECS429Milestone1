@@ -1,5 +1,6 @@
 package cecs429.queries;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +14,20 @@ import cecs429.text.Constants;
 import cecs429.weights.Accumulator;
 import cecs429.weights.AccumulatorComparator;
 
-public class Tf_IDF_RankedQuery implements IRankedQuery {
+public class Tf_IDF_RankedQuery extends IRankedQuery {
 
 	private PriorityQueue<Accumulator> queue;
 	
 	public Tf_IDF_RankedQuery()
 	{
 		queue = new PriorityQueue<>(1,new AccumulatorComparator());
-
+		queue.clear();
+	}
+	public Tf_IDF_RankedQuery(String path) throws FileNotFoundException
+	{
+		super(path);
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+		queue.clear();
 		
 	}
 	@Override
@@ -32,7 +39,7 @@ List<Accumulator> results = new ArrayList<>();
 		if(terms.size() == 0)
 			return results;
 		
-		int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
+		//int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
 		Map<Integer,Double> accList = new HashMap<>();
 		//ForEach term t in query
 		for(String term : terms)
@@ -44,7 +51,7 @@ List<Accumulator> results = new ArrayList<>();
 			if(postingForTerm.size() == 0)
 				continue;
 			
-			double wqt = Math.log(maxDocs /postingForTerm.size());
+			double wqt = Math.log(docAmount /postingForTerm.size());
 			
 			
 			
@@ -72,7 +79,7 @@ List<Accumulator> results = new ArrayList<>();
 			queue.add(
 					new Accumulator( 
 							e.getKey(),
-							( e.getValue() / index.getDocumentValuesModel().getDocWeights().get(e.getKey() ) )
+							( e.getValue() / readWeight(e.getKey() ) )
 							) );
 		}
 		

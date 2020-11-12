@@ -16,6 +16,7 @@ public interface Index {
 	 */
 	List<Posting> getPostings(String term) ;
 	
+	
 	void setDocumentValuesModel(DocumentValuesModel model);
 	DocumentValuesModel getDocumentValuesModel();
 	//int getDocCount();

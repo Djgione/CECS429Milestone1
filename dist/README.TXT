@@ -11,7 +11,11 @@ JAR files manifest file (MANIFEST.MF).
 To run the project from the command line, go to the dist folder and
 type the following:
 
+<<<<<<< OURS
+java -jar "CECS429Milestone1.jar" 
+=======
 java -jar "HW5.0.jar" 
+>>>>>>> THEIRS
 
 To distribute this project, zip up the dist folder (including the lib folder)
 and distribute the ZIP file.

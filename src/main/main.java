@@ -5,12 +5,15 @@
  */
 package main;
 import cecs429.documents.DirectoryCorpus;
+import cecs429.documents.JsonFileDocument;
 import cecs429.index.DiskInvertedIndex;
 import cecs429.index.DiskKgramIndex;
 import cecs429.index.Posting;
 import cecs429.index.SpellingCorrector;
 import cecs429.indexer.DiskIndexWriter;
 import cecs429.indexer.Indexer;
+import cecs429.queries.BooleanQueryParser;
+import cecs429.text.IntermediateTokenProcessor;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -85,7 +88,6 @@ public class main {
         diskWriter.DeleteBinFiles(path);
         dki.closeandDeleteDB(path);
         diskWriter.DeleteKgramBinFiles(path);
-        
     }
 
 }
