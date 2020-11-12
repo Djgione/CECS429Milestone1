@@ -25,7 +25,6 @@ import org.mapdb.BTreeMap;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
-
 import cecs429.weights.DocumentValuesModel;
 
 /**
@@ -94,9 +93,11 @@ public class DiskInvertedIndex implements Index{
         
         try 
         {
+        	System.out.println("getVocabulary().size()" + getVocabulary().size());
         	for(int count = 0; count < getVocabulary().size(); count++)
         	{
         		int dft=file.readInt();
+        		System.out.println(dft);
                 int docId=0;
                 for(int i=0;i<dft;i++)
                 {
@@ -178,14 +179,10 @@ public class DiskInvertedIndex implements Index{
                 if(i==0)ids.add(file.readInt());
                 else ids.add(file.readInt()+ids.get(ids.size()-1));
                 int tftd=file.readInt();
-                for(int j=0;j<tftd;j++)
-                {
-                    file.readInt();
-                }
-                //file.seek(address);
+                file.seek(file.getFilePointer()+(tftd*4));
             }
             
-        } catch (IOException ex) {
+        } catch (IOException ex) {file.seek(file.getFilePointer()+(tftd*4));
             Logger.getLogger(DiskInvertedIndex.class.getName()).log(Level.SEVERE, null, ex);
         }
         return ids;
