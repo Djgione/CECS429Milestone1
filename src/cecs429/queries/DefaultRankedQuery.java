@@ -43,7 +43,10 @@ public class DefaultRankedQuery extends IRankedQuery {
 			return results;
 
 		Map<Integer,Double> accList = new HashMap<>();
+<<<<<<< HEAD
 
+=======
+>>>>>>> Omar
 		for(String term : terms)
 		{
 
@@ -78,7 +81,10 @@ public class DefaultRankedQuery extends IRankedQuery {
 		}
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Omar
 		if(accList.size() == 0)
 			return results;
 		for(Entry<Integer,Double> e : accList.entrySet())

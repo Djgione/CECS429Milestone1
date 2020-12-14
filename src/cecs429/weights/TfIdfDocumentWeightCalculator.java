@@ -48,4 +48,16 @@ public class TfIdfDocumentWeightCalculator implements IDocumentWeightCalculator 
 		return results;
 	}
 
+	@Override
+	public List<Double> getKnnWeights() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<Integer, List<Double>> termWeightSets() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

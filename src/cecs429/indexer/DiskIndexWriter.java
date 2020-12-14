@@ -51,11 +51,16 @@ public class DiskIndexWriter {
     private BTreeMap<String,Long> KgramMap;
     public DiskIndexWriter(String path)
     {
+    	try {
+			DeleteBinFiles(path);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         db = DBMaker.fileDB(path+"/theDB").make();
-        map = db.treeMap("map")
-                                    .keySerializer(Serializer.STRING)
-                                    .valueSerializer(Serializer.LONG)
-                                    .createOrOpen();
+        map = db.treeMap("map") .keySerializer(Serializer.STRING)
+                                .valueSerializer(Serializer.LONG)
+                                .createOrOpen();
         
         kgramdb=DBMaker.fileDB(path+"/KgramDB").make();
         KgramMap=kgramdb.treeMap("kgrammap")
@@ -81,8 +86,7 @@ public class DiskIndexWriter {
     {
         //the list of 8 byte integer values consisting of byte positions where
         //start of postings list occurs in postings.bin
-
-        
+    	 
         //..make a b+ tree using BTreeMap       
         try
         {
@@ -99,9 +103,7 @@ public class DiskIndexWriter {
                 List<Posting> postingObjs = index.getPostings(term);
                 
                 //get dft and write to disk
-                int dft = postingObjs.size();                   
-                long postingsByteBegin = out.size();
-                map.put(term, postingsByteBegin);
+                int dft = postingObjs.size();
                 out.writeInt(dft);
                 
                 //current value of the counter written(byte position where postings for term begin?)
@@ -134,8 +136,6 @@ public class DiskIndexWriter {
                     //get and write tftd to disk
                     int tftd = positions.size();                   
                     out.writeInt(tftd);
-                   // System.out.println("tftd "+tftd);
-                    //System.out.println("tftd "+tftd);
 
                     int previousPos = 0;
 
@@ -151,7 +151,7 @@ public class DiskIndexWriter {
             }
             
             out.close();
-            db.close();
+            
         }
         catch(Exception e)
         {
@@ -162,7 +162,10 @@ public class DiskIndexWriter {
     }
             
     
-    
+    public void closeDB()
+    {
+    	db.close();
+    }
     /**
      * Write the weight of documents to a file named docWeights.bin
      * @param index
@@ -245,6 +248,8 @@ public class DiskIndexWriter {
     
     public void DeleteBinFiles(String path)throws FileNotFoundException, IOException
     {
+		Files.deleteIfExists(Paths.get(path+ "\\theDB").toAbsolutePath());
+
 		Files.deleteIfExists(Paths.get(path+ "\\postings.bin").toAbsolutePath());
 		//Files.deleteIfExists(Paths.get(path+ "\\docWeights.bin").toAbsolutePath());
 
@@ -252,6 +257,8 @@ public class DiskIndexWriter {
     public void DeleteKgramBinFiles(String path)throws FileNotFoundException, IOException
     {
 		Files.deleteIfExists(Paths.get(path+ "\\Kgrampostings.bin").toAbsolutePath());
+		Files.deleteIfExists(Paths.get(path+ "\\KgramDB").toAbsolutePath());
+
 
     }
 }

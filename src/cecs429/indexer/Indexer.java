@@ -14,7 +14,6 @@ import cecs429.index.Index;
 import cecs429.index.KGramIndex;
 import cecs429.index.PositionalInvertedIndex;
 import cecs429.index.Posting;
-import cecs429.queries.BiWordQuery;
 import cecs429.queries.BooleanQueryParser;
 import cecs429.queries.DefaultRankedQuery;
 import cecs429.queries.IRankedQuery;
@@ -23,7 +22,6 @@ import cecs429.queries.Query;
 import cecs429.queries.Tf_IDF_RankedQuery;
 import cecs429.queries.WackyRankedQuery;
 import cecs429.queries.WildcardLiteral;
-import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 import cecs429.text.IntermediateTokenProcessor;
 import cecs429.text.TokenProcessor;
@@ -145,6 +143,8 @@ public class Indexer {
 			
 		
 	}
+	public IDocumentWeightCalculator getCalculator() {return calculator;}
+	public String getCorpusPath() {return path.getFileName().toString();}
 	
 	private List<Long> findByteSize(Path path, String extension)
 	{
@@ -178,11 +178,7 @@ public class Indexer {
 		int docNumber = 0;
 		for(Document doc:corpus.getDocuments())
 		{
-
-			
-
 			Map<String, Integer> termFrequency = new HashMap<>();
-			
 			int docLength = 0;
 			int pos=0;
 			
@@ -196,10 +192,9 @@ public class Indexer {
 			{
 				
 				docLength++;
-				//TokenProcessor basicProc = new BasicTokenProcessor();
 				
 				noDupes.addAll(processor.processToken(str));
-				//System.out.print(str);
+
 				for(String s: processor.processToken(str))
 				{
 					if(i==0)
@@ -254,9 +249,7 @@ public class Indexer {
 		model.setDocAverageTFDs(
 				calculateAverageTFDs(mapForCalculation, docLengths));
 		model.setDocWeights(calculator.calculate(model));
-		
-		
-		
+
 		
 		pInvertedIndex.setDocumentValuesModel(model);
 		pInvertedIndex.setIndex(kgramindex);

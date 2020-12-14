@@ -19,5 +19,6 @@ public class Constants {
 	public static String hamiltonPath="C:\\Users\\Daniel\\Desktop\\CECS 429\\FedPapers\\HAMILTON";
 	public static String jayPath ="C:\\Users\\Daniel\\Desktop\\CECS 429\\FedPapers\\JAY";
 	public static String disputedPath = "C:\\Users\\Daniel\\Desktop\\CECS 429\\FedPapers\\DISPUTED";
+	public static String allPath = "C:\\Users\\Daniel\\Desktop\\CECS 429\\ALLPAPERS";
 
 }
