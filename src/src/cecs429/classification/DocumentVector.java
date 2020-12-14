@@ -1,4 +1,4 @@
-package classifications;
+package cecs429.classification;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,8 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
-<<<<<<< HEAD
+package cecs429.main;
 import cecs429.classification.Bayes;
 import cecs429.classification.RocchioClassification;
 import cecs429.classification.RocchioValuesModel;
@@ -21,19 +20,14 @@ import cecs429.indexer.Indexer;
 import cecs429.queries.BooleanQueryParser;
 import cecs429.text.Constants;
 import cecs429.text.IntermediateTokenProcessor;
-=======
-
 import cecs429.index.DiskInvertedIndex;
 import cecs429.indexer.DiskIndexWriter;
 import cecs429.indexer.Indexer;
-import classifications.EuclideanEntry;
-import classifications.knnClassification;
+import cecs429.classification.*;
 import cecs429.documents.Document;
->>>>>>> Omar
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-<<<<<<< HEAD
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -42,14 +36,10 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
-
 import javax.sound.midi.Sequence;
-
 import org.mapdb.BTreeMap;
-=======
 import java.util.List;
 import java.util.Map;
->>>>>>> Omar
 /**
  *
  * @author Kermite
@@ -148,28 +138,25 @@ public class main {
 
         System.out.println("\n" +model.getDisputedDocsClassificationsToString());
         
+        // System.out.println("Vocab Size: " + bigIndexer.getVocabulary().size());
+        //
+//                for(int i = 0; i < 30; i++)
+//                {
+//             	   System.out.println(bigIndexer.getVocabulary().get(i));
+//                }
+
+
+                //String path="/Users/kabir/NetBeansProjects/CECS429Milestone2/src/";   
+        
         
 		
-
-       
-        Indexer indexer1 = new Indexer(Paths.get(Constants.jayPath).toAbsolutePath(),"txt");
-        Indexer indexer2 = new Indexer(Paths.get(Constants.madisonPath).toAbsolutePath(),"txt");
-        Indexer indexer3 = new Indexer(Paths.get(Constants.hamiltonPath).toAbsolutePath(),"txt");
-        Indexer indexer4 = new Indexer(Paths.get(Constants.disputedPath).toAbsolutePath(),"txt");
-        Indexer bigIndexer = new Indexer(Paths.get(Constants.allPath).toAbsolutePath(), "txt");
-        System.out.println("Vocab Size: " + bigIndexer.getVocabulary().size());
-
-        for(int i = 0; i < 30; i++)
-        {
-     	   System.out.println(bigIndexer.getVocabulary().get(i));
-        }
-
-
-        //String path="/Users/kabir/NetBeansProjects/CECS429Milestone2/src/";        
+        Indexer indexer4 = new Indexer(Paths.get(Constants.disputedPath).toAbsolutePath(),"txt",0);
+        Indexer bigIndexer = new Indexer(Paths.get(Constants.allPath).toAbsolutePath(), "txt",0);
         Indexer hamiltonIndexer = new Indexer(Paths.get(Constants.hamiltonPath).toAbsolutePath(),"txt",0);
         Indexer jayIndex=new Indexer(Paths.get(Constants.jayPath).toAbsolutePath(),"txt",0);
         Indexer madisonIndex=new Indexer(Paths.get(Constants.madisonPath).toAbsolutePath(),"txt",0);
-        
+        indexer4.index();
+        bigIndexer.index();
         
         
         Index hamiltonI=hamiltonIndexer.index();
@@ -206,9 +193,9 @@ public class main {
 	
 
        List<Indexer> threeCorpuses = new ArrayList<>();
-       threeCorpuses.add(indexer1);
-       threeCorpuses.add(indexer2);
-       threeCorpuses.add(indexer3);
+       threeCorpuses.add(jayIndex);
+       threeCorpuses.add(madisonIndex);
+       threeCorpuses.add(hamiltonIndexer);
        knnClassification knn = new knnClassification();
        System.out.println("before knn");
        

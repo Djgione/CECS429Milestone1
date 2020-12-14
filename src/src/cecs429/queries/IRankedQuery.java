@@ -38,12 +38,8 @@ public abstract class IRankedQuery {
 	 * @return
 	 */
 	public abstract List<Accumulator> query(List<String> terms, Index index);
-<<<<<<< HEAD
 
 
-=======
-	
->>>>>>> Omar
 	private void getDocAmounts()
 	{
 		int i = 0;

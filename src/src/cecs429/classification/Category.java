@@ -1,4 +1,4 @@
-package classifications;
+package cecs429.classification;
 
 
 import cecs429.documents.Document;

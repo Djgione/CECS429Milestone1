@@ -1,4 +1,4 @@
-package main;
+package cecs429.main;
 
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
