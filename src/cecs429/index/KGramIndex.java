@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author kabir
  */
-public class KGramIndex {
+public class KGramIndex  {
     HashMap<String,List<String>> kGramIndex;
     public KGramIndex()
     {

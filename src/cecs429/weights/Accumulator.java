@@ -18,6 +18,6 @@ public class Accumulator {
 	public void setaValue(double aValue) {
 		this.aValue = aValue;
 	}
-	
-	
+
+
 }

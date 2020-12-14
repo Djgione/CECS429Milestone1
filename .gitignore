@@ -1,1 +1,13 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> a21b23d95b04d698870db16cc08df32321d6de57
+/build/
+/COF575/nbproject/private/
+/COF575/build/
+/JavaApplication33/nbproject/private/
 /bin/
+src/corpus/
+*.json
+*.txt
+*.bin

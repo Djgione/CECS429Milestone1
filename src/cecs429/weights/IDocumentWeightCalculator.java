@@ -6,7 +6,5 @@ import java.util.TreeMap;
 
 public interface IDocumentWeightCalculator {
 	
-	
-	//void setDocumentTermFrequencies(Map<Integer,Map<String,Integer>> map);
 	 List<Double> calculate(DocumentValuesModel model);
 }

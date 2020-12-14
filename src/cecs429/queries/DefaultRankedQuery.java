@@ -1,5 +1,6 @@
 package cecs429.queries;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -9,17 +10,25 @@ import java.util.PriorityQueue;
 import java.util.TreeMap;
 
 import cecs429.index.Index;
+import cecs429.index.Pair;
 import cecs429.index.Posting;
 import cecs429.text.Constants;
 import cecs429.weights.Accumulator;
 import cecs429.weights.AccumulatorComparator;
 
-public class DefaultRankedQuery implements IRankedQuery {
+public class DefaultRankedQuery extends IRankedQuery {
 
 	private PriorityQueue<Accumulator> queue;
-
+	
 	public DefaultRankedQuery()
 	{
+		queue = new PriorityQueue<>(1,new AccumulatorComparator());
+		queue.clear();
+	}
+
+	public DefaultRankedQuery(String path) throws FileNotFoundException 
+	{
+		super(path);
 		queue = new PriorityQueue<>(1, new AccumulatorComparator());
 		queue.clear();
 	}
@@ -33,42 +42,34 @@ public class DefaultRankedQuery implements IRankedQuery {
 		if(terms.size() == 0)
 			return results;
 
-		int maxDocs = index.getDocumentValuesModel().getDocLengths().size();
-		//System.out.println(maxDocs);
-
 		Map<Integer,Double> accList = new HashMap<>();
-//		
-//		for(Posting s :index.getPostings("it"))
-//		{
-//			System.out.println(s.getPositions().size());
-//		}
-		//ForEach term t in query
+
 		for(String term : terms)
 		{
 
 
-			List<Posting> postingForTerm = index.getPostings(term);
+			List<Pair> postingForTerm = index.getDocIds(term);
 
 			double wqt;
 
 			if(postingForTerm.size() != 0)
 			{
 
-				wqt = Math.log(1 + (maxDocs /postingForTerm.size()));
+				wqt = Math.log(1 + (docAmount /postingForTerm.size()));
 
 
 
 				// ForEach doc d in postings of t
-				for(Posting p : postingForTerm)
+				for(Pair p : postingForTerm)
 				{
 
-					double wdt = 1 + Math.log(p.getPositions().size());
-					if(accList.containsKey(p.getDocumentId())) 
+					double wdt = 1 + Math.log(p.getTftd());
+					if(accList.containsKey(p.getDocId())) 
 					{
-						accList.computeIfPresent(p.getDocumentId(), (key,value) -> value + (wqt * wdt) );
+						accList.computeIfPresent(p.getDocId(), (key,value) -> value + (wqt * wdt) );
 					}
 					else {
-						accList.put(p.getDocumentId(),
+						accList.put(p.getDocId(),
 								(wqt * wdt) );
 					}
 				}
@@ -77,7 +78,7 @@ public class DefaultRankedQuery implements IRankedQuery {
 		}
 
 
-		//System.out.println(accList.size());
+
 		if(accList.size() == 0)
 			return results;
 		for(Entry<Integer,Double> e : accList.entrySet())
@@ -85,7 +86,7 @@ public class DefaultRankedQuery implements IRankedQuery {
 			queue.add(
 					new Accumulator( 
 							e.getKey(),
-							( e.getValue() / index.getDocumentValuesModel().getDocWeights().get(e.getKey() ) )
+							( e.getValue() / readWeight(e.getKey() ) )
 							) );
 		}
 

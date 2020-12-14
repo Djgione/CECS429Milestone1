@@ -5,9 +5,12 @@ import java.util.HashSet;
 import java.util.List;
 
 import cecs429.index.BiWordIndex;
+import cecs429.index.DiskKgramIndex;
 import cecs429.index.Index;
 import cecs429.index.Posting;
+import cecs429.index.iKgramIndex;
 import cecs429.text.IntermediateTokenProcessor;
+import cecs429.weights.Accumulator;
 
 public class WildcardLiteral implements Query {
 	private String mTerm;
@@ -37,13 +40,15 @@ public class WildcardLiteral implements Query {
 	public List<Posting> getPostings(Index index) {
 		throw new UnsupportedOperationException("Not supported yet."); 
 	}
+	
+	
 
 	/**
 	 * Gets the postings for the wildcard term, uses an OrQuery to combine the results
 	 */
 	@Override
 	public List<Posting> getPostings(Index index, IntermediateTokenProcessor proc) {
-		if(mTerm.equals("*"))
+		if(mTerm.length() == 1 && mTerm.charAt(0)=='*')
 		{
 			return index.getPostings();
 		}
@@ -64,8 +69,6 @@ public class WildcardLiteral implements Query {
 
 		queries = filterResults(terms, kGrams);
 
-		//List<Posting> results = new ArrayList<Posting>();
-		//TODO: Or together posting finds from filtered Terms
 		if(queries.size()==0)
 			return new ArrayList<Posting>();
 		Query results;
@@ -80,40 +83,63 @@ public class WildcardLiteral implements Query {
 		return results.getPostings(index, proc);
 
 	}
+	
+	public List<String> getKGrams(DiskKgramIndex index)
+	{
+		if(mTerm.length() == 1 && mTerm.charAt(0)=='*')
+		{
+			try 
+			{
+				return index.getPostings();
+			}catch(Exception e)
+			{
+				e.printStackTrace();
+				return new ArrayList<String>();
+			}
+		}
+		mTerm = mTerm.toLowerCase();
+		String tempTerm = "$" + mTerm + "$";
+		List<String> kGrams = divideKGrams(tempTerm);
+		
+		List<String> terms = new ArrayList<>();
+		try 
+		{
+			for(String s : kGrams)
+			{
 
+				terms.addAll(index.getPostings(s));
 
-
-
-	/**
-	 * Filters results returned from parsing the kGramIndex
-	 * @param terms
-	 * @return List of Queries (termLiteral) that fit the wildCard
-	 */
-	private List<Query> filterResults(List<String> terms, List<String> kGrams)
+			}
+			
+			return returnKGramResults(terms, kGrams);
+			
+			
+		} catch(Exception e)
+		{
+			e.printStackTrace();
+			return new ArrayList<String>();
+		}
+		
+	}
+	
+	public List<String> returnKGramResults(List<String> terms, List<String> kGrams)
 	{
 		List<String> filteredResults = new ArrayList<>();
 
+		
 		for(String term : terms)
 		{
-			int lastIndex = -1;
+			
 			boolean addable = true;
 
 
 			for(int i = 0; i < kGrams.size(); i++)
 			{
 				// Checks to see if kGram is inside term, as well as further along than last kGram
-				if(kGrams.size() > 1 && term.indexOf(kGrams.get(i)) > lastIndex)
-				{
-					lastIndex = term.indexOf(kGrams.get(i));
-				}
-				else if(kGrams.size() == 1)
-				{
-					lastIndex =-1;
-				}
-				else
+				if(!term.contains(kGrams.get(i)))
 				{
 					addable = false;
-					break;
+					break; 
 				}
 
 				// If all Kgrams exist inside the term, add the term
@@ -126,7 +152,21 @@ public class WildcardLiteral implements Query {
 			
 			}
 		}
+		
+		return filteredResults;
+	}
 
+
+
+
+	/**
+	 * Filters results returned from parsing the kGramIndex
+	 * @param terms
+	 * @return List of Queries (termLiteral) that fit the wildCard
+	 */
+	private List<Query> filterResults(List<String> terms, List<String> kGrams)
+	{
+		List<String> filteredResults = returnKGramResults(terms,kGrams);
 		
 		if(filteredResults.size() == 0)
 		{
@@ -164,7 +204,7 @@ public class WildcardLiteral implements Query {
 		for(int j = 3; j != 0; j--) {
 			for(int i = 0; i < term.length()-(j-1); i++)
 			{
-				//System.out.println("I:" + i + "\nJ:" + j);
+				
 				String s = term.substring(i, i+j);
 				s = removeAsterisk(s);
 				boolean addable = true;
@@ -249,6 +289,8 @@ public class WildcardLiteral implements Query {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
 
 
 }

@@ -9,6 +9,7 @@ import cecs429.documents.DirectoryCorpus;
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
 import cecs429.index.BiWordIndex;
+import cecs429.index.DiskKgramIndex;
 import cecs429.index.Index;
 import cecs429.index.KGramIndex;
 import cecs429.index.PositionalInvertedIndex;
@@ -57,13 +58,17 @@ public class Indexer {
 	KGramIndex kgramindex;
 	IDocumentWeightCalculator calculator;
 	private IRankedQuery rankedQuery;
-	
+	private Path path;
+	private DiskKgramIndex diskKgram;
+	private String extension;
 	
 
 
 
 	public Indexer(Path path,String extension)
 	{
+		this.path = path;
+		this.extension = extension;
 		parser= new BooleanQueryParser();
 		biwordindex=new BiWordIndex();
 		kgramindex=new KGramIndex();
@@ -94,10 +99,9 @@ public class Indexer {
 		}
 			
 		
-
 		
 		
-		System.out.println("Config" + Constants.rankConfig);
+		
 		if(extension.equals("json"))
 		{
 			corpus=DirectoryCorpus.loadJsonDirectory(path, ".json");
@@ -106,10 +110,41 @@ public class Indexer {
 		{
 			corpus=DirectoryCorpus.loadTextDirectory(path, ".txt");
 		}
-		index=index(corpus, path, extension);
+	
 		
 	}
 	
+	public Indexer(Path path, String extension, int overrideConstant)
+	{
+		this(path,extension);
+		
+		if(overrideConstant == 0) {
+			calculator = new DefaultDocumentWeightCalculator();
+			rankedQuery = new DefaultRankedQuery();
+		}
+		else if(overrideConstant  == 1)
+		{
+			calculator = new TfIdfDocumentWeightCalculator();
+			rankedQuery = new Tf_IDF_RankedQuery();
+		}
+		else if(overrideConstant  ==2)
+		{
+			calculator = new Okapi_BM25_DocumentWeightCalculator();
+			rankedQuery = new Okapi_BM25_RankedQuery();
+		}
+		else if(overrideConstant  == 3)
+		{
+			calculator = new WackyDocumentWeightCalculator();
+			rankedQuery = new WackyRankedQuery();
+		}
+		else
+		{
+			calculator = new DefaultDocumentWeightCalculator();
+			rankedQuery = new DefaultRankedQuery();
+		}
+			
+		
+	}
 	
 	private List<Long> findByteSize(Path path, String extension)
 	{
@@ -126,14 +161,12 @@ public class Indexer {
 				results.add(f.length());
 			}
 		}
-//		
-//		for(Long l : results)
-//			System.out.println(l);
+		
 		return results;
 	}
 
 
-	private Index index(DocumentCorpus corpus, Path path, String extension)
+	public Index index()
 	{
 		Index pInvertedIndex=new PositionalInvertedIndex(corpus.getCorpusSize());
 		HashSet<String> noDupes = new HashSet<>();
@@ -142,7 +175,7 @@ public class Indexer {
 		List<Long> docBytes = findByteSize(path,extension);
 		
 
-		int docNumber = 1;
+		int docNumber = 0;
 		for(Document doc:corpus.getDocuments())
 		{
 
@@ -158,14 +191,15 @@ public class Indexer {
 			String s2="";
 			int i=0;
 			
+			BasicTokenProcessor proc = new BasicTokenProcessor();
 			for(String str : stream.getTokens())
 			{
 				
 				docLength++;
-				TokenProcessor basicProc = new BasicTokenProcessor();
 				
-				noDupes.add(basicProc.processToken(str).get(0));
-				//System.out.print(str);
+				
+				noDupes.addAll(proc.processToken(str));
+			
 				for(String s: processor.processToken(str))
 				{
 					if(i==0)
@@ -179,16 +213,16 @@ public class Indexer {
 						biwordindex.addTerm(s1+" "+s2, doc.getId());
 						s1=s2;
 					}
-					//System.out.println(s + "docid=" + doc.getId());
-					pInvertedIndex.addTerm(s,doc.getId(),pos++);
-					//kgramindex.addTerm(s,0,0);
+					if(!s.isEmpty() && !s.isBlank())
+						pInvertedIndex.addTerm(s,doc.getId(),pos++);
+					
 
 					// If the termFrequency map does not contain key, put it in there. Else, add one to the counter of the term
-					if(!termFrequency.containsKey(s))
+					if(!termFrequency.containsKey(s) && !s.isEmpty())
 					{
 						termFrequency.put(s, 1);
 					}
-					else
+					else if(!s.isEmpty())
 					{
 						termFrequency.computeIfPresent(s, (key,val) -> val+=1);
 					}
@@ -199,18 +233,18 @@ public class Indexer {
 			mapForCalculation.put(docNumber, termFrequency);
 			docLengths.add(docLength);
 			docNumber++;
+			
 		}
-
-
+		
+		
 		for(String s: noDupes)
 		{
 			kgramindex.addTerm(s, 0, 0);
-			//System.out.print(s);
+			
 		}
 		
-		System.out.println(mapForCalculation.size());
-		// Sets the document weights into the inverted Index using the calculator from the constructor
-		//calculator.setDocumentTermFrequencies(mapForCalculation);
+	
+
 		
 		DocumentValuesModel model = new DocumentValuesModel();
 		model.setDocLengths(docLengths);
@@ -219,7 +253,6 @@ public class Indexer {
 		
 		model.setDocAverageTFDs(
 				calculateAverageTFDs(mapForCalculation, docLengths));
-		//List<Double> docWeights = calculator.calculate(model);
 		model.setDocWeights(calculator.calculate(model));
 		
 		
@@ -228,16 +261,17 @@ public class Indexer {
 		pInvertedIndex.setDocumentValuesModel(model);
 		pInvertedIndex.setIndex(kgramindex);
 		biwordindex.setIndex(kgramindex);
-		//pInvertedIndex.print();
+		
 		return pInvertedIndex; 
 	}
 	public DocumentCorpus getCorpus()
 	{
 		return corpus;
 	}
-	//Omar added this
+	
+	
 	public Index getIndex() {return index;}
-    public KGramIndex getKgramIndex(){return kgramindex;}
+   
 
 	public List<String> getVocab1000()
 	{
@@ -260,6 +294,16 @@ public class Indexer {
 	//Returns the document title and the accumulator value
 	public List<String> rankedQuery(String query)
 	{
+		
+		try 
+		{
+			rankedQuery.setPath(path.toString()+"/docWeights.bin");
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 		List<Accumulator> queryResults;
 		List<String> methodResults = new ArrayList<>();
 		TokenProcessor proc = new IntermediateTokenProcessor();
@@ -269,40 +313,68 @@ public class Indexer {
 		
 		for(String s : queryTerms)
 		{
-			formattedTerms.add(proc.processToken(s).get(0));
-			//System.out.println(proc.processToken(s).get(0));
+			if(s.length() == 1 && s.indexOf('*')>= 0)
+				formattedTerms.add(s);
+			else
+				formattedTerms.addAll(proc.processToken(s));
+	
 		}
 		
-		queryResults = rankedQuery.query(formattedTerms, diskIndex);
-		//System.out.println(queryResults.size());
-		if(queryResults.size() != 0) {
-			for(Accumulator acc : queryResults)
+		try {
+			List<String> temps = new ArrayList<>();
+			for(int i = 0; i <  formattedTerms.size(); i++)
 			{
-				if(acc == null)
-					continue;
-				StringBuilder s = new StringBuilder();
-				s.append("Title: ");
-				//System.out.println(acc.getDocId());
-				s.append(corpus.getDocument(acc.getDocId()).getTitle());
-				s.append(" | Accumulator Value : ");
-				s.append(acc.getaValue());
 				
-				methodResults.add(s.toString());
+				if(formattedTerms.get(i).length() > 1 && formattedTerms.get(i).indexOf('*') >= 0)
+				{
+					WildcardLiteral lit = new WildcardLiteral(formattedTerms.get(i));
+					formattedTerms.remove(formattedTerms.get(i));
+					i--;
+					temps.addAll(lit.getKGrams(diskKgram));
+				}
+				else if(formattedTerms.get(i).length() == 1 && formattedTerms.get(i).indexOf('*') == 0)
+				{
+					formattedTerms.addAll(diskIndex.getVocabulary());
+					formattedTerms.remove(formattedTerms.get(i));
+				}
 			}
 			
+			formattedTerms.addAll(temps);
+			
+			queryResults = rankedQuery.query(formattedTerms, diskIndex);
+			
+			if(queryResults.size() != 0) {
+				for(Accumulator acc : queryResults)
+				{
+					if(acc == null)
+						continue;
+					StringBuilder s = new StringBuilder();
+					s.append("Title: ");
+					
+					s.append(corpus.getDocument(acc.getDocId()).getTitle());
+					s.append(" | Accumulator Value : ");
+					s.append(acc.getaValue());
+					
+					methodResults.add(s.toString());
+				}
+				
+			}
+			return methodResults;
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+			return new ArrayList<String>();
 		}
-		return methodResults;
 	}
 
 	public List<Posting> query(String query)
 	{                          
 		List<Posting> p;
 		Query q = parser.parseQuery(query);
-		if(q.isBiWord())
-			p=q.getPosting(biwordindex);
-		else if(q.getnegative() && q.getClass() != WildcardLiteral.class) 
-			return notmerge(index.getPostings(), q.getPostings(index, new IntermediateTokenProcessor()));
-		else p= q.getPostings(index,new IntermediateTokenProcessor());
+
+		if(q.getnegative() && q.getClass() != WildcardLiteral.class) 
+			return notmerge(diskIndex.getPostings(), q.getPostings(diskIndex, new IntermediateTokenProcessor()));
+		else p= q.getPostings(diskIndex,new IntermediateTokenProcessor());
 
 
 		return p;               
@@ -336,6 +408,15 @@ public class Indexer {
 		return result;
 	}
 
+	public void delIndex() 
+	{
+		index = null;
+	}
+	
+	public void delKgram()
+	{
+		kgramindex=null;
+	}
 
 	
 	private List<Double> calculateAverageTFDs(Map<Integer,Map<String,Integer>> map, List<Integer> lengths)
@@ -358,8 +439,16 @@ public class Indexer {
 		return averageTFDResults;
 	}
 	
+	public void setDiskKgram(DiskKgramIndex index)
+	{
+		diskKgram = index;
+	}
+	
 	public void setDiskIndex(Index index)
 	{
 		diskIndex = index;
+	}
+	public KGramIndex getKgramIndex() {
+        	return kgramindex;
 	}
 }

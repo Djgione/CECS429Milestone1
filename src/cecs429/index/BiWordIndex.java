@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
+//import java.util.TreeMap;
 
 /**
  *
@@ -25,14 +25,14 @@ public class BiWordIndex implements Index{
     private KGramIndex index;
     public BiWordIndex()
     {
-        biwordindex=new HashMap();
+        biwordindex=new HashMap<>();
     }
     public void addTerm(String string,int documentId)
     {
         
         if(!biwordindex.containsKey(string))
         {
-            biwordindex.put(string, new ArrayList());
+            biwordindex.put(string, new ArrayList<>());
         }
         if(biwordindex.get(string).size()==0)biwordindex.get(string).add(new Posting(documentId));
         if(biwordindex.get(string).size()>0 && biwordindex.get(string).get(biwordindex.get(string).size()-1).getDocumentId()!=documentId)biwordindex.get(string).add(new Posting(documentId));
@@ -83,7 +83,7 @@ public class BiWordIndex implements Index{
 	}
 
     @Override
-    public List<Integer> getDocIds(String term) {
+    public List<Pair> getDocIds(String term) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 	@Override

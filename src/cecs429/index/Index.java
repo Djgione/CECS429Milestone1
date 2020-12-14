@@ -16,16 +16,17 @@ public interface Index {
 	 */
 	List<Posting> getPostings(String term) ;
 	
+	
 	void setDocumentValuesModel(DocumentValuesModel model);
 	DocumentValuesModel getDocumentValuesModel();
-	//int getDocCount();
+	
 	/**
 	 * Retrieves a list of all postings
 	 * @return
 	 */
 	List<Posting> getPostings();
 	
-	List<Integer> getDocIds(String term);
+	List<Pair> getDocIds(String term);
 	/**
 	 * A (sorted) list of all terms in the index vocabulary.
 	 */
@@ -38,6 +39,7 @@ public interface Index {
 
         
     public void setIndex(KGramIndex index);
+    
         
     public KGramIndex getIndex();
     
