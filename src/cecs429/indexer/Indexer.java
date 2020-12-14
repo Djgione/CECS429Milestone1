@@ -196,10 +196,10 @@ public class Indexer {
 			{
 				
 				docLength++;
+				//TokenProcessor basicProc = new BasicTokenProcessor();
 				
-				
-				noDupes.addAll(proc.processToken(str));
-			
+				noDupes.addAll(processor.processToken(str));
+				//System.out.print(str);
 				for(String s: processor.processToken(str))
 				{
 					if(i==0)
@@ -261,7 +261,7 @@ public class Indexer {
 		pInvertedIndex.setDocumentValuesModel(model);
 		pInvertedIndex.setIndex(kgramindex);
 		biwordindex.setIndex(kgramindex);
-		
+		index = pInvertedIndex;
 		return pInvertedIndex; 
 	}
 	public DocumentCorpus getCorpus()
@@ -271,7 +271,7 @@ public class Indexer {
 	
 	
 	public Index getIndex() {return index;}
-   
+   // public KGramIndex getKgramIndex(){return kgramindex;}
 
 	public List<String> getVocab1000()
 	{

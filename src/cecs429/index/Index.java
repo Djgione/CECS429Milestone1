@@ -1,5 +1,6 @@
 package cecs429.index;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -43,5 +44,15 @@ public interface Index {
         
     public KGramIndex getIndex();
     
+
+	public int getDocFreq(String s);
+
+	int getDocCount();
+
+	int getTf(String s);
+
+	HashSet<Integer>getAllDocs();
+    
+
 
 }

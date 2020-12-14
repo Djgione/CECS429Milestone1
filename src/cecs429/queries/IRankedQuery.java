@@ -93,7 +93,6 @@ public abstract class IRankedQuery {
 		{
 			weights.seek(skipLength + Double.BYTES);
 			return weights.readDouble();
-
 		} catch(IOException e)
 		{
 			e.printStackTrace();
@@ -111,7 +110,7 @@ public abstract class IRankedQuery {
 		{
 			weights.seek(skipLength + (Double.BYTES * 2));
 			return weights.readInt();
-
+			
 		} catch(IOException e)
 		{
 			e.printStackTrace();
@@ -136,7 +135,6 @@ public abstract class IRankedQuery {
 		} 
 
 	}
-
 	protected int readTotalLength()
 	{
 		try 

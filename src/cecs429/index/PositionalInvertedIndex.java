@@ -14,14 +14,19 @@ import java.util.HashMap.*;
 import java.util.HashSet;
 
 public class PositionalInvertedIndex implements Index {
+	int totalTokens;
 	private final HashMap<String, List<Posting>> mMap;
 	private KGramIndex index;
 	private int maxDoc;
 	private DocumentValuesModel model;
-	
+	HashSet<Integer> docs=new HashSet();
+	public int totalDocs;
+	public HashMap<String,Integer> termfreq =new HashMap<String,Integer>();
+	public static HashMap<String,Integer> corpfreq =new HashMap<String,Integer>();
 	
 	public PositionalInvertedIndex(int num)
 	{
+		totalTokens = 0;
 		maxDoc = num;
 		mMap = new HashMap<>();
 	}
@@ -39,18 +44,24 @@ public class PositionalInvertedIndex implements Index {
 	
 	public void addTerm(String term, int documentId, int position)
 	{
+		totalTokens++;
+		docs.add(documentId);
 		//if the term does not exist in the index
 		if(mMap.get(term) == null)
 		{
-                    List<Posting> list = new ArrayList<>();
-                    list.add(new Posting(documentId, position));
-                    mMap.put(term, list);
+				corpfreq.put(term,corpfreq.getOrDefault(term,0)+1);
+				termfreq.put(term,termfreq.getOrDefault(term,0)+1);
+                List<Posting> list = new ArrayList<>();
+                list.add(new Posting(documentId, position));
+                mMap.put(term, list);
 		}
 		// If it does exist in the index
 		else
 		{
                     // If the documentId is contained in the posting
                     int last = mMap.get(term).size()-1;
+                    corpfreq.put(term,corpfreq.getOrDefault(term,0)+1);
+                    termfreq.put(term,termfreq.getOrDefault(term,0)+1);
                     if(mMap.get(term)
                        .get(last)
                        .getDocumentId() == documentId)
@@ -123,6 +134,7 @@ public class PositionalInvertedIndex implements Index {
     public List<Pair> getDocIds(String term) {
         List<Posting> postings = mMap.get(term);
         List<Pair> list=new ArrayList<>();
+        if(postings == null) return new ArrayList<>();
         for(Posting p:postings)
         {
             list.add(new Pair(p.getDocumentId(),p.getPositions().size()));
@@ -147,6 +159,40 @@ public class PositionalInvertedIndex implements Index {
 //		return maxDoc;
 //	}
 
+
+	public int getTf(String s)
+	{
+		
+		if(termfreq.get(s)!=null)
+		{
+			return termfreq.get(s);
+		}
+		else return 0;
+	}
+	public int getCf(String s)
+	{
+		return corpfreq.get(s);
+
+	}
+	public HashSet<Integer> getAllDocs()
+	{
+		return docs;
+	}
 	
+//
+	@Override
+	public int getDocCount() {
+		// TODO Auto-generated method stub
+		return docs.size();
+	}
+
+    public int getDocFreq(String term)
+    {
+    	
+    	List<Posting> postings = mMap.get(term);
+    	if(postings==null)return 0;
+    	return postings.size();
+    	
+    }
 
 }

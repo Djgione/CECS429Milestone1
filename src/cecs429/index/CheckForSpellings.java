@@ -16,46 +16,47 @@ import java.util.List;
  * @author kabir
  */
 public class CheckForSpellings {
-	String[] tokens;
-	IntermediateTokenProcessor itp;
-	DiskInvertedIndex di;
-	DiskKgramIndex dki;
-	public CheckForSpellings (DiskInvertedIndex di,DiskKgramIndex dki)
-	{
-
-		itp =new IntermediateTokenProcessor();
-		this.di=di;
-		this.dki=dki;
-
-	}
-	public String suggest(String s) throws IOException
-	{
-		tokens=s.split(" ");
-
-		for(int i=0;i<tokens.length;i++)
-		{
-
-
-			if(dki.getPostings(tokens[i]).size()<15)
-			{
-
-
-				SpellingCorrector sp=new SpellingCorrector(dki,di);
-				if(sp.checkFor(tokens[i]).size()>0)
-				{
-					tokens[i]=sp.checkFor(tokens[i]).get(0);
-				}
-			}
-		}
-		String answer="";
-		for(String str:tokens)
-		{
-			answer=answer+str;
-
-			if(!str.equals(tokens[tokens.length - 1]))
-				answer += " ";
-		}
-		return answer;
-	}
-
+    String[] tokens;
+    IntermediateTokenProcessor itp;
+    DiskInvertedIndex di;
+    DiskKgramIndex dki;
+    public CheckForSpellings (DiskInvertedIndex di,DiskKgramIndex dki)
+    {
+        
+        itp =new IntermediateTokenProcessor();
+        this.di=di;
+        this.dki=dki;
+        
+    }
+    public String suggest(String s) throws IOException
+    {
+    	if(s.contains("*"))
+    		return "";
+    	
+        if(s.contains(" + "))       	
+        	tokens=s.split(" + ");
+        else
+        	tokens=s.split(" ");
+        
+       System.out.println("tokens length: "+ tokens.length);
+        for(int i=0;i<tokens.length;i++)
+        {
+            if(dki.getPostings(itp.processToken(tokens[i]).get(0)).size()<5)
+            {
+                SpellingCorrector sp=new SpellingCorrector(dki,di);
+                if(sp.checkFor(tokens[i]).size()>0)
+                	tokens[i]=sp.checkFor(tokens[i]).get(0);
+            }
+        }
+        String answer="";
+        for(String str:tokens)
+        {
+        	answer=answer+str;
+        	
+        	if(!str.equals(tokens[tokens.length - 1]))
+        		answer += " ";
+        }
+        return answer;
+    }
+    
 }

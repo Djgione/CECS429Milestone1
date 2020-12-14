@@ -21,7 +21,7 @@ public class TfIdfDocumentWeightCalculator implements IDocumentWeightCalculator 
 		if(map.isEmpty())
 			return results;
 		
-		int i = 1;
+		int i = 0;
 		
 		do {
 			
@@ -43,7 +43,7 @@ public class TfIdfDocumentWeightCalculator implements IDocumentWeightCalculator 
 			results.add(documentWeight);
 			i++;
 			
-		}while(i < map.size() + 1);		
+		}while(i < map.size());		
 		
 		return results;
 	}

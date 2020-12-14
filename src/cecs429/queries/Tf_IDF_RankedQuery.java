@@ -29,7 +29,6 @@ public class Tf_IDF_RankedQuery extends IRankedQuery {
 		super(path);
 		queue = new PriorityQueue<>(1,new AccumulatorComparator());
 		queue.clear();
-
 	}
 	@Override
 	public List<Accumulator> query(List<String> terms, Index index) {

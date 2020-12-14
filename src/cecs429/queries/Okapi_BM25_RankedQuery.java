@@ -23,7 +23,6 @@ public class Okapi_BM25_RankedQuery extends IRankedQuery{
 		queue = new PriorityQueue<>(1,new AccumulatorComparator());
 		queue.clear();
 	}
-
 	public Okapi_BM25_RankedQuery(String path) throws FileNotFoundException
 	{
 		super(path);

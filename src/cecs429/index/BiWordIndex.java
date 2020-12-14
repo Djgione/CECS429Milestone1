@@ -11,6 +11,7 @@ import cecs429.weights.DocumentValuesModel;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -102,6 +103,26 @@ public class BiWordIndex implements Index{
 //		return 0;
 //	}
 //	
+	@Override
+	public int getDocFreq(String s) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public int getDocCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public int getTf(String s) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	@Override
+	public HashSet<Integer> getAllDocs() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
     
   
