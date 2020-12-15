@@ -21,7 +21,7 @@ public class Bayes {
 		this.Hamilton=Hamilton;
 		this.Jay=Jay;
 		this.Madison=Madison;
-		vocab=T(50);
+		vocab=T(10);
 	}
 	//use only the terms in T*
 	//

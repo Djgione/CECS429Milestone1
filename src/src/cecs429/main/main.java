@@ -107,7 +107,7 @@ public class main {
 		model.setMappedDisputedDocs(classifier.createDisputedDocVectors(model));
 		model.setDistanceFromClassifications(classifier.calculateDistance(model));
 
-		System.out.println("Order:\nHamilton\nJay\nMadison");
+		
 		
 //		for(int i = 0; i < 3; i++)
 //		{
@@ -119,6 +119,7 @@ public class main {
 //			}
 //
 //		}
+		
         System.out.println("\n\npaper52 Rocchio:");
         System.out.println("Components:");
         
@@ -127,8 +128,11 @@ public class main {
         for(int i = 0; i < 30; i++)
         {
                 System.out.print(model.getMappedDisputedDocs().get(3).get(keys.get(i)) + ", ");
+                if(i==20)
+                	System.out.println();
         }
         System.out.println(">");
+        System.out.println("Order:\nHamilton\nJay\nMadison");
         System.out.println("Distances:");
         
         for(int i = 0; i < 3; i++)
@@ -138,12 +142,7 @@ public class main {
 
         System.out.println("\n" +model.getDisputedDocsClassificationsToString());
         
-        // System.out.println("Vocab Size: " + bigIndexer.getVocabulary().size());
-        //
-//                for(int i = 0; i < 30; i++)
-//                {
-//             	   System.out.println(bigIndexer.getVocabulary().get(i));
-//                }
+        
 
 
                 //String path="/Users/kabir/NetBeansProjects/CECS429Milestone2/src/";   
@@ -158,6 +157,13 @@ public class main {
         indexer4.index();
         bigIndexer.index();
         
+//        
+//        System.out.println("Vocab Size: " + bigIndexer.getVocabulary().size());
+//        
+//        for(int i = 0; i < 30; i++)
+//        {
+//     	   System.out.println(bigIndexer.getVocabulary().get(i));
+//        }
         
         Index hamiltonI=hamiltonIndexer.index();
         Index jayI=jayIndex.index();
@@ -171,25 +177,30 @@ public class main {
 //        3.N10- documents that have the term and are not in the catagory
 //        4.N01- documents that do not have the term and are in the catagory.
 
-        Bayes b=new Bayes(hamiltonI,jayI,madisonI);
+//        Bayes b=new Bayes(hamiltonI,jayI,madisonI);
         Indexer indexer=new Indexer(Paths.get(Constants.disputedPath).toAbsolutePath(),"txt",0);
-        
-        for(Document d:indexer.getCorpus().getDocuments())
-        {
-        	System.out.println("for document"+d.getTitle());
-        	double h=(double)b.classify(d,hamiltonI);
-        	double j=(double)b.classify(d,jayI);
-        	double m=(double)b.classify(d,madisonI);
-        	System.out.println("hamilton:"+"  "+ h);
-        	System.out.println("jay"+"  "+ j);
-        	System.out.println("madison:"+"  "+ m);
-        	
-        	System.out.println("");
-        	System.out.println("");
-        	System.out.println("");
-        	System.out.println("");
-        	
-        }
+//        
+//        for(Document d:indexer.getCorpus().getDocuments())
+//        {
+//        	System.out.println("for document"+d.getTitle());
+//        	double h=(double)b.classify(d,hamiltonI);
+//        	double j=(double)b.classify(d,jayI);
+//        	double m=(double)b.classify(d,madisonI);
+//        	System.out.println("hamilton:"+"  "+ h);
+//        	System.out.println("jay"+"  "+ j);
+//        	System.out.println("madison:"+"  "+ m);
+//        	
+//        	double temp=max(h,j,m);
+//        	if(h==temp)System.out.print("predicted author - Hamilton");
+//        	else if(j==temp)System.out.print("predicted author - Jay");
+//        	else if(m==temp)System.out.print("predicted author - Madison");
+//        	
+//        	System.out.println("");
+//        	System.out.println("");
+//        	System.out.println("");
+//        	System.out.println("");
+//        	
+//        }
 	
 
        List<Indexer> threeCorpuses = new ArrayList<>();
@@ -203,5 +214,11 @@ public class main {
         System.out.println("made it out of knn");
         
     }
+	
+    public static double max(double a,double b,double c)
+    {
+    	return Math.max(a,Math.max(b,c));
+    }
+
 
 }
