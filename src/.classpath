@@ -2,16 +2,5 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path=""/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/gson-2.8.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/kotlin-stdlib-1.0.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/kotlin-runtime-1.0.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/jcip-annotations-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/eclipse-collections-forkjoin-7.1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/eclipse-collections-api-7.1.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/mapdb-3.0.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/lz4-1.3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/guava-19.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/elsa-3.0.0-M5.jar"/>
-	<classpathentry exported="true" kind="lib" path="C:/Users/Daniel/Downloads/eclipse-collections-7.1.2.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
