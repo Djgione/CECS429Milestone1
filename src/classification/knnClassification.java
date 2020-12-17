@@ -41,7 +41,7 @@ public class knnClassification {
 							   int 	         k)
 	{
         Map<Document, List<EuclideanEntry>> nearestNeighbors = findNearestNeighbors(allCorpuses, disputedCorp, k);
-        //printKnnResults(nearestNeighbors);
+        printKnnResults(nearestNeighbors);
         Map<Document, List<Category>> map = new HashMap<Document, List<Category>>();
         for(Entry<Document, List<EuclideanEntry>> e : nearestNeighbors.entrySet())
         {
