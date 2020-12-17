@@ -22,19 +22,16 @@ public class Bayes {
 		this.Hamilton=Hamilton;
 		this.Jay=Jay;
 		this.Madison=Madison;
-		vocab=T(10);
+		vocab=T(50);
 	}
 	//use only the terms in T*
 	//
 	public double classify(Document d,Index index)
 	{
-		//System.out.println(vocab);
 		double cmap=0.0;
 		double indexprob=((double)index.getDocCount()/(double)71);
 		EnglishTokenStream ts=new EnglishTokenStream(d.getContent());
 		int corpfreq=countCorpFreq(index);
-		//System.out.println("indexprob"+indexprob);
-		//System.out.println("hamiltonprob "+hamiltonprob);
 		double temp=0.0;
 		for(String str : ts.getTokens())
 		{
@@ -54,8 +51,6 @@ public class Bayes {
 					
 				
 		}
-		//System.out.println("temp="+temp);
-		//cmaphamilton=(log2(hamiltonprob)/log2(2))+temp;
 		cmap = Math.log(indexprob) + temp;
 		
 		return cmap;
@@ -87,8 +82,6 @@ public class Bayes {
 		PriorityQueue<Pair> pq=new PriorityQueue(new Comp());
 		Set<String> set=new HashSet();
 		int totalVocab=getTotalVocab();
-		//System.out.println("Jay docs"+Jay.getAllDocs());
-		//System.out.println("Hamilton docs"+Hamilton.getAllDocs());
 		
 		for(String s:Hamilton.getVocabulary())
 		{
@@ -103,7 +96,6 @@ public class Bayes {
 			//documents that are in the catagory and do not contain the term
 			set1=new HashSet(Hamilton.getAllDocs());
 			set1.removeAll(Hamilton.getDocIds(s));
-		//	System.out.println("n01="+set1);
 			double n01=(double)set1.size();
 			
 			//documents that are not in the catagory and do contain the term
@@ -116,16 +108,8 @@ public class Bayes {
 			double n11=(double)Hamilton.getDocFreq(s);
 			
 			double n=n00+n01+n11+n10;
-			//=72
 			double  mutualinfo=0.0;
-			//System.out.println(s+" n00"+n00+"n01 "+n01+" n11"+n11+" n10"+n10+"="+ n);
 			
-//			if(n11==0||n10==0||n01==0||n00==0)
-//			{
-//				mutualinfo=0.0;
-//			}
-//			else
-//			{
 			
 			if((n10+n11)==0 || (n01+n11)==0 ||(n00+n10)==0 || (n00+n01)==0 || n11==0 || n00==0 || n01 ==0 || n10==0)
 			{
@@ -143,10 +127,7 @@ public class Bayes {
 						+((n01/n) * log2(c)) +((n00/n) * log2(d));
 				
 			}
-				//System.out.println(a+" "+b+" "+c+" "+d);
 				
-			//}
-			//System.out.println(s+" "+mutualinfo);
 			boolean b=true;
 			for(Pair p:pq)
 			{
@@ -210,7 +191,6 @@ public class Bayes {
 						+((n01/n) * log2(c)) +((n00/n) * log2(d));
 				
 			}
-			//System.out.println(s+" "+mutualinfo);
 			boolean b=true;
 			for(Pair p:pq)
 			{
@@ -252,7 +232,6 @@ public class Bayes {
 			double n10=(double)set1.size()+(double)set2.size();
 			//documents that are in the catagory and do contain the term
 			double n11=(double)Madison.getDocFreq(s);
-			//System.out.println(n00+" "+n11+" "+n10+" "+n01);
 			double n=n00+n01+n11+n10;
 			double mutualinfo=0.0;
 			
@@ -272,7 +251,6 @@ public class Bayes {
 						+((n01/n) * log2(c)) +((n00/n) * log2(d));
 				
 			}
-			//System.out.println(s+" "+mutualinfo);
 			boolean b=true;
 			for(Pair p:pq)
 			{
